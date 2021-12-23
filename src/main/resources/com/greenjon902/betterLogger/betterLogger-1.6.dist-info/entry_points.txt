@@ -1,0 +1,3 @@
+[console_scripts]
+betterLogger = betterLogger.__init__:main
+
