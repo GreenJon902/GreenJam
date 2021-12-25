@@ -5,11 +5,10 @@ import java.net.ServerSocket;
 
 public class BetterLoggerCommunicator {
     private boolean started = false;
-    ServerSocket serverSocket;
+    private ServerSocket serverSocket;
 
-    private int openServer() throws IOException {
-        ServerSocket serverSocket = new ServerSocket(0);
-        return serverSocket.getLocalPort();
+    private void openServer() throws IOException {
+        serverSocket = new ServerSocket(0);
     }
 
     private void closeServer() throws IOException {
@@ -20,6 +19,7 @@ public class BetterLoggerCommunicator {
         if (!started) {
             try {
                 openServer();
+                System.out.println("Logging on port " + serverSocket.getLocalPort());
             } catch (IOException e) {
                 System.out.println(Colors.format("[ERROR] Failed to start logger"));
             }
