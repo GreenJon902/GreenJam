@@ -1,2 +1,1 @@
-print("Portal opened")
-import betterLogger
+print("f")
