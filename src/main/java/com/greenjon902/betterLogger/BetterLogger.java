@@ -2,12 +2,11 @@ package com.greenjon902.betterLogger;
 
 import org.python.util.PythonInterpreter;
 
-import java.util.Objects;
-import java.util.Properties;
+import java.net.URL;
 
 public class BetterLogger {
-    public static String getPythonScriptsPath() {
-        return Objects.requireNonNull(BetterLogger.class.getClassLoader().getResource("com/greenjon902/betterLogger")).getFile();
+    public static URL getPythonLaunchFile() {
+        return BetterLogger.class.getClassLoader().getResource("com/greenjon902/betterLogger/portal.py");
     }
 
     public static void start() {
@@ -19,14 +18,8 @@ public class BetterLogger {
 
     private static void startPython() {
         try {
-            Properties properties = new Properties();
-            properties.setProperty("python.path", getPythonScriptsPath());
-            PythonInterpreter.initialize(System.getProperties(), properties, new String[]{""});
-
             PythonInterpreter pyInterp = new PythonInterpreter();
-            pyInterp.exec("import sys; print(sys.path)");
-            pyInterp.exec("import betterLogger");
-            pyInterp.exec("betterLogger.info(\"Test\")");
+            pyInterp.execfile(getPythonLaunchFile().openStream());
 
         } catch (Exception e) {
             e.printStackTrace();
