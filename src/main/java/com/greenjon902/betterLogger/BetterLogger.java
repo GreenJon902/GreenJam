@@ -25,4 +25,8 @@ public class BetterLogger {
             e.printStackTrace();
         }
     }
+
+    public static void info(String... strings) {
+        System.out.println(String.join(" ", strings));
+    };
 }
