@@ -14,7 +14,11 @@ public class BetterLoggerCommunicator {
     private ServerSocket serverSocket;
 
     private void openServer() throws IOException {
-        serverSocket = new ServerSocket(0);
+        String port = System.getenv("BETTERLOGGERPORT");
+        if (port == null) {
+            port = "0";
+        }
+        serverSocket = new ServerSocket(Integer.parseInt(port));
     }
 
     private void closeServer() throws IOException {
