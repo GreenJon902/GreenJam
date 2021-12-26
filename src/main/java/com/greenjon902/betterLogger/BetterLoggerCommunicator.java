@@ -26,9 +26,10 @@ public class BetterLoggerCommunicator {
     }
 
     private void connectPython(int port) throws IOException {
-        if (!pythonFile.exists()) {
+        if (!pythonFile.exists() || (System.getenv("FORCEBETTERLOGGERCOPYFILE") != null && Boolean.parseBoolean(System.getenv("FORCEBETTERLOGGERCOPYFILE")))) {
             //noinspection ConstantConditions
             FileUtils.copyURLToFile(getClass().getResource("betterLoggerPortal.py"), pythonFile);
+            System.out.println("Copied betterLoggerPortal.py");
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder("python", pythonFile.getAbsolutePath(), String.valueOf(port));
