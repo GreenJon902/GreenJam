@@ -19,8 +19,11 @@ def send(type_, string):
 class ConnSender:
     current_send_type = ""
 
-    def write(self, string):
+    def write(self, string: str):
         send(self.current_send_type, string)
+
+    def flush(self):
+        pass
 
 
 connSender = ConnSender()
@@ -39,8 +42,7 @@ except ImportError:
 
     connSender.current_send_type = "PIP_INSTALL"
     import subprocess
-    process = subprocess.run([sys.executable, '-m', 'pip', 'install', "betterLogger"])
-    print(process)
+    subprocess.run([sys.executable, '-m', 'pip', 'install', "betterLogger"])
 
     connSender.current_send_type = "LOG"
     try:
@@ -49,5 +51,5 @@ except ImportError:
         send("ERROR", "Install of betterLogger failed")
         sys.exit(1)
     send("INFO", "Installed betterLogger")
-send("CTRL", "End")
+send("CTRL", "END")
 conn.close()

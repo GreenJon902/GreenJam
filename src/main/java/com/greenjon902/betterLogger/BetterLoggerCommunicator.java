@@ -52,7 +52,8 @@ public class BetterLoggerCommunicator {
 
     private void handleLogger() {
         System.out.println("Handling logger on thread " + Thread.currentThread().getName());
-        while (true) {
+        boolean running = true;
+        while (running) {
             try {
                 byte[] typeLengthBytes = new byte[pythonConn_typeLength];
                 int bytes_read = pythonConnectionInputStream.read(typeLengthBytes);
@@ -74,7 +75,32 @@ public class BetterLoggerCommunicator {
                     pythonConnectionInputStream.read(messageBytes);
 
                     String message = new String(messageBytes, StandardCharsets.UTF_8);
-                    System.out.print("[" + type + "]  " + message);
+
+                    switch (type) {
+                        case "LOG":
+                            System.out.print(message);
+                            break;
+                        case "INFO":
+                            System.out.println(Colors.format("{BLACK}<INFO>  " + message + "{RESET}"));
+                            break;
+                        case "PIP_INSTALL":
+                            System.out.println(Colors.format("{BLACK}<PIP_INSTALL>  " + message + "{RESET}"));
+                            break;
+                        case "ERROR":
+                            System.out.print(Colors.format("{RED}<ERROR>  " + message + "{RESET}"));
+                            break;
+                        case "CTRL":
+                            if (message.equals("END")) {
+                                running = false;
+                            } else {
+                                System.out.println(Colors.format("{RED}<ERROR>  Received unknown control message from betterLogger - \"" + message + "\"{RESET}"));
+                            }
+                            break;
+
+                        default:
+                            System.out.println(Colors.format("{RED}<ERROR>  Received unknown type from betterLogger - \"" + type + "\"{RESET}"));
+                    }
+
                 }
 
             } catch (Exception e) {
@@ -101,15 +127,6 @@ public class BetterLoggerCommunicator {
                 System.out.println(Colors.format("[ERROR] Failed to start logger, error:"));
                 e.printStackTrace();
             }
-        }
-
-        try
-        {
-            Thread.sleep(10000);
-        }
-        catch(InterruptedException ex)
-        {
-            Thread.currentThread().interrupt();
         }
     }
 
