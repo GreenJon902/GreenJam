@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 public class BetterLoggerCommunicator {
     private static final File pythonFile = new File(System.getProperty("user.dir"), "betterLoggerPortal.py");
@@ -27,9 +28,11 @@ public class BetterLoggerCommunicator {
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder("python", pythonFile.getAbsolutePath(), String.valueOf(port));
-        System.out.println(1);
-        processBuilder.start();
-        System.out.println(2);
+        Process process = processBuilder.start();
+
+        System.out.println("Waiting on connection");
+        Socket pythonConnection = serverSocket.accept();
+        System.out.println("Incoming connection from " + pythonConnection.getInetAddress().toString() + pythonConnection.getPort());
     }
 
     public void start() {
