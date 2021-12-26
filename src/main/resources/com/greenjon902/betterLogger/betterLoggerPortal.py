@@ -42,6 +42,7 @@ except ImportError:
 
     connSender.current_send_type = "PIP_INSTALL"
     import subprocess
+
     subprocess.run([sys.executable, '-m', 'pip', 'install', "betterLogger"])
 
     connSender.current_send_type = "LOG"
@@ -51,5 +52,13 @@ except ImportError:
         send("ERROR", "Install of betterLogger failed")
         sys.exit(1)
     send("INFO", "Installed betterLogger")
-send("CTRL", "END")
-conn.close()
+
+while True:
+    type_ = conn.recv(int(conn.recv(4).decode("utf8"))).decode("utf8")
+    message = conn.recv(int(conn.recv(8).decode("utf8"))).decode("utf8")
+
+    if type_ == "CTRL":
+        if message == "END":
+            betterLogger.root_logger.info("Ending logging!")
+            send("CTRL", "END")
+            break

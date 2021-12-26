@@ -1,26 +1,29 @@
 package com.greenjon902.betterLogger;
 
+import com.greenjon902.betterLogger.commands.Command;
+import com.greenjon902.betterLogger.commands.CommandCtrlEnd;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 public class BetterLoggerCommunicator {
-    private static final int pythonConn_typeLength = 4;
-    private static final int pythonConn_messageLength = 8;
+    public static final int pythonConn_typeLength = 4;
+    public static final int pythonConn_messageLength = 8;
 
     private static final File pythonFile = new File(System.getProperty("user.dir"), "betterLoggerPortal.py");
 
     private boolean started = false;
     private ServerSocket serverSocket;
-    InputStream pythonConnectionInputStream;
-    Thread loggerHandlerThread;
-    Process pythonProcess;
+    private InputStream pythonConnectionInputStream;
+    private OutputStream pythonConnectionOutputStream;
+    private Thread loggerHandlerInThread;
+    private Process pythonProcess;
 
     private void openServer() throws IOException {
         String port = System.getenv("BETTERLOGGERPORT");
@@ -42,16 +45,17 @@ public class BetterLoggerCommunicator {
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder("python3", pythonFile.getAbsolutePath(), String.valueOf(port));
-        pythonProcess = processBuilder.start();
+        //pythonProcess = processBuilder.start();
 
         System.out.println("Waiting on connection");
         Socket pythonConnection = serverSocket.accept();
         pythonConnectionInputStream = pythonConnection.getInputStream();
+        pythonConnectionOutputStream = pythonConnection.getOutputStream();
         System.out.println("Incoming connection from " + pythonConnection.getInetAddress().toString() + ":" + pythonConnection.getPort());
     }
 
-    private void handleLogger() {
-        System.out.println("Handling logger on thread " + Thread.currentThread().getName());
+    private void handleLoggerIn() {
+        System.out.println("Handling logger in on thread " + Thread.currentThread().getName());
         boolean running = true;
         while (running) {
             try {
@@ -100,7 +104,6 @@ public class BetterLoggerCommunicator {
                         default:
                             System.out.println(Colors.format("{RED}<ERROR>  Received unknown type from betterLogger - \"" + type + "\"{RESET}"));
                     }
-
                 }
 
             } catch (Exception e) {
@@ -112,6 +115,19 @@ public class BetterLoggerCommunicator {
         }
     }
 
+    public void sendCommand(Command command) {
+        try {
+            System.out.println("Sending " + new String(command.encode(), StandardCharsets.UTF_8));
+            pythonConnectionOutputStream.write(command.encode());
+
+        } catch (Exception e) {
+            System.out.println("Got exception while sending data logger");
+            System.out.print(Colors.RED);
+            e.printStackTrace(System.out);
+            System.out.print(Colors.RESET);
+        }
+    }
+
     public void start() {
         if (!started) {
             try {
@@ -119,8 +135,8 @@ public class BetterLoggerCommunicator {
                 System.out.println("Logging on port " + serverSocket.getLocalPort());
                 connectPython(serverSocket.getLocalPort());
 
-                loggerHandlerThread = new Thread(this::handleLogger);
-                loggerHandlerThread.start();
+                loggerHandlerInThread = new Thread(this::handleLoggerIn);
+                loggerHandlerInThread.start();
 
                 started = true;
             } catch (Exception e) {
@@ -132,7 +148,8 @@ public class BetterLoggerCommunicator {
 
     public void end() {
         try {
-            loggerHandlerThread.join();
+            sendCommand(new CommandCtrlEnd());
+            loggerHandlerInThread.join();
             closeServer();
         } catch (Exception e) {
             System.out.println(Colors.format("[ERROR] Failed to end logger"));
