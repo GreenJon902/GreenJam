@@ -1,3 +1,4 @@
+import base64
 import socket
 import sys
 import time
@@ -55,8 +56,8 @@ except ImportError:
     send("INFO", "Installed betterLogger")
 
 while True:
-    type_ = conn.recv(int(conn.recv(4).decode("utf8"))).decode("utf8")
-    message = conn.recv(int(conn.recv(8).decode("utf8"))).decode("utf8")
+    type_ =   base64.b64decode(conn.recv(int(base64.b64decode(conn.recv(4)))))
+    message = base64.b64decode(conn.recv(int(base64.b64decode(conn.recv(8)))))
 
     if type_ == "CTRL":
         if message == "END":

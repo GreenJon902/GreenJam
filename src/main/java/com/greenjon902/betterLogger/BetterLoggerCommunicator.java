@@ -2,6 +2,7 @@ package com.greenjon902.betterLogger;
 
 import com.greenjon902.betterLogger.commands.Command;
 import com.greenjon902.betterLogger.commands.CommandCtrlEnd;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -96,10 +97,8 @@ public class BetterLoggerCommunicator {
                             break;
                         case "CTRL":
                             if (message.equals("END")) {
-                                System.out.println(12);
                                 pythonConnectionOutputStream.write(StandardCharsets.UTF_8.encode("F").array()); // Send message to say connection is done
                                 running = false;
-                                System.out.println("12b");
                             } else {
                                 System.out.println(Colors.format("{RED}<ERROR>  Received unknown control message from betterLogger - \"" + message + "\"{RESET}"));
                             }
@@ -122,10 +121,8 @@ public class BetterLoggerCommunicator {
 
     public void sendCommand(Command command) {
         try {
-            System.out.println(11);
-            System.out.println("Sending " + new String(command.encode(), StandardCharsets.UTF_8));
+            System.out.println("Sending " + new String(Base64.decodeBase64(command.encode())) + " as " + new String(command.encode()));
             pythonConnectionOutputStream.write(command.encode());
-            System.out.println("11b");
 
         } catch (Exception e) {
             System.out.println("Got exception while sending data logger");
@@ -155,13 +152,9 @@ public class BetterLoggerCommunicator {
 
     public void end() {
         try {
-            System.out.println(1);
             sendCommand(new CommandCtrlEnd());
-            System.out.println(2);
             loggerHandlerInThread.join();
-            System.out.println(3);
             closeServer();
-            System.out.println(4);
         } catch (Exception e) {
             System.out.println(Colors.format("[ERROR] Failed to end logger"));
         }

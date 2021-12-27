@@ -2,6 +2,7 @@ package com.greenjon902.betterLogger.commands;
 
 import com.greenjon902.betterLogger.BetterLoggerCommunicator;
 import com.greenjon902.betterLogger.LogLevel;
+import org.apache.commons.codec.binary.Base64;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -20,9 +21,8 @@ public class CommandLog implements Command {
     @Override
     public byte[] encode() {
         String formattedMessage = level.get() + ":" + message;
-        ByteBuffer encoded = StandardCharsets.UTF_8.encode(
-                CommandUtils.padType(commandType) + CommandUtils.padMessage(formattedMessage)
+        return Base64.encodeBase64(
+                (CommandUtils.padType(commandType) + CommandUtils.padMessage(formattedMessage)).getBytes()
         );
-        return encoded.array();
     }
 }

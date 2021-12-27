@@ -1,9 +1,6 @@
 package com.greenjon902.betterLogger.commands;
 
-import com.greenjon902.betterLogger.BetterLoggerCommunicator;
-
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
+import org.apache.commons.codec.binary.Base64;
 
 public class CommandCtrlEnd implements Command {
     static final String commandType = CommandTypes.CTRL;
@@ -11,9 +8,8 @@ public class CommandCtrlEnd implements Command {
 
     @Override
     public byte[] encode() {
-        ByteBuffer encoded = StandardCharsets.UTF_8.encode(
-                CommandUtils.padType(commandType) + CommandUtils.padMessage(ctrlCode)
+        return Base64.encodeBase64(
+                (CommandUtils.padType(commandType) + CommandUtils.padMessage(ctrlCode)).getBytes()
         );
-        return encoded.array();
     }
 }
