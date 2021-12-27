@@ -1,5 +1,6 @@
 import socket
 import sys
+import time
 
 args = sys.argv
 if len(args) != 2:
@@ -28,11 +29,11 @@ class ConnSender:
 
 connSender = ConnSender()
 connSender.current_send_type = "LOG"
-sys.stdout = connSender
+#sys.stdout = connSender
 
 errorConnSender = ConnSender()
 errorConnSender.current_send_type = "ERROR"
-sys.stderr = errorConnSender
+#sys.stderr = errorConnSender
 
 try:
     import betterLogger
@@ -59,6 +60,7 @@ while True:
 
     if type_ == "CTRL":
         if message == "END":
-            betterLogger.root_logger.info("Ending logging!")
             send("CTRL", "END")
+            conn.recv(1)  # Wait for closed signal
+            conn.close()
             break

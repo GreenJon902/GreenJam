@@ -45,6 +45,7 @@ public class BetterLoggerCommunicator {
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder("python3", pythonFile.getAbsolutePath(), String.valueOf(port));
+        System.out.println(String.join(" ", processBuilder.command()));
         //pythonProcess = processBuilder.start();
 
         System.out.println("Waiting on connection");
@@ -95,7 +96,10 @@ public class BetterLoggerCommunicator {
                             break;
                         case "CTRL":
                             if (message.equals("END")) {
+                                System.out.println(12);
+                                pythonConnectionOutputStream.write(StandardCharsets.UTF_8.encode("F").array()); // Send message to say connection is done
                                 running = false;
+                                System.out.println("12b");
                             } else {
                                 System.out.println(Colors.format("{RED}<ERROR>  Received unknown control message from betterLogger - \"" + message + "\"{RESET}"));
                             }
@@ -111,14 +115,17 @@ public class BetterLoggerCommunicator {
                 System.out.print(Colors.RED);
                 e.printStackTrace(System.out);
                 System.out.print(Colors.RESET);
+                return;
             }
         }
     }
 
     public void sendCommand(Command command) {
         try {
+            System.out.println(11);
             System.out.println("Sending " + new String(command.encode(), StandardCharsets.UTF_8));
             pythonConnectionOutputStream.write(command.encode());
+            System.out.println("11b");
 
         } catch (Exception e) {
             System.out.println("Got exception while sending data logger");
@@ -148,9 +155,13 @@ public class BetterLoggerCommunicator {
 
     public void end() {
         try {
+            System.out.println(1);
             sendCommand(new CommandCtrlEnd());
+            System.out.println(2);
             loggerHandlerInThread.join();
+            System.out.println(3);
             closeServer();
+            System.out.println(4);
         } catch (Exception e) {
             System.out.println(Colors.format("[ERROR] Failed to end logger"));
         }

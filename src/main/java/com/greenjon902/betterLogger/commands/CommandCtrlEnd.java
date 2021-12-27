@@ -11,12 +11,9 @@ public class CommandCtrlEnd implements Command {
 
     @Override
     public byte[] encode() {
-        ByteBuffer encoded = (
-                StandardCharsets.UTF_8.encode(
-                        String.format("%1$" + BetterLoggerCommunicator.pythonConn_typeLength + "s",
-                                commandType.length()).replace(" ", "0") + commandType +
-                                String.format("%1$" + BetterLoggerCommunicator.pythonConn_messageLength + "s",
-                                        ctrlCode.length()).replace(" ", "0") + ctrlCode));
+        ByteBuffer encoded = StandardCharsets.UTF_8.encode(
+                CommandUtils.padType(commandType) + CommandUtils.padMessage(ctrlCode)
+        );
         return encoded.array();
     }
 }
