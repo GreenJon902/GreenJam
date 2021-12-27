@@ -8,8 +8,6 @@ public class CommandCtrlEnd implements Command {
 
     @Override
     public byte[] encode() {
-        return Base64.encodeBase64(
-                (CommandUtils.padType(commandType) + CommandUtils.padMessage(ctrlCode)).getBytes()
-        );
+        return CommandUtils.makeBytes(CommandUtils.padType(commandType) + CommandUtils.padMessage(ctrlCode));
     }
 }

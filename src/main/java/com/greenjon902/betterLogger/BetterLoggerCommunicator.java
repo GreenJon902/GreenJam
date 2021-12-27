@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class BetterLoggerCommunicator {
     public static final int pythonConn_typeLength = 4;
@@ -94,6 +95,7 @@ public class BetterLoggerCommunicator {
                             break;
                         case "ERROR":
                             System.out.print(Colors.format("{RED}<ERROR>  " + message + "{RESET}"));
+                            running = false;
                             break;
                         case "CTRL":
                             if (message.equals("END")) {
@@ -114,14 +116,15 @@ public class BetterLoggerCommunicator {
                 System.out.print(Colors.RED);
                 e.printStackTrace(System.out);
                 System.out.print(Colors.RESET);
-                return;
+                break;
             }
         }
+        System.out.flush();
     }
 
     public void sendCommand(Command command) {
         try {
-            System.out.println("Sending " + new String(Base64.decodeBase64(command.encode())) + " as " + new String(command.encode()));
+            System.out.println("Sending " + new String(command.encode()) + " as " + Arrays.toString(command.encode()));
             pythonConnectionOutputStream.write(command.encode());
 
         } catch (Exception e) {
