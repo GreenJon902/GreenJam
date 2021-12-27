@@ -13,6 +13,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BetterLoggerCommunicator {
     public static final int pythonConn_typeLength = 4;
@@ -26,6 +28,20 @@ public class BetterLoggerCommunicator {
     private OutputStream pythonConnectionOutputStream;
     private Thread loggerHandlerInThread;
     private Process pythonProcess;
+
+    private final Map<String,String> environment = new HashMap<>();
+
+    public BetterLoggerCommunicator(String name, String author, String version, String shortname) {
+        environment.put("APPNAME", name);
+        environment.put("APPAUTHOR", author);
+        environment.put("APPVERSION", version);
+        environment.put("SHORT_APPNAME", shortname);
+        environment.put("LOG_FILE_NAME_FORMAT", "{short_appname}_{year}-{day}-{hour}-{minute}_{number}.log");
+    }
+
+    public BetterLoggerCommunicator() {
+
+    }
 
     private void openServer() throws IOException {
         String port = System.getenv("BETTERLOGGERPORT");
@@ -47,8 +63,8 @@ public class BetterLoggerCommunicator {
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder("python3", pythonFile.getAbsolutePath(), String.valueOf(port));
-        System.out.println(String.join(" ", processBuilder.command()));
-        //pythonProcess = processBuilder.start();
+        processBuilder.environment().putAll(environment);
+        pythonProcess = processBuilder.start();
 
         System.out.println("Waiting on connection");
         Socket pythonConnection = serverSocket.accept();
@@ -124,7 +140,6 @@ public class BetterLoggerCommunicator {
 
     public void sendCommand(Command command) {
         try {
-            System.out.println("Sending " + new String(command.encode()) + " as " + Arrays.toString(command.encode()));
             pythonConnectionOutputStream.write(command.encode());
 
         } catch (Exception e) {
