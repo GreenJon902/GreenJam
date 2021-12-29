@@ -62,8 +62,8 @@ public class BetterLoggerCommunicator {
             FileUtils.copyURLToFile(getClass().getResource("betterLoggerPortal.py"), pythonFile);
             System.out.println("Copied betterLoggerPortal.py");
             //noinspection ConstantConditions
-            FileUtils.copyURLToFile(getClass().getResource("betterLoggerPortal.py"), pythonExceptionsFile);
-            System.out.println("Copied betterLoggerPortal.py");
+            FileUtils.copyURLToFile(getClass().getResource("betterLoggerPortalExceptions.py"), pythonExceptionsFile);
+            System.out.println("Copied betterLoggerPortalExceptions.py");
         }
         if (!Boolean.parseBoolean(System.getenv("STARTBETTERLOGGEREXTERNALLY"))) {
             ProcessBuilder processBuilder = new ProcessBuilder("python3", pythonFile.getAbsolutePath(), String.valueOf(port));
