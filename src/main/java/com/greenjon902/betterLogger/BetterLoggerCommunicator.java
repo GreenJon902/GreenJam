@@ -1,8 +1,8 @@
 package com.greenjon902.betterLogger;
 
 import com.greenjon902.betterLogger.commands.Command;
+import com.greenjon902.betterLogger.commands.CommandCtrl;
 import com.greenjon902.betterLogger.commands.CommandCtrlEnd;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -12,7 +12,6 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 

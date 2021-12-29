@@ -1,6 +1,7 @@
 package com.greenjon902.greenJam;
 
 import com.greenjon902.betterLogger.BetterLogger;
+import com.greenjon902.betterLogger.Logger;
 
 public class GreenJam {
     public static final String NAME = "GreenJam";
@@ -11,8 +12,11 @@ public class GreenJam {
     public static void main(String[] args) {
         BetterLogger.setup(NAME, AUTHOR, VERSION, SHORTNAME);
         BetterLogger.start();
+
+        Logger logger = BetterLogger.getLogger(NAME);
+
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            BetterLogger.info("Finishing");
+            logger.info("Finishing");
             BetterLogger.finish();
         }, "Shutdown-thread"));
     }

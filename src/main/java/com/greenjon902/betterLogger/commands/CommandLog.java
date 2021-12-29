@@ -1,22 +1,19 @@
 package com.greenjon902.betterLogger.commands;
 
-import com.greenjon902.betterLogger.BetterLoggerCommunicator;
 import com.greenjon902.betterLogger.LogLevel;
-import org.apache.commons.codec.binary.Base64;
-
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 
 public class CommandLog implements Command {
     static final String commandType = CommandTypes.LOG;
-    LogLevel level;
 
-    public CommandLog(LogLevel level, String message) {
-        this.level = level;
+    public Integer loggerId;
+    public LogLevel level;
+    public String message;
+
+    public CommandLog(Integer loggerId, LogLevel logLevel, String message) {
+        this.loggerId = loggerId;
+        this.level = logLevel;
         this.message = message;
     }
-
-    String message;
 
     @Override
     public byte[] encode() {

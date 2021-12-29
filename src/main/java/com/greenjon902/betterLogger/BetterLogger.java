@@ -1,6 +1,6 @@
 package com.greenjon902.betterLogger;
 
-import com.greenjon902.betterLogger.commands.CommandLog;
+import com.greenjon902.betterLogger.commands.*;
 
 public class BetterLogger {
     private static BetterLoggerCommunicator betterLoggerCommunicator;
@@ -16,15 +16,29 @@ public class BetterLogger {
         betterLoggerCommunicator.end();
     }
 
-    public static void info(String... strings) {
-        log(LogLevel.INFO, String.join(" ", strings));
-    }
-
-    private static void log(LogLevel info, String message) {
-        betterLoggerCommunicator.sendCommand(new CommandLog(info, message));
-    }
-
     public static void setup(String name, String author, String version, String shortname) {
         betterLoggerCommunicator = new BetterLoggerCommunicator(name, author, version, shortname);
+    }
+
+
+    public static Logger getLogger(String name) {
+        return new Logger(name, betterLoggerCommunicator);
+    }
+
+
+    public static void set_logger_name(Logger logger, String name) {
+        betterLoggerCommunicator.sendCommand(new CommandCtrlSetLoggerName(logger.id, name));
+    }
+
+    public static void push_logger_name(Logger logger, String name) {
+        betterLoggerCommunicator.sendCommand(new CommandCtrlPushLoggerName(logger.id, name));
+    }
+
+    public static void pop_logger_name(Logger logger, String name) {
+        betterLoggerCommunicator.sendCommand(new CommandCtrlPopLoggerName(logger.id, name));
+    }
+
+    public static void log(Logger logger, LogLevel level, String message) {
+        betterLoggerCommunicator.sendCommand(new CommandLog(logger.id, level, message));
     }
 }
