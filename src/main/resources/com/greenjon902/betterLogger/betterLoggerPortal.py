@@ -48,9 +48,6 @@ errorConnSender.current_send_type = "ERROR"
 sys.stderr = errorConnSender
 
 try:
-    from betterLogger.classWithLogger import ClassWithLogger
-    loggers: list[ClassWithLogger] = list()
-
     try:
         import betterLogger
     except ImportError:
@@ -69,6 +66,10 @@ try:
             send("ERROR", "Install of betterLogger failed")
             sys.exit(1)
         send("INFO", "Installed betterLogger")
+
+
+    from betterLogger.classWithLogger import ClassWithLogger
+    loggers: list[ClassWithLogger] = list()
 
     while True:
         type_ = conn.recv(int(conn.recv(4).decode("ascii"))).decode("ascii")
