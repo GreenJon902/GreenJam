@@ -22,7 +22,9 @@ public class BetterLogger {
 
 
     public static Logger getLogger(String name) {
-        return new Logger(name, betterLoggerCommunicator);
+        Logger logger = new Logger(name);
+        betterLoggerCommunicator.sendCommand(new CommandCtrlNewLogger(logger.id, name));
+        return logger;
     }
 
 

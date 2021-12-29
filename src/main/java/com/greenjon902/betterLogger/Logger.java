@@ -4,15 +4,13 @@ public class Logger {
     private static Integer lastLoggerId = -1;
 
     private final String name;
-    private final BetterLoggerCommunicator betterLoggerCommunicator;
     public final Integer id;
 
-    public Logger(String name, BetterLoggerCommunicator betterLoggerCommunicator) {
+    public Logger(String name) {
         lastLoggerId = lastLoggerId + 1;
         id = lastLoggerId;
 
         this.name = name;
-        this.betterLoggerCommunicator = betterLoggerCommunicator;
     }
     
     public void set_logger_name(String name) {
