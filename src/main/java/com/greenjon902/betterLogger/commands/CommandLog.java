@@ -17,7 +17,7 @@ public class CommandLog implements Command {
 
     @Override
     public byte[] encode() {
-        String formattedMessage = level.get() + ":" + message;
+        String formattedMessage = loggerId + ":" + level.get() + ":" + message;
         return CommandUtils.makeBytes(CommandUtils.padType(commandType) + CommandUtils.padMessage(formattedMessage));
     }
 }

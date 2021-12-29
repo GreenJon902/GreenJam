@@ -2,6 +2,9 @@ import socket
 import sys
 import traceback
 
+from betterLoggerPortalExceptions import UnknownCtrlCommandException, NoLoggerWithThatIdException, \
+    IllegalLogLevelException
+
 
 def debug(string, end="\n"):
     ORIGINAL_STDOUT.write(string + end)
@@ -9,7 +12,6 @@ def debug(string, end="\n"):
 
 
 ORIGINAL_STDOUT = sys.stdout
-
 
 args = sys.argv
 if len(args) != 2:
@@ -31,7 +33,7 @@ class ConnSender:
 
     def write(self, string: str):
         send(self.current_send_type, string)
-        debug(f"<PROGRAM> [{self.current_send_type}]  {string}", end="")
+        debug(f"<PROGRAM_OUT> [{self.current_send_type}]  {string}", end="")
 
     def flush(self):
         pass
@@ -46,6 +48,9 @@ errorConnSender.current_send_type = "ERROR"
 sys.stderr = errorConnSender
 
 try:
+    from betterLogger.classWithLogger import ClassWithLogger
+    loggers: list[ClassWithLogger] = list()
+
     try:
         import betterLogger
     except ImportError:
@@ -66,16 +71,13 @@ try:
         send("INFO", "Installed betterLogger")
 
     while True:
-        type_ =   conn.recv(int(conn.recv(4).decode("ascii"))).decode("ascii")
+        type_ = conn.recv(int(conn.recv(4).decode("ascii"))).decode("ascii")
         message = conn.recv(int(conn.recv(8).decode("ascii"))).decode("ascii")
         debug(f"Got \"{type_}\" \"{message}\"")
 
         if type_ == "CTRL":
             if message == "END":
                 betterLogger.root_logger.info("Finishing, Cya!")
-                #betterLogger.console_handler.flush()
-
-                #time.sleep(1)
 
                 send("CTRL", "END")
                 debug("SENT CLOSE SIGNAL, WAITING FOR CONFIRMATION")
@@ -83,7 +85,22 @@ try:
                 debug("RECIEVED")
                 conn.close()
                 break
+            else:
+                raise UnknownCtrlCommandException("Unknown ctrl command \"{message}\"")
+
+        if type_ == "LOG":
+            loggerId, level, message = message.split(":", 2)
+
+            if loggerId not in loggers:
+                raise NoLoggerWithThatIdException(f"No logger with the id {loggerId}")
+
+            if hasattr(loggers[loggerId], f"log_{level.lower()}"):
+                getattr(loggers[loggerId], f"log_{level.lower()}")(message)
+            else:
+                raise IllegalLogLevelException(f"No log level with the name \"{level}\"")
+
+
 except Exception as e:
-    errorConnSender.write(traceback.format_exc()) # This puts the entire error into one message
+    errorConnSender.write(traceback.format_exc())  # This puts the entire error into one message
 
 debug("DONE!")

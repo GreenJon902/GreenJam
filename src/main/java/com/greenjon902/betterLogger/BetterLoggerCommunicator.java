@@ -3,6 +3,7 @@ package com.greenjon902.betterLogger;
 import com.greenjon902.betterLogger.commands.Command;
 import com.greenjon902.betterLogger.commands.CommandCtrl;
 import com.greenjon902.betterLogger.commands.CommandCtrlEnd;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -20,6 +21,7 @@ public class BetterLoggerCommunicator {
     public static final int pythonConn_messageLength = 8;
 
     private static final File pythonFile = new File(System.getProperty("user.dir"), "betterLoggerPortal.py");
+    private static final File pythonExceptionsFile = new File(System.getProperty("user.dir"), "betterLoggerPortalExceptions.py");
 
     private boolean started = false;
     private ServerSocket serverSocket;
@@ -55,15 +57,21 @@ public class BetterLoggerCommunicator {
     }
 
     private void connectPython(int port) throws IOException {
-        if (!pythonFile.exists() || (System.getenv("FORCEBETTERLOGGERCOPYFILE") != null && Boolean.parseBoolean(System.getenv("FORCEBETTERLOGGERCOPYFILE")))) {
+        if (!pythonFile.exists() || !pythonExceptionsFile.exists() || (System.getenv("FORCEBETTERLOGGERCOPYFILE") != null && Boolean.parseBoolean(System.getenv("FORCEBETTERLOGGERCOPYFILE")))) {
             //noinspection ConstantConditions
             FileUtils.copyURLToFile(getClass().getResource("betterLoggerPortal.py"), pythonFile);
             System.out.println("Copied betterLoggerPortal.py");
+            //noinspection ConstantConditions
+            FileUtils.copyURLToFile(getClass().getResource("betterLoggerPortal.py"), pythonExceptionsFile);
+            System.out.println("Copied betterLoggerPortal.py");
         }
-
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", pythonFile.getAbsolutePath(), String.valueOf(port));
-        processBuilder.environment().putAll(environment);
-        pythonProcess = processBuilder.start();
+        if (!Boolean.parseBoolean(System.getenv("STARTBETTERLOGGEREXTERNALLY"))) {
+            ProcessBuilder processBuilder = new ProcessBuilder("python3", pythonFile.getAbsolutePath(), String.valueOf(port));
+            processBuilder.environment().putAll(environment);
+            pythonProcess = processBuilder.start();
+        } else {
+            System.out.println("Please run this command:  python3 " + pythonFile.getAbsolutePath() + " " + port);
+        }
 
         System.out.println("Waiting on connection");
         Socket pythonConnection = serverSocket.accept();
