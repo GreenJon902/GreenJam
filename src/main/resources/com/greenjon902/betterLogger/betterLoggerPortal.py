@@ -86,9 +86,17 @@ try:
                 debug("RECIEVED")
                 conn.close()
                 break
+
             elif message.startswith("NEW_LOGGER"):
-                ctrl_code, logger_id, logger_name = message.split(":", 2)
-                loggers[logger_id] = betterLogger.get_logger(logger_name)
+                ctrl_code, loggerId, logger_name = message.split(":", 2)
+                loggers[loggerId] = betterLogger.get_logger(logger_name)
+
+            elif message.startswith("PUSH_NAME"):
+                ctrl_code, loggerId, name_to_push = message.split(":", 2)
+                if loggerId not in loggers:
+                    raise NoLoggerWithThatIdException(f"No logger with the id {loggerId}")
+                loggers[loggerId].push_logger_name(name_to_push)
+
             else:
                 raise UnknownCtrlCommandException(f"Unknown ctrl command \"{message}\"")
 
