@@ -87,7 +87,7 @@ try:
                 conn.close()
                 break
             else:
-                raise UnknownCtrlCommandException("Unknown ctrl command \"{message}\"")
+                raise UnknownCtrlCommandException(f"Unknown ctrl command \"{message}\"")
 
         if type_ == "LOG":
             loggerId, level, message = message.split(":", 2)
