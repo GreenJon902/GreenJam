@@ -28,8 +28,11 @@ public class GreenJam {
     }
 
     private static void parseArgs(String[] args) {
-        logger.push_logger_name("parseArgs");
+        logger.push_name("parseArgs");
+
         logger.log_info("Parsing args");
         logger.debug("Args are", Arrays.toString(args));
+
+        logger.pop_name();
     }
 }

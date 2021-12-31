@@ -36,8 +36,8 @@ public class BetterLogger {
         betterLoggerCommunicator.sendCommand(new CommandCtrlPushLoggerName(logger.id, name));
     }
 
-    public static void pop_logger_name(Logger logger, String name) {
-        betterLoggerCommunicator.sendCommand(new CommandCtrlPopLoggerName(logger.id, name));
+    public static void pop_logger_name(Logger logger) {
+        betterLoggerCommunicator.sendCommand(new CommandCtrlPopLoggerName(logger.id));
     }
 
     public static void log(Logger logger, LogLevel level, String message) {

@@ -97,6 +97,12 @@ try:
                     raise NoLoggerWithThatIdException(f"No logger with the id {loggerId}")
                 loggers[loggerId].push_logger_name(name_to_push)
 
+            elif message.startswith("POP_NAME"):
+                ctrl_code, loggerId = message.split(":", 1)
+                if loggerId not in loggers:
+                    raise NoLoggerWithThatIdException(f"No logger with the id {loggerId}")
+                loggers[loggerId].pop_logger_name()
+
             else:
                 raise UnknownCtrlCommandException(f"Unknown ctrl command \"{message}\"")
 

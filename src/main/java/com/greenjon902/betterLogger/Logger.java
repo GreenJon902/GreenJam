@@ -21,8 +21,8 @@ public class Logger {
         BetterLogger.push_logger_name(this, name);
     }
 
-    public void pop_logger_name(String name) {
-        BetterLogger.pop_logger_name(this, name);
+    public void pop_logger_name() {
+        BetterLogger.pop_logger_name(this);
     }
 
     public void log_dump(String... messages) {
@@ -57,7 +57,7 @@ public class Logger {
     // ALIASES (because shorted and nicer but less explicit depending on the name the variable the loggers stored in) --
     public void set_name(String name) {set_logger_name(name);}
     public void push_name(String name) {push_logger_name(name);}
-    public void pop_name(String name) {pop_logger_name(name);}
+    public void pop_name() {pop_logger_name();}
     public void dump(String... messages) {log_dump(messages);}
     public void trace(String... messages) {log_trace(messages);}
     public void debug(String... messages) {log_debug(messages);}
