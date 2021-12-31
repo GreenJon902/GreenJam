@@ -69,7 +69,7 @@ try:
 
 
     from betterLogger.classWithLogger import ClassWithLogger
-    loggers: list[ClassWithLogger] = list()
+    loggers: dict[ClassWithLogger] = dict()
 
     while True:
         type_ = conn.recv(int(conn.recv(4).decode("ascii"))).decode("ascii")
@@ -86,6 +86,9 @@ try:
                 debug("RECIEVED")
                 conn.close()
                 break
+            elif message.startswith("NEW_LOGGER"):
+                ctrl_code, logger_id, logger_name = message.split(":", 2)
+                loggers[logger_id] = betterLogger.get_logger(logger_name)
             else:
                 raise UnknownCtrlCommandException(f"Unknown ctrl command \"{message}\"")
 

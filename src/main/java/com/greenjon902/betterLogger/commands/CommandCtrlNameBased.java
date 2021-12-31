@@ -8,4 +8,10 @@ public abstract class CommandCtrlNameBased extends CommandCtrl {
         this.loggerId = loggerId;
         this.name = name;
     }
+
+    @Override
+    public byte[] encode() {
+        return CommandUtils.makeBytes(CommandUtils.padType(commandType) +
+                CommandUtils.padMessage(getCtrlCode() + ":" + loggerId + ":" + name));
+    }
 }
