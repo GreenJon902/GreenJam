@@ -2,7 +2,9 @@ package com.greenjon902.greenJam;
 
 import com.greenjon902.betterLogger.BetterLogger;
 import com.greenjon902.betterLogger.Logger;
+import com.greenjon902.greenJam.interpreter.Interpreter;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -39,6 +41,8 @@ public class GreenJam {
 
         } else if (Objects.equals(args[0], "-i") || Objects.equals(args[0], "--interpret")) {
             logger.debug("First argument means interpret");
+            Interpreter interpreter = new Interpreter();
+            interpreter.interpret(new File(args[1]));
         }
 
         logger.pop_name();
