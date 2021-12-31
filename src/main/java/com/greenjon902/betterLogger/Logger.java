@@ -58,11 +58,11 @@ public class Logger {
     public void set_name(String name) {set_logger_name(name);}
     public void push_name(String name) {push_logger_name(name);}
     public void pop_name(String name) {pop_logger_name(name);}
-    public void dump(String... messages) {log_dump(name);}
-    public void trace(String... messages) {log_trace(name);}
-    public void debug(String... messages) {log_debug(name);}
-    public void info(String... messages) {log_info(name);}
-    public void warning(String... messages) {log_warning(name);}
-    public void error(String... messages) {log_error(name);}
-    public void critical(String... messages) {log_critical(name);}
+    public void dump(String... messages) {log_dump(messages);}
+    public void trace(String... messages) {log_trace(messages);}
+    public void debug(String... messages) {log_debug(messages);}
+    public void info(String... messages) {log_info(messages);}
+    public void warning(String... messages) {log_warning(messages);}
+    public void error(String... messages) {log_error(messages);}
+    public void critical(String... messages) {log_critical(messages);}
 }
