@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestGreenJam {
     @Test
-    public void testGreenJam() {
-        GreenJam.main(new String[0]);
+    public void testInterpretSysCalls() {
+        GreenJam.main(new String[]{"-c", "tests/sysCalls.jon"});
     }
 }
