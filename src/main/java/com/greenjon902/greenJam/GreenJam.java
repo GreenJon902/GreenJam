@@ -36,7 +36,9 @@ public class GreenJam {
         logger.log_info("Parsing args");
         logger.debug("Args are", Arrays.toString(args));
 
-        if (Objects.equals(args[0], "-c") || Objects.equals(args[0], "--compile")) {
+
+
+         if (Objects.equals(args[0], "-c") || Objects.equals(args[0], "--compile")) { // TODO: FIles
             logger.debug("First argument means compile");
 
             File file = new File(args[1]);
