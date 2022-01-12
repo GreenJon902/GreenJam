@@ -30,6 +30,7 @@ public class GreenJam {
         }, "Shutdown-thread"));
 
         useArgs(args);
+        System.exit(0);
     }
 
     private static void useArgs(String[] args) {
