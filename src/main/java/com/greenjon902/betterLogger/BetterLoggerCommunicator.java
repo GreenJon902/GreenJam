@@ -20,6 +20,8 @@ public class BetterLoggerCommunicator {
     public static final int pythonConn_typeLength = 4;
     public static final int pythonConn_messageLength = 8;
 
+    public boolean doConsoleOut = true;
+
     private static final File pythonFile = new File(System.getProperty("user.dir"), "betterLoggerPortal.py");
     private static final File pythonExceptionsFile = new File(System.getProperty("user.dir"), "betterLoggerPortalExceptions.py");
 
@@ -106,31 +108,33 @@ public class BetterLoggerCommunicator {
 
                     String message = new String(messageBytes, StandardCharsets.UTF_8);
 
-                    switch (type) {
-                        case "LOG":
-                            System.out.print(message);
-                            break;
-                        case "INFO":
-                            System.out.println(Colors.format("{BLACK}<INFO>  " + message + "{RESET}"));
-                            break;
-                        case "PIP_INSTALL":
-                            System.out.println(Colors.format("{BLACK}<PIP_INSTALL>  " + message + "{RESET}"));
-                            break;
-                        case "ERROR":
-                            System.out.print(Colors.format("{RED}<ERROR>  " + message + "{RESET}"));
-                            running = false;
-                            break;
-                        case "CTRL":
-                            if (message.equals("END")) {
-                                pythonConnectionOutputStream.write(StandardCharsets.UTF_8.encode("F").array()); // Send message to say connection is done
+                    if (doConsoleOut) {
+                        switch (type) {
+                            case "LOG":
+                                System.out.print(message);
+                                break;
+                            case "INFO":
+                                System.out.println(Colors.format("{BLACK}<INFO>  " + message + "{RESET}"));
+                                break;
+                            case "PIP_INSTALL":
+                                System.out.println(Colors.format("{BLACK}<PIP_INSTALL>  " + message + "{RESET}"));
+                                break;
+                            case "ERROR":
+                                System.out.print(Colors.format("{RED}<ERROR>  " + message + "{RESET}"));
                                 running = false;
-                            } else {
-                                System.out.println(Colors.format("{RED}<ERROR>  Received unknown control message from betterLogger - \"" + message + "\"{RESET}"));
-                            }
-                            break;
+                                break;
+                            case "CTRL":
+                                if (message.equals("END")) {
+                                    pythonConnectionOutputStream.write(StandardCharsets.UTF_8.encode("F").array()); // Send message to say connection is done
+                                    running = false;
+                                } else {
+                                    System.out.println(Colors.format("{RED}<ERROR>  Received unknown control message from betterLogger - \"" + message + "\"{RESET}"));
+                                }
+                                break;
 
-                        default:
-                            System.out.println(Colors.format("{RED}<ERROR>  Received unknown type from betterLogger - \"" + type + "\"{RESET}"));
+                            default:
+                                System.out.println(Colors.format("{RED}<ERROR>  Received unknown type from betterLogger - \"" + type + "\"{RESET}"));
+                        }
                     }
                 }
 
