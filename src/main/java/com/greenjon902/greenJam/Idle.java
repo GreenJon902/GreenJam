@@ -6,10 +6,19 @@ import java.io.InputStream;
 import java.util.Scanner;
 
 public class Idle {
-    public void start(InputStream in) {
-        Scanner input = new Scanner(in);
-        System.out.print(">>>  ");
-        String jam = input.nextLine();
+    private final Lexer lexer;
 
+    public Idle() {
+        lexer = new Lexer();
+    }
+
+    public void start(InputStream in) {
+        while (true) {
+            Scanner input = new Scanner(in);
+            System.out.print(">>>  ");
+            String jam = input.nextLine();
+
+            lexer.analyzeString(jam);
+        }
     }
 }
