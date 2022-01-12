@@ -7,9 +7,11 @@ import java.util.Scanner;
 
 public class Idle {
     private final Lexer lexer;
+    private final Config config;
 
     public Idle() {
         lexer = new Lexer();
+        config = new Config();
     }
 
     public void start(InputStream in) {
@@ -18,7 +20,7 @@ public class Idle {
             System.out.print(">>>  ");
             String jam = input.nextLine();
 
-            lexer.analyzeString(jam);
+            lexer.analyzeString(jam, config);
         }
     }
 }
