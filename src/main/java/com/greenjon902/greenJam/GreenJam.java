@@ -36,9 +36,11 @@ public class GreenJam {
         logger.log_info("Parsing args");
         logger.debug("Args are", Arrays.toString(args));
 
+        if (args.length == 0) { // Same as python idle
+            Idle idle = new Idle();
+            idle.start(System.in);
 
-
-         if (Objects.equals(args[0], "-c") || Objects.equals(args[0], "--compile")) { // TODO: FIles
+        } else if (Objects.equals(args[0], "-c") || Objects.equals(args[0], "--compile")) { // TODO: FIles
             logger.debug("First argument means compile");
 
             File file = new File(args[1]);
