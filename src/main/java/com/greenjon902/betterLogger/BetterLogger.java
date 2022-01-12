@@ -43,4 +43,8 @@ public class BetterLogger {
     public static void log(Logger logger, LogLevel level, String message) {
         betterLoggerCommunicator.sendCommand(new CommandLog(logger.id, level, message));
     }
+
+    public static void setDoConsoleOut(boolean doConsoleOut) {
+        betterLoggerCommunicator.doConsoleOut = doConsoleOut;
+    }
 }

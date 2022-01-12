@@ -1,6 +1,7 @@
 package com.greenjon902.greenJam;
 
 import com.greenjon902.betterLogger.BetterLogger;
+import com.greenjon902.betterLogger.BetterLoggerCommunicator;
 import com.greenjon902.betterLogger.Logger;
 import com.greenjon902.greenJam.types.JamFile;
 
@@ -18,6 +19,7 @@ public class GreenJam {
 
     public static void main(String[] args) {
         BetterLogger.setup(NAME, AUTHOR, VERSION, SHORTNAME);
+        BetterLogger.setDoConsoleOut(false);
         BetterLogger.start();
 
         logger = BetterLogger.getLogger(NAME);
