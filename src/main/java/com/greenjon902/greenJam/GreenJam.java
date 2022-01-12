@@ -40,6 +40,15 @@ public class GreenJam {
             logger.debug("First argument means compile");
 
             File file = new File(args[1]);
+            if (file.isDirectory()) {
+                logger.error("Cannot compile a directory");
+                System.exit(1);
+            } else if (!file.getName().contains(".")) {
+                logger.error("File has no extension");
+                System.exit(1);
+            } else if (file.getName().split(".", 0)[1] == "jam") {
+
+            }
 
 
         } else {
