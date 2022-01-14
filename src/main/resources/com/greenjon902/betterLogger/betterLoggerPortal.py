@@ -1,3 +1,4 @@
+import os
 import socket
 import sys
 import traceback
@@ -45,10 +46,13 @@ sys.stdout = connSender
 
 errorConnSender = ConnSender()
 errorConnSender.current_send_type = "ERROR"
-sys.stderr = errorConnSender
+sys.stderr = open("./error", "a")
+sys.stderr.write("--------------------------------")
 
 try:
     try:
+        os.environ["LOG_LEVEL"] = "1"
+        os.environ["LOG_NAMES_TO_SHORTEN"] = '{"matchTemplatesAndGetLength": "mtagl"}'
         import betterLogger
     except ImportError:
         send("INFO", "betterLogger not installed")
@@ -119,6 +123,12 @@ try:
 
 
 except Exception as e:
+    sys.stderr.write(traceback.format_exc())
+    try:
+        import betterLogger
+        betterLogger.root_logger.error(traceback.format_exc())
+    except Exception as e2:
+        print(e2)
     errorConnSender.write(traceback.format_exc())  # This puts the entire error into one message
 
 debug("DONE!")

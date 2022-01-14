@@ -1,5 +1,6 @@
 package com.greenjon902.greenJam;
 
+import com.greenjon902.betterLogger.BetterLogger;
 import com.greenjon902.betterLogger.Logger;
 import com.greenjon902.greenJam.types.FloatToken;
 import com.greenjon902.greenJam.types.IntegerToken;
@@ -7,17 +8,20 @@ import com.greenjon902.greenJam.types.Token;
 import com.greenjon902.greenJam.types.TokenList;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class Lexer {
-    private final static Logger logger = new Logger("GreenJam.Lexer");
+    private final static Logger logger = BetterLogger.getLogger("Lexer");
 
     public TokenList analyzeString(String jam, Config config) {
         TokenList tokenList = new TokenList();
 
         int currentLocation = 0;
         while (currentLocation < jam.length()) {
-            System.out.println(getFirstToken(jam, config));
+            logger.log_debug("Currently at location", String.valueOf(currentLocation), "in string", jam);
+            Token token = getFirstToken(jam, config);
+            logger.log_debug("Found token", token.toString().replace("{", "{{").replace("}", "}}"));
             break;
         }
 
@@ -62,8 +66,12 @@ public class Lexer {
     private static final char templateEndMatchTemplate = '}';
 
     private static TemplatedStringAndOriginalLength matchTemplatesAndGetLength(String string, String[] templatesToCheck, HashMap<String, String[]> allTemplates) {
+        logger.push_logger_name("matchTemplatesAndGetLength(" + string + ")");
+        logger.log_dump("Matching string", string, "to templates", Arrays.toString(templatesToCheck).replace("{", "{{").replace("}", "}}"));
 
         if (string.length() == 0) {
+            logger.log_dump("String length was 0");
+            logger.pop_logger_name();
             return null;
         }
 
@@ -71,6 +79,9 @@ public class Lexer {
         boolean saveMode = false;
 
         for (String template : templatesToCheck) {
+            logger.push_name(template.replace("{", "{{").replace("}", "}}"));
+            logger.log_trace("Matching string", string, "to templates", template.replace("{", "{{").replace("}", "}}"));
+
             StringBuilder currentMatch = new StringBuilder();
 
             boolean failed = false;
@@ -78,7 +89,14 @@ public class Lexer {
             int currentLocationInTemplate = 0;
             int currentLocationInString = 0;
             while (currentLocationInTemplate < template.length()) {
+                logger.log_dump("Current location in template is", String.valueOf(currentLocationInTemplate), "which is", String.valueOf(template.charAt(currentLocationInTemplate)).replace("{", "{{").replace("}", "}}"));
 
+                if (currentLocationInString < string.length()) {
+                    System.out.println(1);
+                    logger.log_dump("Current location in string is", String.valueOf(currentLocationInString), "which is", String.valueOf(string.charAt(currentLocationInString)).replace("{", "{{").replace("}", "}}"));
+                    System.out.println(2);
+                }
+                System.out.println(1);
 
                 if (template.charAt(currentLocationInTemplate) == templateStartMatchTemplate && !lastCharacter.equals(templateEscapeCharacter, currentLocationInTemplate, template)) {
 
@@ -137,10 +155,11 @@ public class Lexer {
             if (!failed) {
                 matches.add(new TemplatedStringAndOriginalLength(currentMatch.toString(), currentLocationInString));
             }
-
+            logger.pop_name();
         }
 
         if (matches.size() == 0) {
+            logger.pop_name();
             return null;
         }
 
@@ -153,8 +172,9 @@ public class Lexer {
                 elementLength = matches.get(i).originalLength;
             }
         }
-        return matches.get(index);
 
+        logger.pop_name();
+        return matches.get(index);
     }
 }
 
