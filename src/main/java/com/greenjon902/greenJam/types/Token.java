@@ -1,4 +1,5 @@
 package com.greenjon902.greenJam.types;
 
-public class Token {
+public abstract class Token {
+    abstract TokenType getType();
 }
