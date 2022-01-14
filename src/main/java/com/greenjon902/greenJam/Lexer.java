@@ -18,6 +18,7 @@ public class Lexer {
         int currentLocation = 0;
         while (currentLocation < jam.length()) {
             System.out.println(getFirstToken(jam, config));
+            break;
         }
 
         return tokenList;
@@ -79,12 +80,12 @@ public class Lexer {
             while (currentLocationInTemplate < template.length()) {
 
 
-                if (template.charAt(currentLocationInTemplate) == templateStartMatchTemplate && (currentLocationInTemplate == 0 || template.charAt(currentLocationInTemplate-1) != templateEscapeCharacter)) {
+                if (template.charAt(currentLocationInTemplate) == templateStartMatchTemplate && !lastCharacter.equals(templateEscapeCharacter, currentLocationInTemplate, template)) {
 
                     currentLocationInTemplate++; // skip first curly bracket
                     StringBuilder templateName = new StringBuilder();
 
-                    while (template.charAt(currentLocationInTemplate) != templateEndMatchTemplate && (currentLocationInTemplate == 0 || template.charAt(currentLocationInTemplate-1) != templateEscapeCharacter)) {
+                    while (template.charAt(currentLocationInTemplate) != templateEndMatchTemplate && !lastCharacter.equals(templateEscapeCharacter, currentLocationInTemplate, template)) {
                         templateName.append(template.charAt(currentLocationInTemplate));
                         currentLocationInTemplate++;
                     }
@@ -105,12 +106,12 @@ public class Lexer {
                         currentMatch.append(matched.templatedString);
                     }
 
-                } else if (template.charAt(currentLocationInTemplate) == '<') {
+                } else if (template.charAt(currentLocationInTemplate) == '<' && !lastCharacter.equals(templateEscapeCharacter, currentLocationInTemplate, template)) {
                     saveMode = true;
-                    currentLocationInTemplate++; // TODO: Implement next check
-                } else if (template.charAt(currentLocationInTemplate) == '>') {
+                    currentLocationInTemplate++;
+                } else if (template.charAt(currentLocationInTemplate) == '>' && !lastCharacter.equals(templateEscapeCharacter, currentLocationInTemplate, template)) {
                     saveMode = false;
-                    currentLocationInTemplate++; // TODO: Implement next check
+                    currentLocationInTemplate++;
 
                 } else {
                     if (currentLocationInString >= string.length()) {
@@ -172,5 +173,11 @@ class TemplatedStringAndOriginalLength {
                 "templatedString='" + templatedString + '\'' +
                 ", originalLength=" + originalLength +
                 '}';
+    }
+}
+
+class lastCharacter {
+    public static boolean equals(char character, int currentLocation, String string) {
+        return (currentLocation != 0 && string.charAt(currentLocation-1) == character);
     }
 }
