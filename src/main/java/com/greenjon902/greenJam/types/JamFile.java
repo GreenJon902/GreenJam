@@ -1,8 +1,7 @@
 package com.greenjon902.greenJam.types;
 
 
-import com.greenjon902.betterLogger.BetterLogger;
-import com.greenjon902.betterLogger.Logger;
+import com.greenjon902.greenJam.Logging;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.io.FileUtils;
 
@@ -12,8 +11,6 @@ import java.nio.file.Files;
 import java.util.Arrays;
 
 public class JamFile {
-    private static final Logger logger = BetterLogger.getLogger("JamFile");
-
     private final File path;
     private String contents = null;
 
@@ -34,11 +31,8 @@ public class JamFile {
             contents = FileUtils.readFileToString(path, StandardCharsets.UTF_8);
 
         } catch (IOException e) {
-            logger.error("Could not load file at", path.toString());
-            logger.debug("Absolute path is", path.getAbsolutePath());
+            Logging.error("Could not load file at" + path);
             StringWriter sw = new StringWriter();
-            //noinspection SuspiciousToArrayCall
-            logger.error(Arrays.asList(e.getStackTrace()).toArray(new String[e.getStackTrace().length]));
         }
 
     }

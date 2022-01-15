@@ -1,7 +1,5 @@
 package com.greenjon902.greenJam;
 
-import com.greenjon902.greenJam.types.JamFile;
-
 import java.io.InputStream;
 import java.util.Scanner;
 
