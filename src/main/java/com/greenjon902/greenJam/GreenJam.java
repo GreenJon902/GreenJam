@@ -27,9 +27,9 @@ public class GreenJam {
 
             File file = new File(args[1]);
             if (file.isDirectory()) {
-                System.exit(1);
+                Logging.error("Compiling directories is not yet supported");
             } else if (!file.getName().contains(".")) {
-                System.exit(1);
+                Logging.error("File doesn't have an extension");
             } else if (file.getName().split(".", 0)[1] == "jam") {
 
             }
