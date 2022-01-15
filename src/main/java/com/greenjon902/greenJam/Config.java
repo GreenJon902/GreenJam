@@ -11,6 +11,8 @@ public class Config {
 }
 
 class _lexerTemplates {
+    public final String[] ignorableCharacters = {"\n", " "};
+
     public final String integerName = "integer";
     public final String floatName = "float";
 

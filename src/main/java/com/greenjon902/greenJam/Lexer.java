@@ -15,6 +15,12 @@ public class Lexer {
 
         int currentLocation = 0;
         while (currentLocation < jam.length()) {
+            int ignorable = howMuchOfCurrentLocationIsIgnorable(jam.substring(currentLocation), config);
+            if (ignorable != 0) {
+                currentLocation += ignorable;
+                continue;
+            }
+
             TokenAndOriginalLength tokenAndOriginalLength = getFirstToken(jam.substring(currentLocation), config);
 
             if (tokenAndOriginalLength == null) {
@@ -32,7 +38,16 @@ public class Lexer {
         return tokenList;
     }
 
-    public Token getFirstToken(String jam, Config config) {
+    public int howMuchOfCurrentLocationIsIgnorable(String string, Config config) {
+        for (String ignorableString : config.lexerTemplates.ignorableCharacters) {
+            if (string.startsWith(ignorableString)) {
+                return ignorableString.length();
+            }
+        }
+        return 0;
+    }
+
+    public TokenAndOriginalLength getFirstToken(String jam, Config config) {
         HashMap<Integer, Token> matches = new HashMap<>();
 
 
