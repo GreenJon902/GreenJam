@@ -6,7 +6,6 @@ import com.greenjon902.greenJam.types.Token;
 import com.greenjon902.greenJam.types.TokenList;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class Lexer {
@@ -16,8 +15,18 @@ public class Lexer {
 
         int currentLocation = 0;
         while (currentLocation < jam.length()) {
-            Token token = getFirstToken(jam, config);
-            break;
+            TokenAndOriginalLength tokenAndOriginalLength = getFirstToken(jam.substring(currentLocation), config);
+
+            if (tokenAndOriginalLength == null) {
+                Logging.error("Could not find token at location " + currentLocation);
+            }
+            assert tokenAndOriginalLength != null;  // To stop pycharm complaining even tho Logging.error exits
+
+            Token token = tokenAndOriginalLength.token;
+            int origonalLength = tokenAndOriginalLength.originalLength;
+
+            currentLocation += origonalLength;
+            tokenList.append(token);
         }
 
         return tokenList;
@@ -46,6 +55,11 @@ public class Lexer {
             matches.put(templatedStringAndOriginalLength.originalLength, new FloatToken(templatedStringAndOriginalLength.templatedString));
         }
 
+        // -------------------------------------------------------------------------------------------------------------
+
+        if (matches.size() == 0) {
+            return null;
+        }
 
         int elementLength = 0;
         for (int length : matches.keySet()) {
@@ -53,7 +67,7 @@ public class Lexer {
                 elementLength = length;
             }
         }
-        return matches.get(elementLength);
+        return new TokenAndOriginalLength(matches.get(elementLength), elementLength);
     }
 
     private static final char templateEscapeCharacter = '\\';
@@ -168,6 +182,24 @@ class TemplatedStringAndOriginalLength {
     public String toString() {
         return "TemplatedStringAndOriginalLength{" +
                 "templatedString='" + templatedString + '\'' +
+                ", originalLength=" + originalLength +
+                '}';
+    }
+}
+
+class TokenAndOriginalLength {
+    public Token token;
+    public int originalLength;
+
+    public TokenAndOriginalLength(Token templatedString, int originalLength) {
+        this.token = templatedString;
+        this.originalLength = originalLength;
+    }
+
+    @Override
+    public String toString() {
+        return "TokenAndOriginalLength{" +
+                "token='" + token + '\'' +
                 ", originalLength=" + originalLength +
                 '}';
     }

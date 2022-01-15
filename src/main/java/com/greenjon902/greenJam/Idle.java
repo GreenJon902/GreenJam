@@ -18,7 +18,7 @@ public class Idle {
             System.out.print(">>>  ");
             String jam = input.nextLine();
 
-            lexer.analyzeString(jam, config);
+            System.out.println(lexer.analyzeString(jam, config).toString());
         }
     }
 }
