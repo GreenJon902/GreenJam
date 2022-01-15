@@ -11,16 +11,8 @@ public class GreenJam {
 
 
     public static void main(String[] args) {
-        BetterLogger.setup(NAME, AUTHOR, VERSION, SHORTNAME);
-        BetterLogger.setDoConsoleOut(false);
-        BetterLogger.start();
-
-        logger = BetterLogger.getLogger(NAME);
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            BetterLogger.getLogger(NAME).info("Finishing"); //Gets rid of name stack
-            BetterLogger.finish();
-        }, "Shutdown-thread"));
+        System.out.println(NAME + " by " + AUTHOR);
+        System.out.println("     " + "VERSION " + VERSION);
 
         useArgs(args);
         System.exit(0);
