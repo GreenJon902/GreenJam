@@ -88,7 +88,7 @@ public class Lexer {
 
         // -------------------------------------------------------------------------------------------------------------
 
-        if (matches.size() == 0) {
+        if (matches.isEmpty()) {
             return null;
         }
 
@@ -106,7 +106,7 @@ public class Lexer {
     private static final char templateEndMatchTemplate = '}';
 
     private static TemplatedStringAndOriginalLength matchTemplatesAndGetLength(String string, String[] templatesToCheck, HashMap<String, String[]> allTemplates) {
-        if (string.length() == 0) {
+        if (string.isEmpty()) {
             return null;
         }
 
@@ -185,7 +185,7 @@ public class Lexer {
             }
         }
 
-        if (matches.size() == 0) {
+        if (matches.isEmpty()) {
             return null;
         }
 
