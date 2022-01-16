@@ -123,12 +123,13 @@ public class Lexer {
             int currentLocationInString = 0;
             while (currentLocationInTemplate < template.length()) {
 
-                if (template.charAt(currentLocationInTemplate) == templateStartMatchTemplate && !lastCharacter.equals(templateEscapeCharacter, currentLocationInTemplate, template)) {
+                if (template.charAt(currentLocationInTemplate) == templateStartMatchTemplate && !lastCharacter.equalsCanceling(templateEscapeCharacter, currentLocationInTemplate, template)) {
+
+                    System.out.println(template + currentLocationInTemplate + (template.charAt(currentLocationInTemplate) == templateStartMatchTemplate && !lastCharacter.equalsCanceling(templateEscapeCharacter, currentLocationInTemplate, template)));
 
                     currentLocationInTemplate++; // skip first curly bracket
                     StringBuilder templateName = new StringBuilder();
-
-                    while (template.charAt(currentLocationInTemplate) != templateEndMatchTemplate && !lastCharacter.equals(templateEscapeCharacter, currentLocationInTemplate, template)) {
+                    while (template.charAt(currentLocationInTemplate) != templateEndMatchTemplate && !lastCharacter.equalsCanceling(templateEscapeCharacter, currentLocationInTemplate, template)) {
                         templateName.append(template.charAt(currentLocationInTemplate));
                         currentLocationInTemplate++;
                     }
@@ -148,11 +149,14 @@ public class Lexer {
                         currentMatch.append(matched.templatedString);
                     }
 
-                } else if (template.charAt(currentLocationInTemplate) == '<' && !lastCharacter.equals(templateEscapeCharacter, currentLocationInTemplate, template)) {
+                } else if (template.charAt(currentLocationInTemplate) == '<' && !lastCharacter.equalsCanceling(templateEscapeCharacter, currentLocationInTemplate, template)) {
                     saveMode = true;
                     currentLocationInTemplate++;
-                } else if (template.charAt(currentLocationInTemplate) == '>' && !lastCharacter.equals(templateEscapeCharacter, currentLocationInTemplate, template)) {
+                } else if (template.charAt(currentLocationInTemplate) == '>' && !lastCharacter.equalsCanceling(templateEscapeCharacter, currentLocationInTemplate, template)) {
                     saveMode = false;
+                    currentLocationInTemplate++;
+
+                } else if (template.charAt(currentLocationInTemplate) == templateEscapeCharacter && !lastCharacter.equalsCanceling(templateEscapeCharacter, currentLocationInTemplate, template)) {
                     currentLocationInTemplate++;
 
                 } else {
@@ -237,6 +241,11 @@ class TokenAndOriginalLength {
 
 class lastCharacter {
     public static boolean equals(char character, int currentLocation, String string) {
-        return (currentLocation != 0 && string.charAt(currentLocation-1) == character);
+        return (currentLocation != 0 && string.charAt(currentLocation - 1) == character);
     }
+
+    public static boolean equalsCanceling(char character, int currentLocation, String string) {
+        return (currentLocation > 0 && string.charAt(currentLocation - 1) == character && !lastCharacter.equalsCanceling(character, currentLocation - 1, string));
+    }
+
 }
