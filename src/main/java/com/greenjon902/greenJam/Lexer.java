@@ -105,29 +105,36 @@ public class Lexer {
     private static final char templateStartMatchTemplate = '{';
     private static final char templateEndMatchTemplate = '}';
 
+    /**
+     *
+     * @param string The string that should have templates matched to it
+     * @param templatesToCheck The templates that should be checked whether the string fits in it
+     * @param allTemplates All the possible templates (for when a template uses nested template)
+     * @return Returns the biggest string (that's been matched to a template) and the origonal length of it.
+     *         Returns null if no templates match.
+     */
     private static TemplatedStringAndOriginalLength matchTemplatesAndGetLength(String string, String[] templatesToCheck, HashMap<String, String[]> allTemplates) {
         if (string.isEmpty()) {
             return null;
         }
 
-        ArrayList<TemplatedStringAndOriginalLength> matches = new ArrayList<>();
-        boolean saveMode = false;
+        ArrayList<TemplatedStringAndOriginalLength> matches = new ArrayList<>(); // List of all the strings that we managed to match
+        boolean saveMode = false; // Are we adding the matched letters to currentMatch
 
         for (String template : templatesToCheck) {
 
-            StringBuilder currentMatch = new StringBuilder();
+            StringBuilder currentMatch = new StringBuilder(); // The list of letters that fit into the current template
 
-            boolean failed = false;
+            boolean failed = false; // Did matching it to the template fail
 
-            int currentLocationInTemplate = 0;
-            int currentLocationInString = 0;
+            int currentLocationInTemplate = 0; // The index of where we are in the template
+            int currentLocationInString = 0; // The index of where we are in the string
             while (currentLocationInTemplate < template.length()) {
 
-                if (template.charAt(currentLocationInTemplate) == templateStartMatchTemplate && !lastCharacter.equalsCanceling(templateEscapeCharacter, currentLocationInTemplate, template)) {
-
-                    System.out.println(template + currentLocationInTemplate + (template.charAt(currentLocationInTemplate) == templateStartMatchTemplate && !lastCharacter.equalsCanceling(templateEscapeCharacter, currentLocationInTemplate, template)));
-
+                if (template.charAt(currentLocationInTemplate) == templateStartMatchTemplate && !lastCharacter.equalsCanceling(templateEscapeCharacter, currentLocationInTemplate, template)) { // Matching a nested template
                     currentLocationInTemplate++; // skip first curly bracket
+
+                    // Get the full name of the nested template by looping until we reach the end character (templateEscapeCharacter)
                     StringBuilder templateName = new StringBuilder();
                     while (template.charAt(currentLocationInTemplate) != templateEndMatchTemplate && !lastCharacter.equalsCanceling(templateEscapeCharacter, currentLocationInTemplate, template)) {
                         templateName.append(template.charAt(currentLocationInTemplate));
@@ -136,30 +143,30 @@ public class Lexer {
 
                     currentLocationInTemplate++; // skip final curly bracket
 
-                    if (!allTemplates.containsKey(templateName.toString())) {
-                        System.exit(1);
+                    if (!allTemplates.containsKey(templateName.toString())) { // Check the template exists
+                        Logging.error("Failed to find template called " + templateName);
                     }
-                    TemplatedStringAndOriginalLength matched = matchTemplatesAndGetLength(string.substring(currentLocationInString), allTemplates.get(templateName.toString()), allTemplates);
-                    if (matched == null) {
+                    TemplatedStringAndOriginalLength matched = matchTemplatesAndGetLength(string.substring(currentLocationInString), allTemplates.get(templateName.toString()), allTemplates); // Match the string to the template
+                    if (matched == null) { // If matched is null then that means it could not match therefor exit
                         failed = true;
                         break;
 
-                    } else if (saveMode) {
+                    } else if (saveMode) { // If in save mode then save the matched templates
                         currentLocationInString += matched.originalLength;
                         currentMatch.append(matched.templatedString);
                     }
 
-                } else if (template.charAt(currentLocationInTemplate) == '<' && !lastCharacter.equalsCanceling(templateEscapeCharacter, currentLocationInTemplate, template)) {
+                } else if (template.charAt(currentLocationInTemplate) == '<' && !lastCharacter.equalsCanceling(templateEscapeCharacter, currentLocationInTemplate, template)) { // Turn save mode on
                     saveMode = true;
                     currentLocationInTemplate++;
-                } else if (template.charAt(currentLocationInTemplate) == '>' && !lastCharacter.equalsCanceling(templateEscapeCharacter, currentLocationInTemplate, template)) {
+                } else if (template.charAt(currentLocationInTemplate) == '>' && !lastCharacter.equalsCanceling(templateEscapeCharacter, currentLocationInTemplate, template)) { // Turn save mode off
                     saveMode = false;
                     currentLocationInTemplate++;
 
-                } else if (template.charAt(currentLocationInTemplate) == templateEscapeCharacter && !lastCharacter.equalsCanceling(templateEscapeCharacter, currentLocationInTemplate, template)) {
+                } else if (template.charAt(currentLocationInTemplate) == templateEscapeCharacter && !lastCharacter.equalsCanceling(templateEscapeCharacter, currentLocationInTemplate, template)) { // Ignore templateEscapeCharacter if it's escaping the next character
                     currentLocationInTemplate++;
 
-                } else {
+                } else { // Make sure current character is correct and then add it, else fail
                     if (currentLocationInString >= string.length()) {
                         failed = true;
                         break;
@@ -180,16 +187,16 @@ public class Lexer {
                 }
             }
 
-            if (!failed) {
+            if (!failed) { // If the match didn't fail then add the match so we can figure out which is longest
                 matches.add(new TemplatedStringAndOriginalLength(currentMatch.toString(), currentLocationInString));
             }
         }
 
-        if (matches.isEmpty()) {
+        if (matches.isEmpty()) { // If no matches are found then leave
             return null;
         }
 
-
+        // Get the longest match
         int index = 0;
         int elementLength = matches.get(0).originalLength;
         for (int i=1; i< matches.size(); i++) {
