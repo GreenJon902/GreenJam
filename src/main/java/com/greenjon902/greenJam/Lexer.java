@@ -1,11 +1,9 @@
 package com.greenjon902.greenJam;
 
-import com.greenjon902.greenJam.types.FloatToken;
-import com.greenjon902.greenJam.types.IntegerToken;
-import com.greenjon902.greenJam.types.Token;
-import com.greenjon902.greenJam.types.TokenList;
+import com.greenjon902.greenJam.types.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class Lexer {
@@ -24,6 +22,7 @@ public class Lexer {
             TokenAndOriginalLength tokenAndOriginalLength = getFirstToken(jam.substring(currentLocation), config);
 
             if (tokenAndOriginalLength == null) {
+                System.out.println(jam.substring(currentLocation));
                 Logging.error("Could not find token at location " + currentLocation);
             }
             assert tokenAndOriginalLength != null;  // To stop pycharm complaining even tho Logging.error exits
@@ -49,6 +48,7 @@ public class Lexer {
 
     public TokenAndOriginalLength getFirstToken(String jam, Config config) {
         HashMap<Integer, Token> matches = new HashMap<>();
+        System.out.println(jam);
 
 
 
@@ -70,6 +70,22 @@ public class Lexer {
             matches.put(templatedStringAndOriginalLength.originalLength, new FloatToken(templatedStringAndOriginalLength.templatedString));
         }
 
+        // Character -------------------------------------------------------------------------------------------------------
+        String[] characterTemplates = config.lexerTemplates.templates.get(config.lexerTemplates.characterName);
+        templatedStringAndOriginalLength = matchTemplatesAndGetLength(jam, characterTemplates, config.lexerTemplates.templates);
+
+        if (templatedStringAndOriginalLength != null) {
+            matches.put(templatedStringAndOriginalLength.originalLength, new CharacterToken(templatedStringAndOriginalLength.templatedString));
+        }
+
+        // String -------------------------------------------------------------------------------------------------------
+        String[] stringTemplates = config.lexerTemplates.templates.get(config.lexerTemplates.stringName);
+        templatedStringAndOriginalLength = matchTemplatesAndGetLength(jam, stringTemplates, config.lexerTemplates.templates);
+
+        if (templatedStringAndOriginalLength != null) {
+            matches.put(templatedStringAndOriginalLength.originalLength, new StringToken(templatedStringAndOriginalLength.templatedString));
+        }
+
         // -------------------------------------------------------------------------------------------------------------
 
         if (matches.size() == 0) {
@@ -85,12 +101,11 @@ public class Lexer {
         return new TokenAndOriginalLength(matches.get(elementLength), elementLength);
     }
 
-    private static final char templateEscapeCharacter = '\\';
+    private static final char templateEscapeCharacter = '!';
     private static final char templateStartMatchTemplate = '{';
     private static final char templateEndMatchTemplate = '}';
 
     private static TemplatedStringAndOriginalLength matchTemplatesAndGetLength(String string, String[] templatesToCheck, HashMap<String, String[]> allTemplates) {
-
         if (string.length() == 0) {
             return null;
         }
