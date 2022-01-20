@@ -1,5 +1,7 @@
 package com.greenjon902.greenJam;
 
+import com.greenjon902.greenJam.types.TokenList;
+
 import java.io.InputStream;
 import java.util.Scanner;
 
@@ -18,7 +20,8 @@ public class Idle {
             System.out.print(">>>  ");
             String jam = input.nextLine();
 
-            System.out.println(lexer.analyzeString(jam, config).toString());
+            TokenList tokenList = lexer.analyzeString(jam, config);
+            System.out.println(tokenList.toString());
         }
     }
 }
