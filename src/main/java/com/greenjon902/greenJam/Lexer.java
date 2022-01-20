@@ -3,7 +3,6 @@ package com.greenjon902.greenJam;
 import com.greenjon902.greenJam.types.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class Lexer {
@@ -37,7 +36,7 @@ public class Lexer {
         return tokenList;
     }
 
-    public int howMuchOfCurrentLocationIsIgnorable(String string, Config config) {
+    private int howMuchOfCurrentLocationIsIgnorable(String string, Config config) {
         for (String ignorableString : config.lexerTemplates.ignorableCharacters) {
             if (string.startsWith(ignorableString)) {
                 return ignorableString.length();
@@ -46,7 +45,7 @@ public class Lexer {
         return 0;
     }
 
-    public TokenAndOriginalLength getFirstToken(String jam, Config config) {
+    private TokenAndOriginalLength getFirstToken(String jam, Config config) {
         HashMap<Integer, Token> matches = new HashMap<>();
         System.out.println(jam);
 
