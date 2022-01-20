@@ -53,7 +53,7 @@ public class Lexer {
     private UnclassifiedTokenAndOriginalLength getFirstToken(String jam, Config config) {
         HashMap<Integer, UnclassifiedToken> matches = new HashMap<>();
 
-        for (String firstLayerTemplateName : config.lexerTemplates.FirstLayerTemplateNames) {
+        for (String firstLayerTemplateName : config.lexerTemplates.firstLayerTemplateNames) {
             String[] integerTemplates = config.lexerTemplates.templates.get(firstLayerTemplateName);
             TemplatedStringAndOriginalLength templatedStringAndOriginalLength =
                     matchTemplatesAndGetLength(jam, integerTemplates, config.lexerTemplates.templates);

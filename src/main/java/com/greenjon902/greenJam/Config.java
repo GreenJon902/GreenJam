@@ -3,10 +3,10 @@ package com.greenjon902.greenJam;
 import java.util.HashMap;
 
 public class Config {
-    public final _lexerTemplates lexerTemplates;
+    public final LexerTemplates lexerTemplates;
 
     public Config() {
-        lexerTemplates = new _lexerTemplates();
+        lexerTemplates = new LexerTemplates();
     }
 }
 
@@ -18,10 +18,10 @@ public class Config {
  * "'A test string'" matched to the template "'<{string}>'" with return only "A test string" which doesn't have
  *      the "'". Multiple sets of angle brackets are joined together
  */
-class _lexerTemplates {
+class LexerTemplates {
     public final String[] ignorableCharacters = {"\n", " "};
 
-    public final String[] FirstLayerTemplateNames = {"integer", "float", "character", "string"};
+    public final String[] firstLayerTemplateNames = {"integer", "float", "character", "string"};
 
     public final HashMap<String, String[]> templates = new HashMap<>() {{
         put("integer", new String[]{"<{digit}>", "<{digit}{integer}>"});
