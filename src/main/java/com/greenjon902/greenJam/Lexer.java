@@ -8,6 +8,7 @@ import java.util.HashMap;
 public class Lexer {
 
     public TokenList analyzeString(String jam, Config config) {
+        // Lex it ------------------------------------------------------------------------------------------------------
         UnclassifiedTokenList unclassifiedTokenList = new UnclassifiedTokenList();
 
         int currentLocation = 0;
@@ -32,8 +33,9 @@ public class Lexer {
             currentLocation += origonalLength;
             unclassifiedTokenList.append(unclassifiedToken);
         }
-        System.out.println(unclassifiedTokenList);
 
+        // Classify it -------------------------------------------------------------------------------------------------
+        // This means converting the UnclassifiedToken class into a token class, e.g. UnclassifiedToken[type="INT",value="14"] turns into IntegerToken[value=14]
         TokenList tokenList = new TokenList();
 
         return tokenList;
