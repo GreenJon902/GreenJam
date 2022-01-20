@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class Lexer {
 
     public TokenList analyzeString(String jam, Config config) {
-        TokenList tokenList = new TokenList();
+        UnclassifiedTokenList unclassifiedTokenList = new UnclassifiedTokenList();
 
         int currentLocation = 0;
         while (currentLocation < jam.length()) {
@@ -18,20 +18,23 @@ public class Lexer {
                 continue;
             }
 
-            TokenAndOriginalLength tokenAndOriginalLength = getFirstToken(jam.substring(currentLocation), config);
+            UnclassifiedTokenAndOriginalLength unclassifiedTokenAndOriginalLength = getFirstToken(jam.substring(currentLocation), config);
 
-            if (tokenAndOriginalLength == null) {
+            if (unclassifiedTokenAndOriginalLength == null) {
                 System.out.println(jam.substring(currentLocation));
                 Logging.error("Could not find token at location " + currentLocation);
             }
-            assert tokenAndOriginalLength != null;  // To stop pycharm complaining even tho Logging.error exits
+            assert unclassifiedTokenAndOriginalLength != null;  // To stop pycharm complaining even tho Logging.error exits
 
-            Token token = tokenAndOriginalLength.token;
-            int origonalLength = tokenAndOriginalLength.originalLength;
+            UnclassifiedToken unclassifiedToken = unclassifiedTokenAndOriginalLength.unclassifiedToken;
+            int origonalLength = unclassifiedTokenAndOriginalLength.originalLength;
 
             currentLocation += origonalLength;
-            tokenList.append(token);
+            unclassifiedTokenList.append(unclassifiedToken);
         }
+        System.out.println(unclassifiedTokenList);
+
+        TokenList tokenList = new TokenList();
 
         return tokenList;
     }
@@ -45,47 +48,20 @@ public class Lexer {
         return 0;
     }
 
-    private TokenAndOriginalLength getFirstToken(String jam, Config config) {
-        HashMap<Integer, Token> matches = new HashMap<>();
-        System.out.println(jam);
+    private UnclassifiedTokenAndOriginalLength getFirstToken(String jam, Config config) {
+        HashMap<Integer, UnclassifiedToken> matches = new HashMap<>();
 
+        for (String firstLayerTemplateName : config.lexerTemplates.FirstLayerTemplateNames) {
+            String[] integerTemplates = config.lexerTemplates.templates.get(firstLayerTemplateName);
+            TemplatedStringAndOriginalLength templatedStringAndOriginalLength =
+                    matchTemplatesAndGetLength(jam, integerTemplates, config.lexerTemplates.templates);
 
-
-        TemplatedStringAndOriginalLength templatedStringAndOriginalLength;
-
-        // Integer -----------------------------------------------------------------------------------------------------
-        String[] integerTemplates = config.lexerTemplates.templates.get(config.lexerTemplates.integerName);
-        templatedStringAndOriginalLength = matchTemplatesAndGetLength(jam, integerTemplates, config.lexerTemplates.templates);
-
-        if (templatedStringAndOriginalLength != null) {
-            matches.put(templatedStringAndOriginalLength.originalLength, new IntegerToken(templatedStringAndOriginalLength.templatedString));
+            if (templatedStringAndOriginalLength != null) {
+                matches.put(templatedStringAndOriginalLength.originalLength,
+                        new UnclassifiedToken(firstLayerTemplateName, templatedStringAndOriginalLength.templatedString));
+            }
         }
 
-        // Float -------------------------------------------------------------------------------------------------------
-        String[] floatTemplates = config.lexerTemplates.templates.get(config.lexerTemplates.floatName);
-        templatedStringAndOriginalLength = matchTemplatesAndGetLength(jam, floatTemplates, config.lexerTemplates.templates);
-
-        if (templatedStringAndOriginalLength != null) {
-            matches.put(templatedStringAndOriginalLength.originalLength, new FloatToken(templatedStringAndOriginalLength.templatedString));
-        }
-
-        // Character -------------------------------------------------------------------------------------------------------
-        String[] characterTemplates = config.lexerTemplates.templates.get(config.lexerTemplates.characterName);
-        templatedStringAndOriginalLength = matchTemplatesAndGetLength(jam, characterTemplates, config.lexerTemplates.templates);
-
-        if (templatedStringAndOriginalLength != null) {
-            matches.put(templatedStringAndOriginalLength.originalLength, new CharacterToken(templatedStringAndOriginalLength.templatedString));
-        }
-
-        // String -------------------------------------------------------------------------------------------------------
-        String[] stringTemplates = config.lexerTemplates.templates.get(config.lexerTemplates.stringName);
-        templatedStringAndOriginalLength = matchTemplatesAndGetLength(jam, stringTemplates, config.lexerTemplates.templates);
-
-        if (templatedStringAndOriginalLength != null) {
-            matches.put(templatedStringAndOriginalLength.originalLength, new StringToken(templatedStringAndOriginalLength.templatedString));
-        }
-
-        // -------------------------------------------------------------------------------------------------------------
 
         if (matches.isEmpty()) {
             return null;
@@ -97,7 +73,7 @@ public class Lexer {
                 elementLength = length;
             }
         }
-        return new TokenAndOriginalLength(matches.get(elementLength), elementLength);
+        return new UnclassifiedTokenAndOriginalLength(matches.get(elementLength), elementLength);
     }
 
     private static final char templateEscapeCharacter = '!';
@@ -227,19 +203,19 @@ class TemplatedStringAndOriginalLength {
     }
 }
 
-class TokenAndOriginalLength {
-    public Token token;
+class UnclassifiedTokenAndOriginalLength {
+    public UnclassifiedToken unclassifiedToken;
     public int originalLength;
 
-    public TokenAndOriginalLength(Token templatedString, int originalLength) {
-        this.token = templatedString;
+    public UnclassifiedTokenAndOriginalLength(UnclassifiedToken unclassifiedToken, int originalLength) {
+        this.unclassifiedToken = unclassifiedToken;
         this.originalLength = originalLength;
     }
 
     @Override
     public String toString() {
-        return "TokenAndOriginalLength{" +
-                "token='" + token + '\'' +
+        return "UnclassifiedTokenAndOriginalLength{" +
+                "unclassifiedToken='" + unclassifiedToken + '\'' +
                 ", originalLength=" + originalLength +
                 '}';
     }
