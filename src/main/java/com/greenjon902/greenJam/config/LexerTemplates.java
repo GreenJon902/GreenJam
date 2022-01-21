@@ -1,14 +1,6 @@
-package com.greenjon902.greenJam;
+package com.greenjon902.greenJam.config;
 
 import java.util.HashMap;
-
-public class Config {
-    public final LexerTemplates lexerTemplates;
-
-    public Config() {
-        lexerTemplates = new LexerTemplates();
-    }
-}
 
 /**
  * My templating system thingy!
@@ -18,7 +10,7 @@ public class Config {
  * "'A test string'" matched to the template "'<{string}>'" with return only "A test string" which doesn't have
  *      the "'". Multiple sets of angle brackets are joined together
  */
-class LexerTemplates {
+public class LexerTemplates {
     public final String[] ignorableCharacters = {"\n", " "};
 
     public final String[] firstLayerTemplateNames = {"integer", "float", "character", "string"};

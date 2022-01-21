@@ -1,6 +1,7 @@
 package com.greenjon902.greenJam;
 
 
+import com.greenjon902.greenJam.config.Config;
 import com.greenjon902.greenJam.types.TokenList;
 
 import java.io.InputStream;
