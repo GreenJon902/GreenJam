@@ -1,6 +1,7 @@
 package com.greenjon902.greenJam;
 
 import com.greenjon902.greenJam.config.Config;
+import com.greenjon902.greenJam.types.tokens.CharacterToken;
 import com.greenjon902.greenJam.types.tokens.IntegerToken;
 import com.greenjon902.greenJam.types.tokens.Token;
 import com.greenjon902.greenJam.types.TokenList;
@@ -89,6 +90,9 @@ public class TokenClassifier {
                  switch (correct) {
                      case "integer":
                          token = new IntegerToken(Integer.parseInt(tokenArgs.get(0)));
+                         break;
+                     case "character":
+                         token = new CharacterToken(tokenArgs.get(0).charAt(0));
                          break;
                      default:
                          Logging.error("Unknown token type \"" + correct + "\"");

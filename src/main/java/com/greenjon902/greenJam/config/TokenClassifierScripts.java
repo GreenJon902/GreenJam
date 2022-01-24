@@ -47,5 +47,11 @@ public class TokenClassifierScripts {
             "stt \"integer\"",
             "ldv",
             "sta 0"
+    }, {
+            "ldt",
+            "cse \"character\"",
+            "stt \"character\"", // TODO: Add error if character length is over 1
+            "ldv",
+            "sta 0"
     }};
 }
