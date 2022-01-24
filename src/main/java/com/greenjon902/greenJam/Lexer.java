@@ -4,11 +4,12 @@ import com.greenjon902.greenJam.config.Config;
 import com.greenjon902.greenJam.types.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class Lexer {
 
-    public TokenList analyzeString(String jam, Config config) {
+    public UnclassifiedTokenList analyzeString(String jam, Config config) {
         // Lex it ------------------------------------------------------------------------------------------------------
         UnclassifiedTokenList unclassifiedTokenList = new UnclassifiedTokenList();
 
@@ -35,11 +36,7 @@ public class Lexer {
             unclassifiedTokenList.append(unclassifiedToken);
         }
 
-        // Classify it -------------------------------------------------------------------------------------------------
-        // This means converting the UnclassifiedToken class into a token class, e.g. UnclassifiedToken[type="INT",value="14"] turns into IntegerToken[value=14]
-        TokenList tokenList = new TokenList();
-
-        return tokenList;
+        return unclassifiedTokenList;
     }
 
     private int howMuchOfCurrentLocationIsIgnorable(String string, Config config) {
@@ -55,9 +52,9 @@ public class Lexer {
         HashMap<Integer, UnclassifiedToken> matches = new HashMap<>();
 
         for (String firstLayerTemplateName : config.lexerTemplates.firstLayerTemplateNames) {
-            String[] integerTemplates = config.lexerTemplates.templates.get(firstLayerTemplateName);
+            String[] templates = config.lexerTemplates.templates.get(firstLayerTemplateName);
             TemplatedStringAndOriginalLength templatedStringAndOriginalLength =
-                    matchTemplatesAndGetLength(jam, integerTemplates, config.lexerTemplates.templates);
+                    matchTemplatesAndGetLength(jam, templates, config.lexerTemplates.templates);
 
             if (templatedStringAndOriginalLength != null) {
                 matches.put(templatedStringAndOriginalLength.originalLength,
