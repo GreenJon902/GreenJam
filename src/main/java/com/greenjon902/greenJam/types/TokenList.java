@@ -1,5 +1,7 @@
 package com.greenjon902.greenJam.types;
 
+import com.greenjon902.greenJam.types.tokens.Token;
+
 import java.util.ArrayList;
 
 public class TokenList {

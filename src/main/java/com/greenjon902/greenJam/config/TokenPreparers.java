@@ -31,8 +31,8 @@ package com.greenjon902.greenJam.config;
  *       <td>If the value in the accumulator is equal to the value in (string) then continue, else skip to the next preparer</td>
  *   </tr>
  *   <tr>
- *       <td>sac</td>
- *       <td>Set the current preparer as correct and will exit when finishes the preparer</td>
+ *       <td>stt (string)</td>
+ *       <td>Set the token type as (string) and exit when finishes the preparer</td>
  *   </tr>
  *   <tr>
  *       <td>sta (arg_number)</td>
@@ -41,11 +41,11 @@ package com.greenjon902.greenJam.config;
  * </table>
  */
 public class TokenPreparers {
-    public final String integerPreparer =
-            "ldt;" +
-            "cse \"integer\";" +
-            "sac;" +
-            "ldv;" +
-            "set 0";
-
+    public final String[][] prepareScripts = {{
+            "ldt",
+            "cse \"integer\"",
+            "stt \"integer\"",
+            "ldv",
+            "sta 0"
+    }};
 }

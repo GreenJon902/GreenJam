@@ -16,4 +16,8 @@ public class UnclassifiedTokenList {
     public void append(UnclassifiedToken unclassifiedToken) {
         unclassifiedTokens.add(unclassifiedToken);
     }
+
+    public UnclassifiedToken[] toArray() {
+        return unclassifiedTokens.toArray(new UnclassifiedToken[0]);
+    }
 }
