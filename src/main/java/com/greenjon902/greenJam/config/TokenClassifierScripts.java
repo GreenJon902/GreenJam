@@ -40,8 +40,8 @@ package com.greenjon902.greenJam.config;
  *   </tr>
  * </table>
  */
-public class TokenPreparers {
-    public final String[][] prepareScripts = {{
+public class TokenClassifierScripts {
+    public final String[][] classifyScripts = {{
             "ldt",
             "cse \"integer\"",
             "stt \"integer\"",

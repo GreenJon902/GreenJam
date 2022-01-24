@@ -27,7 +27,7 @@ public class Idle {
 
             UnclassifiedTokenList unclassifiedTokenList = lexer.analyzeString(jam, config);
             System.out.println(unclassifiedTokenList.toString());
-            TokenList tokenList = tokenClassifier.classify(unclassifiedTokenList, config);
+            TokenList tokenList = tokenClassifier.classifyList(unclassifiedTokenList, config);
             System.out.println(tokenList);
         }
     }

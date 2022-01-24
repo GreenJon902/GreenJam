@@ -12,11 +12,11 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class TokenClassifier {
-    public TokenList classify(UnclassifiedTokenList unclassifiedTokenList, Config config) {
+    public TokenList classifyList(UnclassifiedTokenList unclassifiedTokenList, Config config) {
         TokenList tokenList = new TokenList();
 
         for (UnclassifiedToken unclassifiedToken : unclassifiedTokenList.toArray()) {
-            tokenList.append(prepareUnclassifiedToken(unclassifiedToken, config));
+            tokenList.append(classify(unclassifiedToken, config));
         }
 
         return tokenList;
@@ -31,8 +31,8 @@ public class TokenClassifier {
     private static final String commandSetTokenType = "stt";
     private static final String commandStoreTokenArg = "sta";
 
-    private Token prepareUnclassifiedToken(UnclassifiedToken unclassifiedToken, Config config) {
-        for (String[] script : config.tokenPreparers.prepareScripts) {
+    public Token classify(UnclassifiedToken unclassifiedToken, Config config) {
+        for (String[] script : config.tokenClassifierScripts.classifyScripts) {
             String correct = null;
             HashMap<Integer, String> tokenArgs = new HashMap<>();
 
@@ -76,7 +76,7 @@ public class TokenClassifier {
                         tokenArgs.put(parseInt(arg), accumulator_value);
                         break;
                     default:
-                        Logging.error("Unknown TokenPreparer command \"" + command + "\"");
+                        Logging.error("Unknown command \"" + command + "\"");
                 }
 
                 if (skip) {
