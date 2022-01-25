@@ -11,6 +11,7 @@ import com.greenjon902.greenJam.types.UnclassifiedTokenList;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 public class TokenClassifier {
     public TokenList classifyList(UnclassifiedTokenList unclassifiedTokenList, Config config) {
@@ -25,12 +26,8 @@ public class TokenClassifier {
     }
 
 
-    private static final String commandLoadType = "ldt";
-    private static final String commandLoadValue = "ldv";
-    private static final String commandSkipIfStringEquals = "sse";
-    private static final String commandContinueIfStringEquals = "cse";
-    private static final String commandSetTokenType = "stt";
-    private static final String commandStoreTokenArg = "sta";
+    private static final String ACC_TRUE = "TRUE";
+    private static final String ACC_FALSE = "FALSE";
 
     public Token classify(UnclassifiedToken unclassifiedToken, Config config) {
         for (String[] script : config.tokenClassifierScripts.classifyScripts) {
@@ -39,11 +36,15 @@ public class TokenClassifier {
 
             String accumulator_value = "";
 
-            for (String instruction : script) {
+            int current_instruction_index = 0;
+            while (current_instruction_index < script.length){
+                String instruction = script[current_instruction_index];
+
+
                 boolean skip = false;
 
                 String[] command_and_arg = instruction.split(" ", 2);
-                String command = command_and_arg[0];
+                Command command = Command.valueOf(command_and_arg[0]);
 
                 String arg;
                 if (command_and_arg.length == 2) {
@@ -54,27 +55,98 @@ public class TokenClassifier {
 
 
                 switch (command) {
-                    case commandLoadType:
+                    case loadTokenType:
                         accumulator_value = unclassifiedToken.type;
                         break;
-                    case commandLoadValue:
+                    case loadTokenValue:
                         accumulator_value = unclassifiedToken.value;
                         break;
-                    case commandSkipIfStringEquals:
-                        if (Objects.equals(accumulator_value, parseString(arg))) {
-                            skip = true;
+                    case equals:
+                        if (accumulator_value.equals(parseString(arg))) {
+                            accumulator_value = ACC_TRUE;
+                        } else {
+                            accumulator_value = ACC_FALSE;
                         }
                         break;
-                    case commandContinueIfStringEquals:
-                        if (!Objects.equals(accumulator_value, parseString(arg))) {
-                            skip = true;
+                    case flip:
+                        if (accumulator_value.equals(ACC_TRUE)) {
+                            accumulator_value = ACC_FALSE;
+                        } else if (accumulator_value.equals(ACC_FALSE)) {
+                            accumulator_value = ACC_TRUE;
+                        } else {
+                            Logging.error("Could not flip accumulator value as it is neither \"TRUE\" nor \"FALSE\", it is \"" + accumulator_value + "\"");
                         }
                         break;
-                    case commandSetTokenType:
+                    case setTokenType:
                         correct = parseString(arg);
                         break;
-                    case commandStoreTokenArg:
+                    case setTokenArgument:
                         tokenArgs.put(parseInt(arg), accumulator_value);
+                        break;
+                    case loadTokenArgument:
+                        accumulator_value = tokenArgs.get(parseInt(arg));
+                        break;
+                    case error:
+                        String out = parseString(arg);
+                        out = out.replace("%acc", accumulator_value);
+                        String out_new = out;
+
+                        int location = 0;
+                        while (location < out.length()) {
+                            if (out.charAt(location) == '%') {
+                                location += 4; // Skip the %arg
+
+                                int arg_number = parseInt(String.valueOf(location));
+                                String string_arg_number = String.valueOf(arg_number);
+                                location += string_arg_number.length();
+
+                                out_new = out_new.replace("%arg" + string_arg_number, tokenArgs.get(arg_number));
+
+                            } else {
+                                location++;
+                            }
+                        }
+
+                        Logging.error(out_new);
+                        break;
+                    case skipIfAccumulatorContainsTrue:
+                        if (accumulator_value.equals(ACC_TRUE)) {
+                            skip = true;
+                        }
+                        break;
+                    case skipIfAccumulatorContainsFalse:
+                        if (accumulator_value.equals(ACC_FALSE)) {
+                            skip = true;
+                        }
+                        break;
+                    case skip:
+                        skip = true;
+                        break;
+                    case jumpIfAccumulatorContainsTrue:
+                        if (accumulator_value.equals(ACC_TRUE)) {
+                            current_instruction_index = parseInt(arg);
+                        }
+                        break;
+                    case jumpIfAccumulatorContainsFalse:
+                        if (accumulator_value.equals(ACC_FALSE)) {
+                            current_instruction_index = parseInt(arg);
+                        }
+                        break;
+                    case jump:
+                        current_instruction_index = parseInt(arg);
+                        break;
+                    case moveIfAccumulatorContainsTrue:
+                        if (accumulator_value.equals(ACC_TRUE)) {
+                            current_instruction_index += parseInt(arg) - 1; // Minus one because it gets raised by one at the end and this would mean the value is not correct
+                        }
+                        break;
+                    case moveIfAccumulatorContainsFalse:
+                        if (accumulator_value.equals(ACC_FALSE)) {
+                            current_instruction_index += parseInt(arg) - 1; // Minus one because it gets raised by one at the end and this would mean the value is not correct
+                        }
+                        break;
+                    case move:
+                        current_instruction_index += parseInt(arg) - 1; // Minus one because it gets raised by one at the end and this would mean the value is not correct
                         break;
                     default:
                         Logging.error("Unknown command \"" + command + "\"");
@@ -83,6 +155,7 @@ public class TokenClassifier {
                 if (skip) {
                     break;
                 }
+                current_instruction_index++;
             }
              if (correct != null) {
 
@@ -116,5 +189,31 @@ public class TokenClassifier {
 
     private int parseInt(String string) {
         return Integer.parseInt(string);
+    }
+}
+
+enum Command {
+    loadTokenType("ldt"),
+    loadTokenValue("ldv"),
+    equals("equ"),
+    flip("flp"),
+    setTokenType("stt"),
+    setTokenArgument("sta"),
+    loadTokenArgument("lta"),
+    error("err"),
+    skipIfAccumulatorContainsTrue("sit"),
+    skipIfAccumulatorContainsFalse("sif"),
+    skip("skp"),
+    jumpIfAccumulatorContainsTrue("jit"),
+    jumpIfAccumulatorContainsFalse("jif"),
+    jump("jmp"),
+    moveIfAccumulatorContainsTrue("mit"),
+    moveIfAccumulatorContainsFalse("mif"),
+    move("mov");
+
+    public final String type;
+
+    Command(String type) {
+        this.type = type;
     }
 }
