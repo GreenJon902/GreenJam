@@ -87,13 +87,15 @@ package com.greenjon902.greenJam.config;
 public class TokenClassifierScripts {
     public final String[][] classifyScripts = {{
             "ldt",
-            "cse \"integer\"",
+            "equ \"integer\"",
+            "sif",
             "stt \"integer\"",
             "ldv",
             "sta 0"
     }, {
             "ldt",
-            "cse \"character\"",
+            "equ \"character\"",
+            "sif",
             "stt \"character\"", // TODO: Add error if character length is over 1
             "ldv",
             "sta 0"
