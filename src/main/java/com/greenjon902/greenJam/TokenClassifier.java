@@ -44,7 +44,7 @@ public class TokenClassifier {
                 boolean skip = false;
 
                 String[] command_and_arg = instruction.split(" ", 2);
-                Command command = Command.valueOf(command_and_arg[0]);
+                Command command = Command.getFromCode(command_and_arg[0]);
 
                 String arg;
                 if (command_and_arg.length == 2) {
@@ -211,9 +211,19 @@ enum Command {
     moveIfAccumulatorContainsFalse("mif"),
     move("mov");
 
-    public final String type;
+    private final String code;
 
-    Command(String type) {
-        this.type = type;
+    Command(String code) {
+        this.code = code;
+    }
+
+    public static Command getFromCode(String code) {
+        for (Command command : values()){
+            if (command.code.equals(code)){
+                return command;
+            }
+        }
+
+        throw new IllegalArgumentException(code + " is not a valid code");
     }
 }
