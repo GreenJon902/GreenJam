@@ -3,6 +3,7 @@ package com.greenjon902.greenJam;
 import com.greenjon902.greenJam.config.Config;
 import com.greenjon902.greenJam.types.tokens.CharacterToken;
 import com.greenjon902.greenJam.types.tokens.IntegerToken;
+import com.greenjon902.greenJam.types.tokens.OperatorToken;
 import com.greenjon902.greenJam.types.tokens.Token;
 import com.greenjon902.greenJam.types.TokenList;
 import com.greenjon902.greenJam.types.UnclassifiedToken;
@@ -148,6 +149,9 @@ public class TokenClassifier {
                     case move:
                         current_instruction_index += parseInt(arg) - 1; // Minus one because it gets raised by one at the end and this would mean the value is not correct
                         break;
+                    case setAccumulatorAs:
+                        accumulator_value = parseString(arg);
+                        break;
                     default:
                         Logging.error("Unknown command \"" + command + "\"");
                 }
@@ -166,6 +170,9 @@ public class TokenClassifier {
                          break;
                      case "character":
                          token = new CharacterToken(tokenArgs.get(0).charAt(0));
+                         break;
+                     case "operator":
+                         token = new OperatorToken(tokenArgs.get(0), tokenArgs.get(1));
                          break;
                      default:
                          Logging.error("Unknown token type \"" + correct + "\"");
@@ -209,7 +216,8 @@ enum Command {
     jump("jmp"),
     moveIfAccumulatorContainsTrue("mit"),
     moveIfAccumulatorContainsFalse("mif"),
-    move("mov");
+    move("mov"),
+    setAccumulatorAs("sav");
 
     private final String code;
 

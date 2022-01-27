@@ -82,6 +82,10 @@ package com.greenjon902.greenJam.config;
  *      <td>mov (location)</td>
  *      <td>Move to the instruction that is the current location + (location)</td>
  *  </tr>
+ *  <tr>
+ *      <td>sav (string)</td>
+ *      <td>Set the accumulator value to (string)</td>
+ *  </tr>
  * </table>
  */
 public class TokenClassifierScripts {
@@ -99,5 +103,23 @@ public class TokenClassifierScripts {
             "stt \"character\"", // TODO: Add error if character length is over 1
             "ldv",
             "sta 0"
+    }, {
+            "ldt",
+            "equ \"operator\"",
+            "sif",
+            "stt \"operator\"",
+            "ldv",
+            "sta 1", // Put the operator in the correct place
+            // Series of if statements to get operator type
+
+            // Addition
+            "equ \"+\"",
+            "mif 4",
+            "sav \"addition\"",
+            "sta 0",
+            "skp", // It was correct so exit
+
+            // None
+            "err \"Couldn't figure out what the operator type was %acc\""
     }};
 }
