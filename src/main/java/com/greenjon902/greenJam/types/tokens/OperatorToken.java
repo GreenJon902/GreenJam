@@ -11,7 +11,14 @@ public class OperatorToken extends Token {
     }
 
     @Override
-    TokenType getType() {
+    public TokenType getType() {
         return TokenType.OPERATOR;
+    }
+
+    @Override
+    public String toString() {
+        return "OperatorToken{" +
+                "operatorType='" + operatorType + '\'' +
+                '}';
     }
 }

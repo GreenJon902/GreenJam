@@ -11,7 +11,14 @@ public class CharacterToken extends Token {
     }
 
     @Override
-    TokenType getType() {
+    public TokenType getType() {
         return TokenType.CHARACTER;
+    }
+
+    @Override
+    public String toString() {
+        return "CharacterToken{" +
+                "value=" + value +
+                '}';
     }
 }

@@ -11,7 +11,14 @@ public class IntegerToken extends Token {
     }
 
     @Override
-    TokenType getType() {
+    public TokenType getType() {
         return TokenType.INTEGER;
+    }
+
+    @Override
+    public String toString() {
+        return "IntegerToken{" +
+                "value=" + value +
+                '}';
     }
 }
