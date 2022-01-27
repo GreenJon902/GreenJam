@@ -119,6 +119,7 @@ public class TokenClassifierScripts {
             "skp", // It was correct so exit
 
             // None
+            "ldv",
             "err \"Couldn't figure out what the operator type was %acc\""
     }};
 }
