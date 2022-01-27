@@ -107,7 +107,6 @@ public class TokenClassifier {
                                 location++;
                             }
                         }
-
                         Logging.error(out_new);
                         break;
                     case skipIfAccumulatorContainsTrue:
@@ -172,7 +171,7 @@ public class TokenClassifier {
                          token = new CharacterToken(tokenArgs.get(0).charAt(0));
                          break;
                      case "operator":
-                         token = new OperatorToken(tokenArgs.get(0), tokenArgs.get(1));
+                         token = new OperatorToken(tokenArgs.get(0));
                          break;
                      default:
                          Logging.error("Unknown token type \"" + correct + "\"");

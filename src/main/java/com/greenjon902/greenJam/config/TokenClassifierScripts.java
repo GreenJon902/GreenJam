@@ -109,7 +109,6 @@ public class TokenClassifierScripts {
             "sif",
             "stt \"operator\"",
             "ldv",
-            "sta 1", // Put the operator in the correct place
             // Series of if statements to get operator type
 
             // Addition
