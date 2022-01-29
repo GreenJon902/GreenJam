@@ -10,12 +10,12 @@ import java.util.Scanner;
 
 public class Idle {
     private final Lexer lexer;
-    private final TokenClassifier tokenClassifier;
+    private final TokenPreparer tokenPreparer;
     private final Config config;
 
     public Idle() {
         lexer = new Lexer();
-        tokenClassifier = new TokenClassifier();
+        tokenPreparer = new TokenPreparer();
         config = new Config();
     }
 
@@ -27,7 +27,7 @@ public class Idle {
 
             UnclassifiedTokenList unclassifiedTokenList = lexer.analyzeString(jam, config);
             System.out.println(unclassifiedTokenList.toString());
-            TokenList tokenList = tokenClassifier.classifyList(unclassifiedTokenList, config);
+            TokenList tokenList = tokenPreparer.prepareList(unclassifiedTokenList, config);
             System.out.println(tokenList);
         }
     }

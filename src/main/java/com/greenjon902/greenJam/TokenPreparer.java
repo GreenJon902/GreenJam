@@ -9,12 +9,12 @@ import com.greenjon902.greenJam.types.UnclassifiedTokenList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class TokenClassifier {
-    public TokenList classifyList(UnclassifiedTokenList unclassifiedTokenList, Config config) {
+public class TokenPreparer {
+    public TokenList prepareList(UnclassifiedTokenList unclassifiedTokenList, Config config) {
         TokenList tokenList = new TokenList();
 
         for (UnclassifiedToken unclassifiedToken : unclassifiedTokenList.toArray()) {
-            tokenList.append(classify(unclassifiedToken, config));
+            tokenList.append(prepare(unclassifiedToken, config));
         }
 
         return tokenList;
@@ -25,8 +25,8 @@ public class TokenClassifier {
     private static final String ACC_TRUE = "TRUE";
     private static final String ACC_FALSE = "FALSE";
 
-    public Token classify(UnclassifiedToken unclassifiedToken, Config config) {
-        for (String[] script : config.tokenClassifierScripts.classifyScripts) {
+    public Token prepare(UnclassifiedToken unclassifiedToken, Config config) {
+        for (String[] script : config.tokenPreparationScripts.preparationScripts) {
             String correct = null;
             HashMap<String, String> tokenAttributes = new HashMap<>();
 
@@ -161,7 +161,7 @@ public class TokenClassifier {
              }
         }
 
-        Logging.error("Failed to classify token - " + unclassifiedToken);
+        Logging.error("Failed to prepare token - " + unclassifiedToken);
         return null;
     }
 

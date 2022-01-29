@@ -88,8 +88,8 @@ package com.greenjon902.greenJam.config;
  *  </tr>
  * </table>
  */
-public class TokenClassifierScripts {
-    public final String[][] classifyScripts = {{
+public class TokenPreparationScripts {
+    public final String[][] preparationScripts = {{
             "ldt",
             "equ \"integer\"",
             "sif",
