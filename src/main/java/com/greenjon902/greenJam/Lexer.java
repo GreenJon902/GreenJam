@@ -161,7 +161,7 @@ public class Lexer {
                 }
             }
 
-            if (!failed) { // If the match didn't fail then add the match so we can figure out which is longest
+            if (!failed) { // If the match didn't fail then add the match, so we can figure out which is longest
                 matches.add(new TemplatedStringAndOriginalLength(currentMatch.toString(), currentLocationInString));
             }
         }

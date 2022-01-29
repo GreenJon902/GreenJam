@@ -156,8 +156,7 @@ public class TokenPreparer {
             }
 
             if (correct != null) {
-                Token token = new Token(correct, tokenAttributes);
-                return token; // TODO: Token Creation
+                return new Token(correct, tokenAttributes);
              }
         }
 
