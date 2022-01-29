@@ -13,10 +13,11 @@ import java.util.HashMap;
 public class LexerTemplates {
     public final String[] ignorableCharacters = {"\n", " "};
 
-    public final String[] firstLayerTemplateNames = {"integer", "character", "string", "operator"};
+    public final String[] firstLayerTemplateNames = {"integer", "fraction", "character", "string", "operator"};
 
     public final HashMap<String, String[]> templates = new HashMap<>() {{
         put("integer", new String[]{"<{digit}>", "<{digit}{integer}>"});
+        put("fraction", new String[]{"<{integer}> over< {integer}>"});
         put("character", new String[]{"'<{_character}>'"});
         put("string", new String[]{"\"<{word}>\""});
         put("operator", new String[]{"<+>"});
