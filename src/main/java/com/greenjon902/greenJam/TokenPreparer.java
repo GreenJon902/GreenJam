@@ -3,18 +3,18 @@ package com.greenjon902.greenJam;
 import com.greenjon902.greenJam.config.Config;
 import com.greenjon902.greenJam.types.Token;
 import com.greenjon902.greenJam.types.TokenList;
-import com.greenjon902.greenJam.types.UnclassifiedToken;
-import com.greenjon902.greenJam.types.UnclassifiedTokenList;
+import com.greenjon902.greenJam.types.UnpreparedToken;
+import com.greenjon902.greenJam.types.UnpreparedTokenList;
 
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class TokenPreparer {
-    public TokenList prepareList(UnclassifiedTokenList unclassifiedTokenList, Config config) {
+    public TokenList prepareList(UnpreparedTokenList unpreparedTokenList, Config config) {
         TokenList tokenList = new TokenList();
 
-        for (UnclassifiedToken unclassifiedToken : unclassifiedTokenList.toArray()) {
-            tokenList.append(prepare(unclassifiedToken, config));
+        for (UnpreparedToken unpreparedToken : unpreparedTokenList.toArray()) {
+            tokenList.append(prepare(unpreparedToken, config));
         }
 
         return tokenList;
@@ -25,7 +25,7 @@ public class TokenPreparer {
     private static final String ACC_TRUE = "TRUE";
     private static final String ACC_FALSE = "FALSE";
 
-    public Token prepare(UnclassifiedToken unclassifiedToken, Config config) {
+    public Token prepare(UnpreparedToken unpreparedToken, Config config) {
         for (String[] script : config.tokenPreparationScripts.preparationScripts) {
             String correct = null;
             HashMap<String, String> tokenAttributes = new HashMap<>();
@@ -52,10 +52,10 @@ public class TokenPreparer {
 
                 switch (command) {
                     case loadTokenType:
-                        accumulator_value = unclassifiedToken.type;
+                        accumulator_value = unpreparedToken.type;
                         break;
                     case loadTokenValue:
-                        accumulator_value = unclassifiedToken.value;
+                        accumulator_value = unpreparedToken.value;
                         break;
                     case equals:
                         if (accumulator_value.equals(parseString(arg))) {
@@ -161,7 +161,7 @@ public class TokenPreparer {
              }
         }
 
-        Logging.error("Failed to prepare token - " + unclassifiedToken);
+        Logging.error("Failed to prepare token - " + unpreparedToken);
         return null;
     }
 

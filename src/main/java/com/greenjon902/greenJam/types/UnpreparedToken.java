@@ -1,18 +1,18 @@
 package com.greenjon902.greenJam.types;
 
-public class UnclassifiedToken {
+public class UnpreparedToken {
     public final String type;
     public final String value;
 
     @Override
     public String toString() {
-        return "UnclassifiedToken{" +
+        return "UnpreparedToken{" +
                 "type='" + type + '\'' +
                 ", value='" + value + '\'' +
                 '}';
     }
 
-    public UnclassifiedToken(String type, String value) {
+    public UnpreparedToken(String type, String value) {
         this.type = type;
         this.value = value;
     }

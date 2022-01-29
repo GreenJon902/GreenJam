@@ -3,7 +3,7 @@ package com.greenjon902.greenJam;
 
 import com.greenjon902.greenJam.config.Config;
 import com.greenjon902.greenJam.types.TokenList;
-import com.greenjon902.greenJam.types.UnclassifiedTokenList;
+import com.greenjon902.greenJam.types.UnpreparedTokenList;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -25,9 +25,9 @@ public class Idle {
             System.out.print(">>>  ");
             String jam = input.nextLine();
 
-            UnclassifiedTokenList unclassifiedTokenList = lexer.analyzeString(jam, config);
-            System.out.println(unclassifiedTokenList.toString());
-            TokenList tokenList = tokenPreparer.prepareList(unclassifiedTokenList, config);
+            UnpreparedTokenList unpreparedTokenList = lexer.analyzeString(jam, config);
+            System.out.println(unpreparedTokenList.toString());
+            TokenList tokenList = tokenPreparer.prepareList(unpreparedTokenList, config);
             System.out.println(tokenList);
         }
     }

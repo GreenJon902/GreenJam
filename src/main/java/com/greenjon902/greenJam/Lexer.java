@@ -4,14 +4,13 @@ import com.greenjon902.greenJam.config.Config;
 import com.greenjon902.greenJam.types.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class Lexer {
 
-    public UnclassifiedTokenList analyzeString(String jam, Config config) {
+    public UnpreparedTokenList analyzeString(String jam, Config config) {
         // Lex it ------------------------------------------------------------------------------------------------------
-        UnclassifiedTokenList unclassifiedTokenList = new UnclassifiedTokenList();
+        UnpreparedTokenList unpreparedTokenList = new UnpreparedTokenList();
 
         int currentLocation = 0;
         while (currentLocation < jam.length()) {
@@ -21,22 +20,22 @@ public class Lexer {
                 continue;
             }
 
-            UnclassifiedTokenAndOriginalLength unclassifiedTokenAndOriginalLength = getFirstToken(jam.substring(currentLocation), config);
+            UnpreparedTokenAndOriginalLength unpreparedTokenAndOriginalLength = getFirstToken(jam.substring(currentLocation), config);
 
-            if (unclassifiedTokenAndOriginalLength == null) {
+            if (unpreparedTokenAndOriginalLength == null) {
                 System.out.println(jam.substring(currentLocation));
                 Logging.error("Could not find token at location " + currentLocation);
             }
-            assert unclassifiedTokenAndOriginalLength != null;  // To stop pycharm complaining even tho Logging.error exits
+            assert unpreparedTokenAndOriginalLength != null;  // To stop pycharm complaining even tho Logging.error exits
 
-            UnclassifiedToken unclassifiedToken = unclassifiedTokenAndOriginalLength.unclassifiedToken;
-            int origonalLength = unclassifiedTokenAndOriginalLength.originalLength;
+            UnpreparedToken unpreparedToken = unpreparedTokenAndOriginalLength.unpreparedToken;
+            int origonalLength = unpreparedTokenAndOriginalLength.originalLength;
 
             currentLocation += origonalLength;
-            unclassifiedTokenList.append(unclassifiedToken);
+            unpreparedTokenList.append(unpreparedToken);
         }
 
-        return unclassifiedTokenList;
+        return unpreparedTokenList;
     }
 
     private int howMuchOfCurrentLocationIsIgnorable(String string, Config config) {
@@ -48,8 +47,8 @@ public class Lexer {
         return 0;
     }
 
-    private UnclassifiedTokenAndOriginalLength getFirstToken(String jam, Config config) {
-        HashMap<Integer, UnclassifiedToken> matches = new HashMap<>();
+    private UnpreparedTokenAndOriginalLength getFirstToken(String jam, Config config) {
+        HashMap<Integer, UnpreparedToken> matches = new HashMap<>();
 
         for (String firstLayerTemplateName : config.lexerTemplates.firstLayerTemplateNames) {
             String[] templates = config.lexerTemplates.templates.get(firstLayerTemplateName);
@@ -58,7 +57,7 @@ public class Lexer {
 
             if (templatedStringAndOriginalLength != null) {
                 matches.put(templatedStringAndOriginalLength.originalLength,
-                        new UnclassifiedToken(firstLayerTemplateName, templatedStringAndOriginalLength.templatedString));
+                        new UnpreparedToken(firstLayerTemplateName, templatedStringAndOriginalLength.templatedString));
             }
         }
 
@@ -73,7 +72,7 @@ public class Lexer {
                 elementLength = length;
             }
         }
-        return new UnclassifiedTokenAndOriginalLength(matches.get(elementLength), elementLength);
+        return new UnpreparedTokenAndOriginalLength(matches.get(elementLength), elementLength);
     }
 
     private static final char templateEscapeCharacter = '!';
@@ -203,19 +202,19 @@ class TemplatedStringAndOriginalLength {
     }
 }
 
-class UnclassifiedTokenAndOriginalLength {
-    public UnclassifiedToken unclassifiedToken;
+class UnpreparedTokenAndOriginalLength {
+    public UnpreparedToken unpreparedToken;
     public int originalLength;
 
-    public UnclassifiedTokenAndOriginalLength(UnclassifiedToken unclassifiedToken, int originalLength) {
-        this.unclassifiedToken = unclassifiedToken;
+    public UnpreparedTokenAndOriginalLength(UnpreparedToken unpreparedToken, int originalLength) {
+        this.unpreparedToken = unpreparedToken;
         this.originalLength = originalLength;
     }
 
     @Override
     public String toString() {
-        return "UnclassifiedTokenAndOriginalLength{" +
-                "unclassifiedToken='" + unclassifiedToken + '\'' +
+        return "UnpreparedTokenAndOriginalLength{" +
+                "unpreparedToken='" + unpreparedToken + '\'' +
                 ", originalLength=" + originalLength +
                 '}';
     }
