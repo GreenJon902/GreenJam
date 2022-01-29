@@ -86,6 +86,14 @@ package com.greenjon902.greenJam.config;
  *      <td>sav (string)</td>
  *      <td>Set the accumulator value to (string)</td>
  *  </tr>
+ *  <tr>
+ *      <td>skb (string)</td>
+ *      <td>Split the accumulator value at (string) and keep string before</td>
+ *  </tr>
+ *  <tr>
+ *      <td>ska (string)</td>
+ *      <td>Split the accumulator value at (string) and keep string after</td>
+ *  </tr>
  * </table>
  */
 public class TokenPreparationScripts {

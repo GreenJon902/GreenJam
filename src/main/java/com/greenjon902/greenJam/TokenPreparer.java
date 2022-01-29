@@ -195,7 +195,9 @@ enum Command {
     moveIfAccumulatorContainsTrue("mit"),
     moveIfAccumulatorContainsFalse("mif"),
     move("mov"),
-    setAccumulatorAs("sav");
+    setAccumulatorAs("sav"),
+    splitAndKeepBefore("skb"),
+    splitAndKeepAfter("ska");
 
     private final String code;
 
