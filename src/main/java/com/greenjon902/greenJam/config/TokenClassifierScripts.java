@@ -35,16 +35,16 @@ package com.greenjon902.greenJam.config;
  *       <td>Set the token type as (string) and exit when finishes the preparer</td>
  *   </tr>
  *   <tr>
- *       <td>sta (arg_number)</td>
- *       <td>Set the argument at (arg_number)'s value to the current value in the accumulator. If the arg number is higher then the amount of args that the function takes then it is ignored. This can also be used as memory</td>
+ *       <td>sta (attribute_name)</td>
+ *       <td>Set the argument at (attribute_name)'s value to the current value in the accumulator. If the arg number is higher then the amount of args that the function takes then it is ignored. This can also be used as memory</td>
  *   </tr>
  *   <tr>
- *       <td>lta (arg_number)</td>
- *       <td>Load the argument at (arg_number)'s value to the accumulator, crashes if not set</td>
+ *       <td>lta (attribute_name)</td>
+ *       <td>Load the argument at (attribute_name)'s value to the accumulator, crashes if not set</td>
  *   </tr>
  *   <tr>
  *       <td>err (error_message)</td>
- *       <td>Throw an error with the message inside of (error_message). This can include %acc to format in the accumulator value or %arg(arg_number) to format a token argument value from the location (arg_number) in</td>
+ *       <td>Throw an error with the message inside of (error_message). This can include %acc to format in the accumulator value or %atr(attribute_name) to format a token argument value from the location (arg_number) in</td>
  *  </tr>
  *  <tr>
  *      <td>sit</td>
@@ -95,14 +95,14 @@ public class TokenClassifierScripts {
             "sif",
             "stt \"integer\"",
             "ldv",
-            "sta 0"
+            "sta \"value\""
     }, {
             "ldt",
             "equ \"character\"",
             "sif",
             "stt \"character\"", // TODO: Add error if character length is over 1
             "ldv",
-            "sta 0"
+            "sta \"value\""
     }, {
             "ldt",
             "equ \"operator\"",
@@ -115,7 +115,7 @@ public class TokenClassifierScripts {
             "equ \"+\"",
             "mif 4",
             "sav \"addition\"",
-            "sta 0",
+            "sta \"type\"",
             "skp", // It was correct so exit
 
             // None

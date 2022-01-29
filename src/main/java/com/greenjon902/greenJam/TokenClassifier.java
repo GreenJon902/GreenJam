@@ -1,18 +1,13 @@
 package com.greenjon902.greenJam;
 
 import com.greenjon902.greenJam.config.Config;
-import com.greenjon902.greenJam.types.tokens.CharacterToken;
-import com.greenjon902.greenJam.types.tokens.IntegerToken;
-import com.greenjon902.greenJam.types.tokens.OperatorToken;
-import com.greenjon902.greenJam.types.tokens.Token;
+import com.greenjon902.greenJam.types.Token;
 import com.greenjon902.greenJam.types.TokenList;
 import com.greenjon902.greenJam.types.UnclassifiedToken;
 import com.greenjon902.greenJam.types.UnclassifiedTokenList;
 
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Scanner;
-import java.util.TreeMap;
 
 public class TokenClassifier {
     public TokenList classifyList(UnclassifiedTokenList unclassifiedTokenList, Config config) {
@@ -33,7 +28,7 @@ public class TokenClassifier {
     public Token classify(UnclassifiedToken unclassifiedToken, Config config) {
         for (String[] script : config.tokenClassifierScripts.classifyScripts) {
             String correct = null;
-            HashMap<Integer, String> tokenArgs = new HashMap<>();
+            HashMap<String, String> tokenAttributes = new HashMap<>();
 
             String accumulator_value = "";
 
@@ -81,11 +76,11 @@ public class TokenClassifier {
                     case setTokenType:
                         correct = parseString(arg);
                         break;
-                    case setTokenArgument:
-                        tokenArgs.put(parseInt(arg), accumulator_value);
+                    case setTokenAttribute:
+                        tokenAttributes.put(parseString(arg), accumulator_value);
                         break;
-                    case loadTokenArgument:
-                        accumulator_value = tokenArgs.get(parseInt(arg));
+                    case loadTokenAttribute:
+                        accumulator_value = tokenAttributes.get(parseString(arg));
                         break;
                     case error:
                         String out = parseString(arg);
@@ -97,11 +92,10 @@ public class TokenClassifier {
                             if (out.charAt(location) == '%') {
                                 location += 4; // Skip the %arg
 
-                                int arg_number = parseInt(String.valueOf(location));
-                                String string_arg_number = String.valueOf(arg_number);
-                                location += string_arg_number.length();
+                                String attributeName = parseString(String.valueOf(location));
+                                location += attributeName.length() + 2; // + 2 for the two speech marks
 
-                                out_new = out_new.replace("%arg" + string_arg_number, tokenArgs.get(arg_number));
+                                out_new = out_new.replace("%atr" + attributeName, tokenAttributes.get(attributeName));
 
                             } else {
                                 location++;
@@ -160,24 +154,10 @@ public class TokenClassifier {
                 }
                 current_instruction_index++;
             }
-             if (correct != null) {
 
-                 Token token = null;
-                 switch (correct) {
-                     case "integer":
-                         token = new IntegerToken(Integer.parseInt(tokenArgs.get(0)));
-                         break;
-                     case "character":
-                         token = new CharacterToken(tokenArgs.get(0).charAt(0));
-                         break;
-                     case "operator":
-                         token = new OperatorToken(tokenArgs.get(0));
-                         break;
-                     default:
-                         Logging.error("Unknown token type \"" + correct + "\"");
-                 }
-
-                 return token; // TODO: Token Creation
+            if (correct != null) {
+                Token token = new Token(correct, tokenAttributes);
+                return token; // TODO: Token Creation
              }
         }
 
@@ -204,8 +184,8 @@ enum Command {
     equals("equ"),
     flip("flp"),
     setTokenType("stt"),
-    setTokenArgument("sta"),
-    loadTokenArgument("lta"),
+    setTokenAttribute("sta"),
+    loadTokenAttribute("lta"),
     error("err"),
     skipIfAccumulatorContainsTrue("sit"),
     skipIfAccumulatorContainsFalse("sif"),
