@@ -6,8 +6,10 @@ import com.greenjon902.greenJam.types.TokenList;
 import com.greenjon902.greenJam.types.UnpreparedToken;
 import com.greenjon902.greenJam.types.UnpreparedTokenList;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class TokenPreparer {
     public TokenList prepareList(UnpreparedTokenList unpreparedTokenList, Config config) {
@@ -144,6 +146,12 @@ public class TokenPreparer {
                         break;
                     case setAccumulatorAs:
                         accumulator_value = parseString(arg);
+                        break;
+                    case splitAndKeepBefore:
+                        accumulator_value = accumulator_value.split(Pattern.quote(parseString(arg)), 2)[0];
+                        break;
+                    case splitAndKeepAfter:
+                        accumulator_value = accumulator_value.split(Pattern.quote(parseString(arg)), 2)[1];
                         break;
                     default:
                         Logging.error("Unknown command \"" + command + "\"");
