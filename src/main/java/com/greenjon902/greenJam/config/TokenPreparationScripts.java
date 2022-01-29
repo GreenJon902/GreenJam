@@ -106,6 +106,17 @@ public class TokenPreparationScripts {
             "sta \"value\""
     }, {
             "ldt",
+            "equ \"fraction\"",
+            "sif",
+            "stt \"fraction\"",
+            "ldv",
+            "skb \" \"",
+            "sta \"numerator\"",
+            "ldv",
+            "ska \" \"",
+            "sta \"denominator\""
+    }, {
+            "ldt",
             "equ \"character\"",
             "sif",
             "stt \"character\"", // TODO: Add error if character length is over 1
