@@ -35,27 +35,30 @@ public class Tokenizer {
     private Token getNextToken() {
         skipWhitespace();
 
-        Token token;
-        token = attemptGetCommand();
-        if (token != null) {
-            return token;
+        TokenType tokenType;
+        Object token_info;
+
+        if ((token_info = attemptGetCommand()) != null) {
+            tokenType = TokenType.COMMAND;
+        } else if ((token_info = attemptGetStringLiteral()) != null) {
+            tokenType = TokenType.STRING_LITERAL;
+        } else if ((token_info = attemptGetLineEnd()) != null) {
+            tokenType = TokenType.LINE_END;
+            token_info = null; // We don't need to keep the line end character
+
+        } else {
+            throw new RuntimeException("Failed to recognise next token at location - " + location);
         }
 
-        token = attemptGetStringLiteral();
-        if (token != null) {
-            return token;
-        }
-
-        token = attemptGetLineEnd();
-        if (token != null) {
-            return token;
-        }
-
-        throw new RuntimeException("Failed to recognise next token at location - " + location);
+        return new Token(tokenType, token_info);
     }
 
 
-    private Token attemptGetCommand() {
+    /**
+     * Checks of the next token is a command. If the next value is not a command then null is returned.
+     * @return The command name or null.
+     */
+    private String attemptGetCommand() {
         int offset = 0;
 
         if (matchToString(command_delclarer, offset)) {
@@ -70,13 +73,17 @@ public class Tokenizer {
             }
 
             location += offset;
-            return Token.COMMAND(command_name.toString());
+            return command_name.toString();
         }
 
         return null;
     }
 
-    private Token attemptGetStringLiteral() {
+    /**
+     * Checks of the next token is a string literal. If the next value is not a string literal then null is returned.
+     * @return The string literal or null.
+     */
+    private String  attemptGetStringLiteral() {
         int offset = 0;
 
         if (matchToString(string_opener, offset)) {
@@ -90,20 +97,24 @@ public class Tokenizer {
             offset += string_closer.length(); // It was the end condition for loop but wasn't added.
 
             location += offset;
-            return Token.STRING_LITERAL(string_contents.toString());
+            return string_contents.toString();
         }
 
         return null;
     }
 
-    private Token attemptGetLineEnd() {
+    /**
+     * Checks of the next token is a line end. If the next value is not a line end then null is returned.
+     * @return The line end character or null.
+     */
+    private String attemptGetLineEnd() {
         int offset = 0;
 
         if (matchToString(line_ender, offset)) {
             offset += line_ender.length();
 
             location += offset;
-            return Token.LINE_END();
+            return line_ender;
         }
 
         return null;

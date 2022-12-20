@@ -1,3 +1,4 @@
+import com.greenjon902.greenJam.parser.AbstractSyntaxTree;
 import com.greenjon902.greenJam.parser.Parser;
 import com.greenjon902.greenJam.tokenizer.Token;
 import com.greenjon902.greenJam.tokenizer.Tokenizer;
@@ -25,7 +26,12 @@ public class CompileTests {
     }
 
     @Test
-    public void testTokenizeCommands() throws IOException {
+    public void testCompileCommands() throws IOException {
         compileFileWhilePrintingSteps("tests/commands.jam");
+    }
+
+    @Test
+    public void testCompileVariableAssignmentAndMath() throws IOException {
+        compileFileWhilePrintingSteps("tests/variableAssignmentAndMath.jam");
     }
 }
