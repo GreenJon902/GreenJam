@@ -1,13 +1,49 @@
 package com.greenjon902.greenJam.tokenizer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Tokenizer {
     public static String command_delclarer = "::";
     public static String string_opener = "\"";
     public static String string_closer = "\"";
     public static String line_ender = ";";
-    public static ArrayList<Character> whitespace_characters = new ArrayList<>() {{
+    public static char positive_sign = '+';
+    public static char negative_sign = '-';
+    public static char decimal_point_character = '.';
+    public static HashSet<Character> identifier_characters = new HashSet<>() {{
+        //<editor-fold desc="Identifier Characters" defaultstate="collapsed">
+        add('a'); add('A');
+        add('b'); add('B');
+        add('c'); add('C');
+        add('d'); add('D');
+        add('e'); add('E');
+        add('f'); add('F');
+        add('g'); add('G');
+        add('h'); add('H');
+        add('i'); add('I');
+        add('j'); add('J');
+        add('k'); add('K');
+        add('l'); add('L');
+        add('m'); add('M');
+        add('n'); add('N');
+        add('o'); add('O');
+        add('p'); add('P');
+        add('q'); add('Q');
+        add('r'); add('R');
+        add('s'); add('S');
+        add('t'); add('T');
+        add('u'); add('U');
+        add('v'); add('V');
+        add('w'); add('W');
+        add('x'); add('X');
+        add('y'); add('Y');
+        add('z'); add('Z');
+        add('0'); add('1'); add('2'); add('3'); add('4'); add('5'); add('6'); add('7'); add('8'); add('9');
+        add('_');
+        //</editor-fold>
+    }};
+    public static HashSet<Character> whitespace_characters = new HashSet<>() {{
         add(' ');
         add('\t');
         add('\n');
@@ -42,9 +78,16 @@ public class Tokenizer {
             tokenType = TokenType.COMMAND;
         } else if ((token_info = attemptGetStringLiteral()) != null) {
             tokenType = TokenType.STRING_LITERAL;
-        } else if ((token_info = attemptGetLineEnd()) != null) {
+        } else if ((token_info = attemptGetOperator()) != null) {
+            tokenType = TokenType.OPERATOR;
+        } else if ((token_info = attemptGetBracket()) != null) {
+            tokenType = TokenType.BRACKET;
+        } else if ((token_info = attemptGetIdentifier()) != null) {
+            tokenType = TokenType.IDENTIFIER;
+        } else if ((token_info = attemptGetNumericLiteral()) != null) {
+            tokenType = TokenType.NUMERIC_LITERAL;
+        } else if (attemptGetLineEnd() != null) { // We don't need to keep the line end character
             tokenType = TokenType.LINE_END;
-            token_info = null; // We don't need to keep the line end character
 
         } else {
             throw new RuntimeException("Failed to recognise next token at location - " + location);
@@ -53,6 +96,103 @@ public class Tokenizer {
         return new Token(tokenType, token_info);
     }
 
+
+    /**
+     * Checks of the next token is an operator. If the next value is not an operator then null is returned.
+     * @return The operator or null.
+     */
+    private OperatorType attemptGetOperator() {
+        for (OperatorType operatorType : OperatorType.values()) {
+             if (string.regionMatches(location, operatorType.symbol, 0, operatorType.symbol.length())) {
+                 location += operatorType.symbol.length();
+                 return operatorType;
+             }
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Checks of the next token is an operator. If the next value is not an operator then null is returned.
+     * @return The operator or null.
+     */
+    private BracketType attemptGetBracket() {
+        for (BracketType bracketType : BracketType.values()) {
+            if (string.regionMatches(location, bracketType.symbol, 0, bracketType.symbol.length())) {
+                location += bracketType.symbol.length();
+                return bracketType;
+            }
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Checks of the next token is a numeric literal . If the next value is not a numeric literal then null is returned.
+     * @return The numeric literal as string or null.
+     */
+    private String attemptGetNumericLiteral() {
+        int offset = 0;
+
+        StringBuilder number = new StringBuilder();
+
+        if (string.charAt(location) == positive_sign) {
+            number.append(positive_sign);
+            offset += 1;
+        } else if (string.charAt(location) == negative_sign) {
+            number.append(negative_sign);
+            offset += 1;
+        }
+
+        boolean had_decimal_point = false;
+        while (true) {
+            char character = string.charAt(location + offset);
+            if (Character.isDigit(character)) {
+                number.append(character);
+
+            } else if (!had_decimal_point && character == decimal_point_character) {
+                had_decimal_point = true;
+                number.append(character);
+
+            } else {
+                break;
+            }
+
+            offset += 1;
+        }
+
+        String fullNumber = number.toString();
+        if (fullNumber.isBlank() ||  // Empty or only character is . or +-
+                (fullNumber.length() == 1 && !Character.isDigit(fullNumber.charAt(0)))) {
+            return null;
+        }
+
+        location += offset;
+        return fullNumber;
+    }
+
+    /**
+     * Checks of the next token is an identifier. If the next value is not an identifier then null is returned.
+     * @return The identifier or null.
+     */
+    private String attemptGetIdentifier() {
+        int offset = 0;
+
+        StringBuilder identifier = new StringBuilder();
+        while (identifier_characters.contains(string.charAt(location + offset))) {
+            offset += 1;
+            identifier.append(string.charAt(location + offset));
+        }
+
+        if (offset > 0) {
+            location += offset;
+            return identifier.toString();
+        }
+
+        return null;
+    }
 
     /**
      * Checks of the next token is a command. If the next value is not a command then null is returned.
