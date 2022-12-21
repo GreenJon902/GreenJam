@@ -49,22 +49,24 @@ public class Parser {
         while (true) {
             // Handles new current (and brackets)
             if (current == null) { // Current
-                if (tokens[location + offset + 2].isBracket(BracketType.ROUND_OPEN)) { // This does the brackets
-                    location += offset + 3;
-                    System.out.println("start bracklets: ");
-                    System.out.println(current);
-                    System.out.println(tokens[location]);
+                if (tokens[location + offset].isBracket(BracketType.ROUND_OPEN)) { // This does the brackets
+                    location += offset + 1;
 
                     current = parseExpression();
                     offset = 1;  // It's the close bracket
-                    System.out.println("end bracklets: ");
-                    System.out.println(current);
-                    System.out.println(tokens[location + offset]);
 
                 } else {
-                    System.out.println("new current of: ");
-                    System.out.println(tokens[location + offset]);
-                    current = new Identifier((String) tokens[location + offset].primaryStorage);
+                    if (tokens[location + offset].type == TokenType.LITERAL) {
+                        current = new Literal((String) tokens[location + offset].primaryStorage);
+
+                    } else if (tokens[location + offset].type == TokenType.IDENTIFIER) {
+                        current = new Identifier((String) tokens[location + offset].primaryStorage);
+
+                    } else {
+                        throw new RuntimeException();
+                    }
+                    offset += 1;
+
                 }
 
 
@@ -77,39 +79,50 @@ public class Parser {
 
             } else {  // TODO: Function Calls
                 simplified.add(current);
-                offset += 1;
+
                 Token next = tokens[location + offset];
                 if (next.type != TokenType.OPERATOR) {
-                    System.out.println(next);
                     break;
                 }
-                simplified.add(next);
+                simplified.add(next.primaryStorage); // Keep the operator as a token as we can use OperatorType#combinedAt(int)
                 offset += 1;
 
                 current = null;
             }
         }
         System.out.println(simplified);
-        return new Test(simplified);
+
+
+        // It is now a simple maths, so we can apply all other operators while looping through the list
+        for (int precedence_level = 0; precedence_level <= OperatorType.highest_precedence; precedence_level++) {
+            offset = 1;
+            while (offset < simplified.size()) {
+
+                OperatorType currentOperatorType = (OperatorType) simplified.get(offset);
+                if (currentOperatorType.combinedAt(precedence_level)) {
+                    AbstractSyntaxTreeNode a = (AbstractSyntaxTreeNode) simplified.get(offset - 1); // This is at location that
+                                                                                                    // is turning into combined
+                    AbstractSyntaxTreeNode b = (AbstractSyntaxTreeNode) simplified.remove(offset + 1);
+                    simplified.remove(offset); // We already have the operator
+
+                    AbstractSyntaxTreeNode combined = new Operation(currentOperatorType, a, b);
+                    simplified.set(offset - 1, combined);
+
+                    // Offset is not in the position of the next operator, so it does not need to move
+
+                } else {
+                    offset += 2; // Move offset to next operator
+                }
+            }
+        }
+
+        System.out.println(simplified);
+        System.out.println();
+        assert simplified.size() == 1; // Everything should have been combined to one after second stage
+        return (AbstractSyntaxTreeNode) simplified.get(0);
     }
 
     private void error() {
 
-    }
-}
-
-class Test extends AbstractSyntaxTreeNode {
-    ArrayList<Object> test;
-
-
-    public Test(ArrayList<Object> simplified) {
-        this.test = simplified;
-    }
-
-    @Override
-    public String toString() {
-        return "Test{" +
-                "test=" + test +
-                '}';
     }
 }

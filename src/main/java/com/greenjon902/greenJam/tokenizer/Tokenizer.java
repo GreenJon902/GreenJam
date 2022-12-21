@@ -77,13 +77,13 @@ public class Tokenizer {
         if ((token_info = attemptGetCommand()) != null) {
             tokenType = TokenType.COMMAND;
         } else if ((token_info = attemptGetStringLiteral()) != null) {
-            tokenType = TokenType.STRING_LITERAL;
+            tokenType = TokenType.LITERAL;
+        } else if ((token_info = attemptGetNumericLiteral()) != null) {
+            tokenType = TokenType.LITERAL;
         } else if ((token_info = attemptGetOperator()) != null) {
             tokenType = TokenType.OPERATOR;
         } else if ((token_info = attemptGetBracket()) != null) {
             tokenType = TokenType.BRACKET;
-        } else if ((token_info = attemptGetNumericLiteral()) != null) {
-                tokenType = TokenType.NUMERIC_LITERAL;
         } else if ((token_info = attemptGetIdentifier()) != null) {
             tokenType = TokenType.IDENTIFIER;
         } else if (attemptGetLineEnd() != null) { // We don't need to keep the line end character
@@ -173,6 +173,31 @@ public class Tokenizer {
         return fullNumber;
     }
 
+
+    /**
+     * Checks of the next token is a string literal. If the next value is not a string literal then null is returned.
+     * @return The string literal or null.
+     */
+    private String  attemptGetStringLiteral() {
+        int offset = 0;
+
+        if (matchToString(string_opener, offset)) {
+            offset += string_opener.length();
+
+            StringBuilder string_contents = new StringBuilder();
+            while (!matchToString(string_closer, offset)) { // get characters until string closer
+                string_contents.append(string.charAt(location + offset));
+                offset += 1;
+            }
+            offset += string_closer.length(); // It was the end condition for loop but wasn't added.
+
+            location += offset;
+            return string_contents.toString();
+        }
+
+        return null;
+    }
+
     /**
      * Checks of the next token is an identifier. If the next value is not an identifier then null is returned.
      * @return The identifier or null.
@@ -214,30 +239,6 @@ public class Tokenizer {
 
             location += offset;
             return command_name.toString();
-        }
-
-        return null;
-    }
-
-    /**
-     * Checks of the next token is a string literal. If the next value is not a string literal then null is returned.
-     * @return The string literal or null.
-     */
-    private String  attemptGetStringLiteral() {
-        int offset = 0;
-
-        if (matchToString(string_opener, offset)) {
-            offset += string_opener.length();
-
-            StringBuilder string_contents = new StringBuilder();
-            while (!matchToString(string_closer, offset)) { // get characters until string closer
-                string_contents.append(string.charAt(location + offset));
-                offset += 1;
-            }
-            offset += string_closer.length(); // It was the end condition for loop but wasn't added.
-
-            location += offset;
-            return string_contents.toString();
         }
 
         return null;
