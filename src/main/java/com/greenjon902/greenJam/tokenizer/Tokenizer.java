@@ -223,7 +223,7 @@ public class Tokenizer {
      * Checks of the next token is a command. If the next value is not a command then null is returned.
      * @return The command name or null.
      */
-    private String attemptGetCommand() {
+    private CommandType attemptGetCommand() {
         int offset = 0;
 
         if (matchToString(command_delclarer, offset)) {
@@ -236,9 +236,16 @@ public class Tokenizer {
                 command_name.append(string.charAt(location + offset));
                 offset += 1;
             }
-
             location += offset;
-            return command_name.toString();
+
+            String command_name_ = command_name.toString();
+
+            for (CommandType command : CommandType.values()) {
+                if (command_name_.equals(command.name)) {
+                    location += command.name.length();
+                    return command;
+                }
+            }
         }
 
         return null;

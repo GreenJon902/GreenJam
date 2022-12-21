@@ -1,9 +1,8 @@
 package com.greenjon902.greenJam.parser;
 
-import com.greenjon902.greenJam.tokenizer.BracketType;
-import com.greenjon902.greenJam.tokenizer.OperatorType;
-import com.greenjon902.greenJam.tokenizer.Token;
-import com.greenjon902.greenJam.tokenizer.TokenType;
+import com.greenjon902.greenJam.parser.commands.CommandAdd;
+import com.greenjon902.greenJam.parser.commands.CommandWriteToStream;
+import com.greenjon902.greenJam.tokenizer.*;
 
 import java.util.ArrayList;
 
@@ -63,6 +62,10 @@ public class Parser {
                     } else if (tokens[location + offset].type == TokenType.IDENTIFIER) {
                         current = new Identifier((String) tokens[location + offset].primaryStorage);
 
+                    } else if (tokens[location + offset].type == TokenType.COMMAND) {
+                        location += offset;
+                        current = parseCommand();
+
                     } else {
                         throw new RuntimeException();
                     }
@@ -121,6 +124,31 @@ public class Parser {
 
         assert simplified.size() == 1; // Everything should have been combined to one after second stage
         return (AbstractSyntaxTreeNode) simplified.get(0);
+    }
+
+    private AbstractSyntaxTreeNode parseCommand() {
+        CommandType commandType = (CommandType) tokens[location].primaryStorage;
+        location += 1;
+
+        return switch (commandType) {
+            case ADD -> {
+                AbstractSyntaxTreeNode input_1 = parseExpression();
+                AbstractSyntaxTreeNode input_2 = parseExpression();
+                if (tokens[location].type == TokenType.IDENTIFIER) { // We have an output
+                    Identifier output = new Identifier((String) tokens[location].primaryStorage); // We are storing something in a certain
+                    // location so has to be an identifier
+                    yield new CommandAdd(input_1, input_2, output);
+                } else {
+                    yield new CommandAdd(input_1, input_2);
+                }
+            }
+            case WRITE_TO_STREAM -> {
+                AbstractSyntaxTreeNode stream = parseExpression();
+                AbstractSyntaxTreeNode data = parseExpression();
+
+                yield new CommandWriteToStream(stream, data);
+            }
+        };
     }
 
     private void error() {

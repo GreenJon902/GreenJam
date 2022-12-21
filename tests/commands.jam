@@ -1,2 +1,2 @@
-:: WRITE_STD_OUT "Testing";
-:: WRITE_STD_ERR "Oof";
+:: WRITE STD_OUT "Testing";
+:: WRITE ERR_OUT "Oof";
