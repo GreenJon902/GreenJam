@@ -47,6 +47,7 @@ public class Parser {
         current = null;
 
         while (true) {
+
             // Handles new current (and brackets)
             if (current == null) { // Current
                 if (tokens[location + offset].isBracket(BracketType.ROUND_OPEN)) { // This does the brackets
@@ -71,7 +72,9 @@ public class Parser {
 
 
             // Attribute getting
-            } else if (tokens[location + offset + 1].isOperator(OperatorType.GET_ATTRIBUTE)) { // Next operator is get attr
+            } else if (location + offset >= tokens.length &&  // If there is no more tokens than cant be new attr.
+                                                              // This is here to stop ArrayIndexOutOfBoundsException!
+                    tokens[location + offset + 1].isOperator(OperatorType.GET_ATTRIBUTE)) { // Next operator is get attr
                 current = new Operation(OperatorType.GET_ATTRIBUTE, current,
                         new Identifier((String) tokens[location + offset + 2].primaryStorage));
                 offset += 2;
@@ -90,7 +93,7 @@ public class Parser {
                 current = null;
             }
         }
-        System.out.println(simplified);
+        location += offset;
 
 
         // It is now a simple maths, so we can apply all other operators while looping through the list
@@ -116,8 +119,6 @@ public class Parser {
             }
         }
 
-        System.out.println(simplified);
-        System.out.println();
         assert simplified.size() == 1; // Everything should have been combined to one after second stage
         return (AbstractSyntaxTreeNode) simplified.get(0);
     }

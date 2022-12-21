@@ -12,4 +12,14 @@ public class Literal extends AbstractSyntaxTreeNode {
                 "value='" + value + '\'' +
                 '}';
     }
+
+    @Override
+    public void prettyPrint(StringBuilder stringBuilder, int indent) {
+        String stringIndent = "\t".repeat(indent);
+
+        stringBuilder.append(stringIndent);
+        stringBuilder.append("Literal{\"");
+        stringBuilder.append(value);
+        stringBuilder.append("\"}\n");
+    }
 }

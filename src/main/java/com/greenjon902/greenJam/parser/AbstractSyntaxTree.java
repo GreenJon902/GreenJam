@@ -10,6 +10,18 @@ public class AbstractSyntaxTree {
                 '}';
     }
 
+    public void prettyPrint() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("AbstractSyntaxTree{\n");
+
+        int indent = 1;
+        rootNode.prettyPrint(stringBuilder, indent);
+
+        stringBuilder.append("}");
+        System.out.println(stringBuilder);
+    }
+
+
     public final AbstractSyntaxTreeNode rootNode;
 
     public AbstractSyntaxTree(AbstractSyntaxTreeNode rootNode) {

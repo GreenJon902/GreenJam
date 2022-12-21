@@ -22,7 +22,7 @@ public class CompileTests {
 
         Parser parser = new Parser(tokens);
         AbstractSyntaxTree ast = parser.getParsed();
-        System.out.println(ast);
+        ast.prettyPrint();
     }
 
     @Test

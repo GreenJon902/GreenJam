@@ -1,4 +1,5 @@
 package com.greenjon902.greenJam.parser;
 
-public class AbstractSyntaxTreeNode {
+public abstract class AbstractSyntaxTreeNode {
+    public abstract void prettyPrint(StringBuilder stringBuilder, int indent);
 }
