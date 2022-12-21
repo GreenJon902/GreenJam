@@ -82,10 +82,10 @@ public class Tokenizer {
             tokenType = TokenType.OPERATOR;
         } else if ((token_info = attemptGetBracket()) != null) {
             tokenType = TokenType.BRACKET;
+        } else if ((token_info = attemptGetNumericLiteral()) != null) {
+                tokenType = TokenType.NUMERIC_LITERAL;
         } else if ((token_info = attemptGetIdentifier()) != null) {
             tokenType = TokenType.IDENTIFIER;
-        } else if ((token_info = attemptGetNumericLiteral()) != null) {
-            tokenType = TokenType.NUMERIC_LITERAL;
         } else if (attemptGetLineEnd() != null) { // We don't need to keep the line end character
             tokenType = TokenType.LINE_END;
 
@@ -152,7 +152,7 @@ public class Tokenizer {
             if (Character.isDigit(character)) {
                 number.append(character);
 
-            } else if (!had_decimal_point && character == decimal_point_character) {
+            } else if ((!had_decimal_point) && (character == decimal_point_character)) {
                 had_decimal_point = true;
                 number.append(character);
 
@@ -182,8 +182,8 @@ public class Tokenizer {
 
         StringBuilder identifier = new StringBuilder();
         while (identifier_characters.contains(string.charAt(location + offset))) {
-            offset += 1;
             identifier.append(string.charAt(location + offset));
+            offset += 1;
         }
 
         if (offset > 0) {

@@ -20,9 +20,9 @@ public class CompileTests {
         Token[] tokens = tokenizer.getTokens();
         System.out.println(Arrays.toString(tokens));
 
-        Parser parser = new Parser(tokens);
-        AbstractSyntaxTree ast = parser.getParsed();
-        System.out.println(ast);
+        //Parser parser = new Parser(tokens);
+        //AbstractSyntaxTree ast = parser.getParsed();
+        //System.out.println(ast);
     }
 
     @Test
