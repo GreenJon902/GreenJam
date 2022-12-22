@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public enum OperatorType {
-    SET_VARIABLE("="), ADD("+", 2), SUBTRACT("-", 3), MULTIPLY("*", 1), DIVIDE("/", 0),
-    GET_ATTRIBUTE(">");
+    SET_VARIABLE("="), ADD("+", 3), SUBTRACT("-", 4), MULTIPLY("*", 2), DIVIDE("/", 1),
+    GET_ATTRIBUTE(">", 0);
 
     public static final HashSet<String> symbols = new HashSet<>();
     static {
@@ -27,7 +27,7 @@ public enum OperatorType {
 
     public final String symbol;
     /**
-     * 0 is highest
+     * 0 means process first.
      */
     public final int precedence;
 

@@ -39,7 +39,7 @@ public class Parser {
     private AbstractSyntaxTreeNode parseExpression() {
         int offset = 0;
 
-        // Convert to simple arithmetic by removing brackets, attribute getting and function calls
+        // Convert to simple arithmetic by removing brackets and function calls -------------------
         ArrayList<Object> simplified = new ArrayList<>();
 
         AbstractSyntaxTreeNode current;
@@ -48,14 +48,14 @@ public class Parser {
         while (true) {
 
             // Handles new current (and brackets)
-            if (current == null) { // Current
+            if (current == null) {
                 if (tokens[location + offset].isBracket(BracketType.ROUND_OPEN)) { // This does the brackets
                     location += offset + 1;
 
                     current = parseExpression();
                     offset = 1;  // It's the close bracket
 
-                } else {
+                } else { // This does the new current
                     if (tokens[location + offset].type == TokenType.LITERAL) {
                         current = new Literal((String) tokens[location + offset].primaryStorage);
 
@@ -70,20 +70,9 @@ public class Parser {
                         throw new RuntimeException();
                     }
                     offset += 1;
-
                 }
 
-
-            // Attribute getting
-            } else if (location + offset >= tokens.length &&  // If there is no more tokens than cant be new attr.
-                                                              // This is here to stop ArrayIndexOutOfBoundsException!
-                    tokens[location + offset + 1].isOperator(OperatorType.GET_ATTRIBUTE)) { // Next operator is get attr
-                current = new Operation(OperatorType.GET_ATTRIBUTE, current,
-                        new Identifier((String) tokens[location + offset + 2].primaryStorage));
-                offset += 2;
-
-
-            } else {  // TODO: Function Calls
+            } else { // TODO: Function calls
                 simplified.add(current);
 
                 Token next = tokens[location + offset];
@@ -99,7 +88,7 @@ public class Parser {
         location += offset;
 
 
-        // It is now a simple maths, so we can apply all other operators while looping through the list
+        // It is now a simple maths, so we can apply all other operators while looping through the list ----------------
         for (int precedence_level = 0; precedence_level <= OperatorType.highest_precedence; precedence_level++) {
             offset = 1;
             while (offset < simplified.size()) {
@@ -121,7 +110,6 @@ public class Parser {
                 }
             }
         }
-
         assert simplified.size() == 1; // Everything should have been combined to one after second stage
         return (AbstractSyntaxTreeNode) simplified.get(0);
     }
