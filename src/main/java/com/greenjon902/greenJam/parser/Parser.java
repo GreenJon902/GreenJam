@@ -136,7 +136,7 @@ public class Parser {
                 AbstractSyntaxTreeNode input_2 = parseExpression();
                 if (tokens[location].type == TokenType.IDENTIFIER) { // We have an output
                     Identifier output = new Identifier((String) tokens[location].primaryStorage); // We are storing something in a certain
-                    // location so has to be an identifier
+                                                                                                  // location so has to be an identifier
                     yield new CommandAdd(input_1, input_2, output);
                 } else {
                     yield new CommandAdd(input_1, input_2);
