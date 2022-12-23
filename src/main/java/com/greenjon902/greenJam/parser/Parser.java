@@ -20,7 +20,13 @@ public class Parser {
     }
 
     private AbstractSyntaxTreeNode parseCodeBlock() {
-        return parseStatement();
+        ArrayList<AbstractSyntaxTreeNode> codeBlock = new ArrayList<>();
+
+        while (location < tokens.length) {
+            codeBlock.add(parseStatement());
+        }
+
+        return new CodeBlock(codeBlock);
     }
 
     private AbstractSyntaxTreeNode parseStatement() {
@@ -75,6 +81,7 @@ public class Parser {
             } else { // TODO: Function calls
                 simplified.add(current);
 
+                if (!(location + offset < tokens.length)) break;
                 Token next = tokens[location + offset];
                 if (next.type != TokenType.OPERATOR) {
                     break;
