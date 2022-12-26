@@ -56,4 +56,13 @@ public class CommandAdd extends Command {
         stringBuilder.append(stringIndent);
         stringBuilder.append("}\n");
     }
+
+    @Override
+    public String toString() {
+        return "CommandAdd{" +
+                "input_1=" + input_1 +
+                ", input_2=" + input_2 +
+                ", output=" + output +
+                '}';
+    }
 }

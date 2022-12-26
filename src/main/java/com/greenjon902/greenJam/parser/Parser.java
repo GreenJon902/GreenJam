@@ -23,6 +23,7 @@ public class Parser {
         ArrayList<AbstractSyntaxTreeNode> codeBlock = new ArrayList<>();
 
         while (location < tokens.length) {
+            System.out.println(codeBlock);
             codeBlock.add(parseStatement());
             location += 1; // Line end
         }

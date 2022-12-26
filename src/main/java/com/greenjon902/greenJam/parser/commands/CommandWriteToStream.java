@@ -8,6 +8,14 @@ public class CommandWriteToStream extends Command {
     private final AbstractSyntaxTreeNode stream;
     private final AbstractSyntaxTreeNode data;
 
+    @Override
+    public String toString() {
+        return "CommandWriteToStream{" +
+                "stream=" + stream +
+                ", data=" + data +
+                '}';
+    }
+
     public CommandWriteToStream(AbstractSyntaxTreeNode stream, AbstractSyntaxTreeNode data) {
         this.stream = stream;
         this.data = data;
