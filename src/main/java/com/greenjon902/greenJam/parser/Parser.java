@@ -24,6 +24,7 @@ public class Parser {
 
         while (location < tokens.length) {
             codeBlock.add(parseStatement());
+            location += 1; // Line end
         }
 
         return new CodeBlock(codeBlock);
