@@ -21,7 +21,6 @@ public class Parser {
         ArrayList<AbstractSyntaxTreeNode> codeBlock = new ArrayList<>();
 
         while (tokens.hasNext()) {
-            System.out.println(codeBlock);
             codeBlock.add(parseStatement());
             tokens.consume(TokenType.LINE_END);
         }

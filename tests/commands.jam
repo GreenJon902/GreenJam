@@ -1,2 +1,0 @@
-(:: WRITE STD_OUT "Testing")>test2;
-:: WRITE ERR_OUT "Oof";
