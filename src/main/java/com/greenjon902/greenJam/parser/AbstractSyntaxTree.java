@@ -10,7 +10,7 @@ public class AbstractSyntaxTree {
                 '}';
     }
 
-    public void prettyPrint() {
+    public String prettyPrint() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("AbstractSyntaxTree{\n");
 
@@ -18,7 +18,7 @@ public class AbstractSyntaxTree {
         rootNode.prettyPrint(stringBuilder, indent);
 
         stringBuilder.append("}");
-        System.out.println(stringBuilder);
+        return stringBuilder.toString();
     }
 
 
