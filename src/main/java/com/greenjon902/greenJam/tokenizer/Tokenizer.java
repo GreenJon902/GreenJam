@@ -215,7 +215,6 @@ public class Tokenizer {
             location += offset;
             return identifier.toString();
         }
-
         return null;
     }
 
@@ -242,7 +241,6 @@ public class Tokenizer {
 
             for (CommandType command : CommandType.values()) {
                 if (command_name_.equals(command.name)) {
-                    location += command.name.length();
                     return command;
                 }
             }
