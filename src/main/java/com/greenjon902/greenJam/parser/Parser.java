@@ -7,11 +7,9 @@ import com.greenjon902.greenJam.tokenizer.*;
 import java.util.ArrayList;
 
 public class Parser {
-    private int location;
-    private Token[] tokens;
+    private TokenStream tokens;
 
-    public Parser(Token[] tokens) {
-        this.location = 0;
+    public Parser(TokenStream tokens) {
         this.tokens = tokens;
     }
 
@@ -22,19 +20,19 @@ public class Parser {
     private AbstractSyntaxTreeNode parseCodeBlock() {
         ArrayList<AbstractSyntaxTreeNode> codeBlock = new ArrayList<>();
 
-        while (location < tokens.length) {
+        while (tokens.hasNext()) {
             System.out.println(codeBlock);
             codeBlock.add(parseStatement());
-            location += 1; // Line end
+            tokens.consume(TokenType.LINE_END);
         }
 
         return new CodeBlock(codeBlock);
     }
 
     private AbstractSyntaxTreeNode parseStatement() {
-        if (tokens[location + 1].isOperator(OperatorType.SET_VARIABLE)) {
-            Identifier variableName = new Identifier((String) tokens[location].primaryStorage);
-            location += 2;
+        if (tokens.next(1).isOperator(OperatorType.SET_VARIABLE)) {
+            Identifier variableName = new Identifier((String) tokens.consume().primaryStorage);
+            tokens.consume(); // We've already checked for OperatorType.SET_VARIABLE
             AbstractSyntaxTreeNode value = parseStatement();
 
             return new Operation(OperatorType.SET_VARIABLE, variableName, value);
@@ -45,8 +43,6 @@ public class Parser {
     }
 
     private AbstractSyntaxTreeNode parseExpression() {
-        int offset = 0;
-
         // Convert to simple arithmetic by removing brackets and function calls -------------------
         ArrayList<Object> simplified = new ArrayList<>();
 
@@ -57,65 +53,61 @@ public class Parser {
 
             // Handles new current (and brackets)
             if (current == null) {
-                if (tokens[location + offset].isBracket(BracketType.ROUND_OPEN)) { // This does the brackets
-                    location += offset + 1;
-
+                if (tokens.consumeIf(TokenType.BRACKET, BracketType.ROUND_OPEN)) { // This does the brackets
                     current = parseExpression();
-                    offset = 1;  // It's the close bracket
+                    tokens.consume(TokenType.BRACKET, BracketType.ROUND_CLOSE);
 
                 } else { // This does the new current
-                    if (tokens[location + offset].type == TokenType.LITERAL) {
-                        current = new Literal((String) tokens[location + offset].primaryStorage);
+                    if (tokens.next().type == TokenType.LITERAL) {
+                        current = new Literal((String) tokens.consume().primaryStorage);
 
-                    } else if (tokens[location + offset].type == TokenType.IDENTIFIER) {
-                        current = new Identifier((String) tokens[location + offset].primaryStorage);
+                    } else if (tokens.next().type == TokenType.IDENTIFIER) {
+                        current = new Identifier((String) tokens.consume().primaryStorage);
 
-                    } else if (tokens[location + offset].type == TokenType.COMMAND) {
-                        location += offset;
-                        current = parseCommand();
+                    } else if (tokens.next().type == TokenType.COMMAND) {
+                        current = parseCommand(); // ParseCommand needs next to be the command so don't consume
 
                     } else {
                         throw new RuntimeException();
                     }
-                    offset += 1;
                 }
 
             } else { // TODO: Function calls
                 simplified.add(current);
 
-                if (!(location + offset < tokens.length)) break;
-                Token next = tokens[location + offset];
+                if (!tokens.hasNext()) break;
+                Token next = tokens.next();
                 if (next.type != TokenType.OPERATOR) {
                     break;
                 }
-                simplified.add(next.primaryStorage); // Keep the operator as a token as we can use OperatorType#combinedAt(int)
-                offset += 1;
+                simplified.add(next.primaryStorage); // Don't convert to AbstractSyntaxTreeNode yet as we can use OperatorType#combinedAt(int)
+                tokens.consume();
 
                 current = null;
             }
         }
-        location += offset;
 
 
         // It is now a simple maths, so we can apply all other operators while looping through the list ----------------
+        int location;
         for (int precedence_level = 0; precedence_level <= OperatorType.highest_precedence; precedence_level++) {
-            offset = 1;
-            while (offset < simplified.size()) {
+            location = 1;
+            while (location < simplified.size()) {
 
-                OperatorType currentOperatorType = (OperatorType) simplified.get(offset);
+                OperatorType currentOperatorType = (OperatorType) simplified.get(location);
                 if (currentOperatorType.combinedAt(precedence_level)) {
-                    AbstractSyntaxTreeNode a = (AbstractSyntaxTreeNode) simplified.get(offset - 1); // This is at location that
-                                                                                                    // is turning into combined
-                    AbstractSyntaxTreeNode b = (AbstractSyntaxTreeNode) simplified.remove(offset + 1);
-                    simplified.remove(offset); // We already have the operator
+                    AbstractSyntaxTreeNode a = (AbstractSyntaxTreeNode) simplified.get(location - 1); // This is at location that
+                                                                                                      // is turning into combined
+                    AbstractSyntaxTreeNode b = (AbstractSyntaxTreeNode) simplified.remove(location + 1);
+                    simplified.remove(location); // We already have the operator
 
                     AbstractSyntaxTreeNode combined = new Operation(currentOperatorType, a, b);
-                    simplified.set(offset - 1, combined);
+                    simplified.set(location - 1, combined);
 
                     // Offset is not in the position of the next operator, so it does not need to move
 
                 } else {
-                    offset += 2; // Move offset to next operator
+                    location += 2; // Move offset to next operator
                 }
             }
         }
@@ -123,16 +115,18 @@ public class Parser {
         return (AbstractSyntaxTreeNode) simplified.get(0);
     }
 
+    /**
+     * Parse a command. This requires the command token to be at the next location.
+     */
     private AbstractSyntaxTreeNode parseCommand() {
-        CommandType commandType = (CommandType) tokens[location].primaryStorage;
-        location += 1;
+        CommandType commandType = (CommandType) tokens.consume().primaryStorage;
 
         return switch (commandType) {
             case ADD -> {
                 AbstractSyntaxTreeNode input_1 = parseExpression();
                 AbstractSyntaxTreeNode input_2 = parseExpression();
-                if (tokens[location].type == TokenType.IDENTIFIER) { // We have an output
-                    Identifier output = new Identifier((String) tokens[location].primaryStorage); // We are storing something in a certain
+                if (tokens.next().type == TokenType.IDENTIFIER) { // We have an output
+                    Identifier output = new Identifier((String) tokens.consume().primaryStorage); // We are storing something in a certain
                                                                                                   // location so has to be an identifier
                     yield new CommandAdd(input_1, input_2, output);
                 } else {
