@@ -55,7 +55,7 @@ public class CompileTests {
     }
 
     @Test
-    public void testCompileCommands() throws IOException {
+    public void testSimpleCommands() throws IOException {
         System.out.println(colorize("Simple Command -----------", stageHeaderFormat));
 
         Token[] expectedTokens = {
