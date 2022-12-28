@@ -1,1 +1,1 @@
-:: WRITE STD_OUT "Testing";
+:: WRITE STD_OUT, "Testing";

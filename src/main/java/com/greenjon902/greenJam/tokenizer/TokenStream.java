@@ -21,8 +21,11 @@ public class TokenStream {
      */
     public Token consume(TokenType tokenType, Object primaryStorage) throws RuntimeException {
         Token token = tokens[location];
-        if (token.type != tokenType || token.primaryStorage != primaryStorage) {
+        if (token.type != tokenType) {
             throw new RuntimeException("Failed to consume token as is not of type " + tokenType);
+        }
+        if (token.primaryStorage != primaryStorage) {
+            throw new RuntimeException("Failed to consume token as primary storage does not equal " + primaryStorage);
         }
         location += 1;
         return token;

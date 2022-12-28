@@ -1,0 +1,1 @@
+:: WRITE STD_OUT, ((:: ADD 5 / 4, 8 * 9)>toString());

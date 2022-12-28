@@ -61,6 +61,7 @@ public class CompileTests {
         Token[] expectedTokens = {
                 new Token(TokenType.COMMAND, CommandType.WRITE_TO_STREAM),
                 new Token(TokenType.IDENTIFIER, "STD_OUT"),
+                new Token(TokenType.COMMA, null),
                 new Token(TokenType.LITERAL, "Testing"),
                 new Token(TokenType.LINE_END, null)
         };
@@ -79,11 +80,69 @@ public class CompileTests {
     }
 
     @Test
+    public void testComplexCommand() throws IOException {
+        System.out.println(colorize("Complex Command -----------", stageHeaderFormat));
+
+        String expectedTokens = "[Token{type=COMMAND, primaryStorage=\"WRITE_TO_STREAM\"}, Token{type=IDENTIFIER, primaryStorage=\"STD_OUT\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=COMMAND, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=OPERATOR, primaryStorage=\"DIVIDE\"}, Token{type=LITERAL, primaryStorage=\"4\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"8\"}, Token{type=OPERATOR, primaryStorage=\"MULTIPLY\"}, Token{type=LITERAL, primaryStorage=\"9\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=OPERATOR, primaryStorage=\"GET_ATTRIBUTE\"}, Token{type=IDENTIFIER, primaryStorage=\"toString\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=LINE_END, primaryStorage=\"null\"}]";
+        String expectedAbstractSyntaxTree = //<editor-fold desc="Expected Abstract Syntax Tree" defaultstate="collapsed">
+                "AbstractSyntaxTree{\n" +
+                        "\tCodeBlock{\n" +
+                        "\t\t\tCommand.WriteToStream{\n" +
+                        "\t\t\tstream={\n" +
+                        "\t\t\t\tIdentifier{\"STD_OUT\"}\n" +
+                        "\t\t\t},\n" +
+                        "\t\t\tdata={\n" +
+                        "\t\t\t\tOperation{CALL\n" +
+                        "\t\t\t\t\ta={\n" +
+                        "\t\t\t\t\t\tOperation{GET_ATTRIBUTE\n" +
+                        "\t\t\t\t\t\t\ta={\n" +
+                        "\t\t\t\t\t\t\t\tCommand.Add{\n" +
+                        "\t\t\t\t\t\t\t\t\tinput_1={\n" +
+                        "\t\t\t\t\t\t\t\t\t\tOperation{DIVIDE\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\ta={\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\tLiteral{\"5\"}\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t},\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\tb={\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\tLiteral{\"4\"}\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\t\t\t},\n" +
+                        "\t\t\t\t\t\t\t\t\tinput_2={\n" +
+                        "\t\t\t\t\t\t\t\t\t\tOperation{MULTIPLY\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\ta={\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\tLiteral{\"8\"}\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t},\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\tb={\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\tLiteral{\"9\"}\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\t},\n" +
+                        "\t\t\t\t\t\t\tb={\n" +
+                        "\t\t\t\t\t\t\t\tIdentifier{\"toString\"}\n" +
+                        "\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t},\n" +
+                        "\t\t\t\t\tb={\n" +
+                        "\t\t\t\t\t\tLiteral{\"test\"}\n" +
+                        "\t\t\t\t\t}\n" +
+                        "\t\t\t\t}\n" +
+                        "\t\t\t}\n" +
+                        "\t\t}\n" +
+                        "\t}\n" +
+                        "}";
+        //</editor-fold>
+
+        test("tests/complexCommand.jam", expectedTokens, expectedAbstractSyntaxTree);
+    }
+
+    @Test
     public void testCompileVariableAssignmentAndMath() throws IOException {
         System.out.println(colorize("Variable Assignment And Math -----------", stageHeaderFormat));
 
         String expectedTokens = "[Token{type=IDENTIFIER, primaryStorage=\"foo\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=OPERATOR, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"7\"}, Token{type=OPERATOR, primaryStorage=\"GET_ATTRIBUTE\"}, Token{type=IDENTIFIER, primaryStorage=\"test2\"}, Token{type=OPERATOR, primaryStorage=\"MULTIPLY\"}, Token{type=LITERAL, primaryStorage=\"8\"}, Token{type=OPERATOR, primaryStorage=\"SUBTRACT\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=OPERATOR, primaryStorage=\"DIVIDE\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=LITERAL, primaryStorage=\"87.6\"}, Token{type=OPERATOR, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"4\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=OPERATOR, primaryStorage=\"GET_ATTRIBUTE\"}, Token{type=IDENTIFIER, primaryStorage=\"test\"}, Token{type=LINE_END, primaryStorage=\"null\"}]";
-        String expectedAbstractSyntaxTree = //<editor-fold desc="Identifier Characters" defaultstate="collapsed">
+        String expectedAbstractSyntaxTree = //<editor-fold desc="Expected Abstract Syntax Tree" defaultstate="collapsed">
                 "AbstractSyntaxTree{\n" +
                 "\tCodeBlock{\n" +
                 "\t\t\tOperation{SET_VARIABLE\n" +

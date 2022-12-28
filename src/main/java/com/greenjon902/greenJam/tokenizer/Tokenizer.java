@@ -8,6 +8,7 @@ public class Tokenizer {
     public static String string_opener = "\"";
     public static String string_closer = "\"";
     public static String line_ender = ";";
+    public static String comma = ",";
     public static char positive_sign = '+';
     public static char negative_sign = '-';
     public static char decimal_point_character = '.';
@@ -80,17 +81,19 @@ public class Tokenizer {
             tokenType = TokenType.LITERAL;
         } else if ((token_info = attemptGetNumericLiteral()) != null) {
             tokenType = TokenType.LITERAL;
-        } else if ((token_info = attemptGetOperator()) != null) {
-            tokenType = TokenType.OPERATOR;
+        } else if (attemptGetComma() != null) {
+            tokenType = TokenType.COMMA;
         } else if ((token_info = attemptGetBracket()) != null) {
             tokenType = TokenType.BRACKET;
+        } else if ((token_info = attemptGetOperator()) != null) {
+            tokenType = TokenType.OPERATOR;
         } else if ((token_info = attemptGetIdentifier()) != null) {
             tokenType = TokenType.IDENTIFIER;
         } else if (attemptGetLineEnd() != null) { // We don't need to keep the line end character
             tokenType = TokenType.LINE_END;
 
         } else {
-            throw new RuntimeException("Failed to recognise next token at location - " + location);
+            throw new RuntimeException("Failed to recognise next token at location - " + location + " \"" + string.charAt(location) + "\"");
         }
 
         return new Token(tokenType, token_info);
@@ -107,6 +110,23 @@ public class Tokenizer {
                  location += operatorType.symbol.length();
                  return operatorType;
              }
+        }
+
+        return null;
+    }
+
+    /**
+     * Checks of the next token is a comma. If the next value is not a comma then null is returned.
+     * @return The comma or null.
+     */
+    private String attemptGetComma() {
+        int offset = 0;
+
+        if (matchToString(comma, offset)) {
+            offset += comma.length();
+
+            location += offset;
+            return comma;
         }
 
         return null;

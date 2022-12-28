@@ -42,7 +42,8 @@ public class Parser {
     }
 
     private AbstractSyntaxTreeNode parseExpression() {
-        // Convert to simple arithmetic by removing brackets and function calls -------------------
+        // Convert to simple arithmetic by removing brackets, attribute getting, and function calls -------------------
+        // We do attribute getting in first bit as function calls come afterwards.
         ArrayList<Object> simplified = new ArrayList<>();
 
         AbstractSyntaxTreeNode current;
@@ -71,7 +72,17 @@ public class Parser {
                     }
                 }
 
-            } else { // TODO: Function calls
+            // Handles attribute getting calls
+            } else if (tokens.consumeIf(TokenType.OPERATOR, OperatorType.GET_ATTRIBUTE)) {
+                current = new Operation(OperatorType.GET_ATTRIBUTE, current,
+                        new Identifier((String) tokens.consume().primaryStorage));
+
+            // Handles function calls
+            } else if (tokens.consumeIf(TokenType.BRACKET, BracketType.ROUND_OPEN)) {
+                current = new Operation(OperatorType.CALL, current, parseExpressionList());
+                tokens.consume(TokenType.BRACKET, BracketType.ROUND_CLOSE);
+
+            } else {
                 simplified.add(current);
 
                 if (!tokens.hasNext()) break;
@@ -115,6 +126,13 @@ public class Parser {
     }
 
     /**
+     * Parse a list of expressions that are separated by {@link TokenType#COMMA}.
+     */
+    private AbstractSyntaxTreeNode parseExpressionList() {
+        return new Literal("test");
+    }
+
+    /**
      * Parse a command. This requires the command token to be at the next location.
      */
     private AbstractSyntaxTreeNode parseCommand() {
@@ -123,8 +141,10 @@ public class Parser {
         return switch (commandType) {
             case ADD -> {
                 AbstractSyntaxTreeNode input_1 = parseExpression();
+                tokens.consume(TokenType.COMMA);
                 AbstractSyntaxTreeNode input_2 = parseExpression();
-                if (tokens.next().type == TokenType.IDENTIFIER) { // We have an output
+                if (tokens.next(1).type == TokenType.IDENTIFIER) { // We have an output
+                    tokens.consume(TokenType.COMMA);
                     Identifier output = new Identifier((String) tokens.consume().primaryStorage); // We are storing something in a certain
                                                                                                   // location so has to be an identifier
                     yield new CommandAdd(input_1, input_2, output);
@@ -134,6 +154,7 @@ public class Parser {
             }
             case WRITE_TO_STREAM -> {
                 AbstractSyntaxTreeNode stream = parseExpression();
+                tokens.consume(TokenType.COMMA);
                 AbstractSyntaxTreeNode data = parseExpression();
 
                 yield new CommandWriteToStream(stream, data);

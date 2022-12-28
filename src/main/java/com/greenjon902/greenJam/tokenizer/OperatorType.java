@@ -4,8 +4,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public enum OperatorType {
-    SET_VARIABLE("="), ADD("+", 3), SUBTRACT("-", 4), MULTIPLY("*", 2), DIVIDE("/", 1),
-    GET_ATTRIBUTE(">", 0);
+    // Special Operators:
+    SET_VARIABLE("="), CALL("()"), GET_ATTRIBUTE(">"),
+
+    // Normal Operators:
+    ADD("+", 2), SUBTRACT("-", 3), MULTIPLY("*", 1), DIVIDE("/", 0);
 
     public static final HashSet<String> symbols = new HashSet<>();
     static {
