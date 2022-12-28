@@ -208,4 +208,20 @@ public class CompileTests {
 
         test("tests/variableAssignmentAndMath.jam", expectedTokens, expectedAbstractSyntaxTree);
     }
+
+    @Test
+    public void testCompileComments() throws IOException {
+        System.out.println(colorize("Comments -----------", stageHeaderFormat));
+
+        String expectedTokens = "[]";
+        String expectedAbstractSyntaxTree = //<editor-fold desc="Expected Abstract Syntax Tree" defaultstate="collapsed">
+                "AbstractSyntaxTree{\n" +
+                "\tCodeBlock\n" +
+                "\t}\n" +
+                "}";
+        //</editor-fold>
+
+        test("tests/comments.jam", expectedTokens, expectedAbstractSyntaxTree);
+    }
+
 }

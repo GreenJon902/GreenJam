@@ -7,6 +7,9 @@ public class Tokenizer {
     public static String command_delclarer = "::";
     public static String string_opener = "\"";
     public static String string_closer = "\"";
+    public static String comment_declarer = "//";
+    public static String block_comment_opener = "/**";
+    public static String block_comment_closer = "*/";
     public static String line_ender = ";";
     public static String comma = ",";
     public static char positive_sign = '+';
@@ -62,7 +65,10 @@ public class Tokenizer {
         ArrayList<Token> tokens = new ArrayList<>();
 
         while (location < string.length()) {
-            tokens.add(getNextToken());
+            Token newToken = getNextToken();
+            if (newToken != null) {
+                tokens.add(newToken);
+            }
         }
 
         return tokens.toArray(Token[]::new);
@@ -71,6 +77,23 @@ public class Tokenizer {
 
     private Token getNextToken() {
         skipWhitespace();
+
+        if (matchToString(comment_declarer, 0)) {
+            String newline = System.getProperty("line.separator");;
+            while (location < string.length() && !matchToString(newline, 0)) {
+                location += 1;
+            }
+            location += newline.length();
+            return null;
+
+        } else if (matchToString(block_comment_opener, 0)) {
+            location += block_comment_opener.length();
+            while (location < string.length() && !matchToString(block_comment_closer, 0)) {
+                location += 1;
+            }
+            location += block_comment_closer.length();
+            return null;
+        }
 
         TokenType tokenType;
         Object token_info;
