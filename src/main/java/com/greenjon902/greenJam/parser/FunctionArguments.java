@@ -20,7 +20,6 @@ public class FunctionArguments extends AbstractSyntaxTreeNode {
     @Override
     public void prettyPrint(StringBuilder stringBuilder, String indent) {
         stringBuilder.append(indent).append("FunctionArguments{\n");
-        stringBuilder.append(indent).append("\targuments={\n");
         boolean firstLoop = true;
         for (AbstractSyntaxTreeNode argument : arguments) {
             if (firstLoop) {
@@ -29,9 +28,8 @@ public class FunctionArguments extends AbstractSyntaxTreeNode {
                 stringBuilder.delete(stringBuilder.length()-1, stringBuilder.length());
                 stringBuilder.append(",\n");
             }
-            argument.prettyPrint(stringBuilder, indent + "\t\t");
+            argument.prettyPrint(stringBuilder, indent + "\t");
         }
-        stringBuilder.append(indent).append("\t}\n");
         stringBuilder.append(indent).append("}\n");
     }
 }

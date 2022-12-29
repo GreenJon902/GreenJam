@@ -126,8 +126,6 @@ public class CompileTests {
                         "\t\t\t\t\t},\n" +
                         "\t\t\t\t\tb={\n" +
                         "\t\t\t\t\t\tFunctionArguments{\n" +
-                        "\t\t\t\t\t\t\targuments={\n" +
-                        "\t\t\t\t\t\t\t}\n" +
                         "\t\t\t\t\t\t}\n" +
                         "\t\t\t\t\t}\n" +
                         "\t\t\t\t}\n" +
@@ -436,8 +434,6 @@ public class CompileTests {
                         "\t\t\t\t\t\t\t},\n" +
                         "\t\t\t\t\t\t\tb={\n" +
                         "\t\t\t\t\t\t\t\tFunctionArguments{\n" +
-                        "\t\t\t\t\t\t\t\t\targuments={\n" +
-                        "\t\t\t\t\t\t\t\t\t}\n" +
                         "\t\t\t\t\t\t\t\t}\n" +
                         "\t\t\t\t\t\t\t}\n" +
                         "\t\t\t\t\t\t}\n" +
@@ -466,9 +462,7 @@ public class CompileTests {
                         "\t\t\t\t\t},\n" +
                         "\t\t\t\t\tb={\n" +
                         "\t\t\t\t\t\tFunctionArguments{\n" +
-                        "\t\t\t\t\t\t\targuments={\n" +
-                        "\t\t\t\t\t\t\t\tLiteral{\"16\"}\n" +
-                        "\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\tLiteral{\"16\"}\n" +
                         "\t\t\t\t\t\t}\n" +
                         "\t\t\t\t\t}\n" +
                         "\t\t\t\t}\n" +
