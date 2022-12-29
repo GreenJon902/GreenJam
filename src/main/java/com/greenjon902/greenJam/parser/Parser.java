@@ -21,24 +21,38 @@ public class Parser {
         ArrayList<AbstractSyntaxTreeNode> codeBlock = new ArrayList<>();
 
         while (tokens.hasNext()) {
-            codeBlock.add(parseStatement());
-            tokens.consume(TokenType.LINE_END);
+            parseLineInto(codeBlock);
         }
 
         return new CodeBlock(codeBlock);
     }
 
-    private AbstractSyntaxTreeNode parseStatement() {
-        if (tokens.next(1).isOperator(OperatorType.SET_VARIABLE)) {
-            Identifier variableName = new Identifier((String) tokens.consume().primaryStorage);
-            tokens.consume(); // We've already checked for OperatorType.SET_VARIABLE
-            AbstractSyntaxTreeNode value = parseStatement();
+    private void parseLineInto(ArrayList<AbstractSyntaxTreeNode> codeBlock) {
+        //Variable declaration can only happen at the start of a line
+        if (tokens.next().type == TokenType.IDENTIFIER && tokens.next(1).type == TokenType.IDENTIFIER) {
+            // Declaring and setting in same line results in two nodes:
+            // int a = 5;
+            // turns into {DECLARE, type="int", identifier="a"}, {SET, identifier="a", value=5}
 
-            return new Operation(OperatorType.SET_VARIABLE, variableName, value);
+            Identifier type = new Identifier((String) tokens.consume().primaryStorage);
+
+            boolean isInizializing = tokens.next(1).isOperator(OperatorType.SET_VARIABLE);
+            int savedLocation = tokens.currentLocation();
+
+            Identifier[] identifiers = parseIdentifierList();
+            codeBlock.add(new VariableDeclaration(type, identifiers));
+
+            if (isInizializing) {
+                tokens.setLocation(savedLocation); // So it's back to the location of the variable name
+                codeBlock.add(parseExpression());
+            }
+
+            tokens.consume(TokenType.LINE_END);
+
+        } else {
+            codeBlock.add(parseExpression());
+            tokens.consume(TokenType.LINE_END);
         }
-
-        return parseExpression();
-
     }
 
     private AbstractSyntaxTreeNode parseExpression() {
@@ -72,6 +86,11 @@ public class Parser {
                     }
                 }
 
+            // Handles variable assignments
+            } else if (tokens.consumeIf(TokenType.OPERATOR, OperatorType.SET_VARIABLE)) {
+                AbstractSyntaxTreeNode value = parseExpression();
+                current = new Operation(OperatorType.SET_VARIABLE, current, value);
+
             // Handles attribute getting calls
             } else if (tokens.consumeIf(TokenType.OPERATOR, OperatorType.GET_ATTRIBUTE)) {
                 current = new Operation(OperatorType.GET_ATTRIBUTE, current,
@@ -79,7 +98,7 @@ public class Parser {
 
             // Handles function calls
             } else if (tokens.consumeIf(TokenType.BRACKET, BracketType.ROUND_OPEN)) {
-                current = new Operation(OperatorType.CALL, current, parseExpressionList());
+                current = new Operation(OperatorType.CALL, current, parseFunctionArguments());
                 tokens.consume(TokenType.BRACKET, BracketType.ROUND_CLOSE);
 
             } else {
@@ -126,10 +145,35 @@ public class Parser {
     }
 
     /**
-     * Parse a list of expressions that are separated by {@link TokenType#COMMA}.
+     * This will parse function arguments, this means it will try and parse until it gets
+     * {@link BracketType#ROUND_CLOSE}. If there are no arguements then the {@link FunctionArguments#arguments}
+     * will be empty.
      */
-    private AbstractSyntaxTreeNode parseExpressionList() {
-        return new Literal("test");
+    private FunctionArguments parseFunctionArguments() {
+        ArrayList<AbstractSyntaxTreeNode> arguments = new ArrayList<>();
+
+        if (!(tokens.next().isBracket(BracketType.ROUND_CLOSE))) { // Check there are items in the list
+            // No more comma, then args are over, next should be a bracket which gets consumed externally
+            do {
+                arguments.add(parseExpression());
+            } while (tokens.consumeIf(TokenType.COMMA));
+        }
+
+        return new FunctionArguments(arguments.toArray(AbstractSyntaxTreeNode[]::new));
+    }
+
+    /**
+     * Parse a list of just identifiers that are separated by {@link TokenType#COMMA}. This requires there to be at
+     * least one identifier.
+     */
+    private Identifier[] parseIdentifierList() {
+        ArrayList<Identifier> identifiers = new ArrayList<>();
+
+        do {
+            identifiers.add(new Identifier((String) tokens.consume(TokenType.IDENTIFIER).primaryStorage));
+        } while (tokens.consumeIf(TokenType.COMMA));
+
+        return identifiers.toArray(Identifier[]::new);
     }
 
     /**
@@ -143,8 +187,7 @@ public class Parser {
                 AbstractSyntaxTreeNode input_1 = parseExpression();
                 tokens.consume(TokenType.COMMA);
                 AbstractSyntaxTreeNode input_2 = parseExpression();
-                if (tokens.next(1).type == TokenType.IDENTIFIER) { // We have an output
-                    tokens.consume(TokenType.COMMA);
+                if (tokens.consumeIf(TokenType.COMMA)) { // We have an output
                     Identifier output = new Identifier((String) tokens.consume().primaryStorage); // We are storing something in a certain
                                                                                                   // location so has to be an identifier
                     yield new CommandAdd(input_1, input_2, output);

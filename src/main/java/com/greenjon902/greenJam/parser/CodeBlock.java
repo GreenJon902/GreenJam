@@ -11,6 +11,13 @@ public class CodeBlock extends AbstractSyntaxTreeNode {
     }
 
     @Override
+    public String toString() {
+        return "CodeBlock{" +
+                "contents=" + contents +
+                '}';
+    }
+
+    @Override
     public void prettyPrint(StringBuilder stringBuilder, int indent) {
         String stringIndent = "\t".repeat(indent);
         indent += 1;

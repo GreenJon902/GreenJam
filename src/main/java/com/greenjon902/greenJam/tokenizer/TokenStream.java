@@ -100,4 +100,18 @@ public class TokenStream {
     public Token next() {
         return next(0);
     }
+
+    /**
+     * Gets the current location in the token list.
+     */
+    public int currentLocation() {
+        return location;
+    }
+
+    /**
+     * Set the current location in the token list/
+     */
+    public void setLocation(int newLocation) {
+        location = newLocation;
+    }
 }
