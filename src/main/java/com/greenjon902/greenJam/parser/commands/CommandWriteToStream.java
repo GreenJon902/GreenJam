@@ -22,31 +22,14 @@ public class CommandWriteToStream extends Command {
     }
 
     @Override
-    public void prettyPrint(StringBuilder stringBuilder, int indent) {
-        String stringIndent = "\t".repeat(indent);
-
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("Command.WriteToStream{");
-        stringBuilder.append("\n");
-
-        indent += 1;
-        stringIndent = "\t".repeat(indent);
-        indent += 1;
-
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("stream={\n");
-        stream.prettyPrint(stringBuilder, indent);
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("},\n");
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("data={\n");
-        data.prettyPrint(stringBuilder, indent);
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("}\n");
-
-        indent -= 2;
-        stringIndent = "\t".repeat(indent);
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("}\n");
+    public void prettyPrint(StringBuilder stringBuilder, String indent) {
+        stringBuilder.append(indent).append("Command.WriteToStream{\n");
+        stringBuilder.append(indent).append("\tstream={\n");
+        stream.prettyPrint(stringBuilder, indent + "\t\t");
+        stringBuilder.append(indent).append("\t},\n");
+        stringBuilder.append(indent).append("\tdata={\n");
+        data.prettyPrint(stringBuilder, indent + "\t\t");
+        stringBuilder.append(indent).append("\t}\n");
+        stringBuilder.append(indent).append("}\n");
     }
 }

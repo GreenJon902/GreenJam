@@ -14,12 +14,7 @@ public class Literal extends AbstractSyntaxTreeNode {
     }
 
     @Override
-    public void prettyPrint(StringBuilder stringBuilder, int indent) {
-        String stringIndent = "\t".repeat(indent);
-
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("Literal{\"");
-        stringBuilder.append(value);
-        stringBuilder.append("\"}\n");
+    public void prettyPrint(StringBuilder stringBuilder, String indent) {
+        stringBuilder.append(indent).append("Literal{").append("\"").append(value).append("\"").append("}\n");
     }
 }

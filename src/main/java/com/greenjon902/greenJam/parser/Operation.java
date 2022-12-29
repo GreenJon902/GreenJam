@@ -23,32 +23,14 @@ public class Operation extends AbstractSyntaxTreeNode {
     }
 
     @Override
-    public void prettyPrint(StringBuilder stringBuilder, int indent) {
-        String stringIndent = "\t".repeat(indent);
-
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("Operation{");
-        stringBuilder.append(operatorType);
-        stringBuilder.append("\n");
-
-        indent += 1;
-        stringIndent = "\t".repeat(indent);
-        indent += 1;
-
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("a={\n");
-        a.prettyPrint(stringBuilder, indent);
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("},\n");
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("b={\n");
-        b.prettyPrint(stringBuilder, indent);
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("}\n");
-
-        indent -= 2;
-        stringIndent = "\t".repeat(indent);
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("}\n");
+    public void prettyPrint(StringBuilder stringBuilder, String indent) {
+        stringBuilder.append(indent).append("Operation{").append(operatorType).append("\n");
+        stringBuilder.append(indent).append("\ta={\n");
+        a.prettyPrint(stringBuilder, indent + "\t\t");
+        stringBuilder.append(indent).append("\t},\n");
+        stringBuilder.append(indent).append("\tb={\n");
+        b.prettyPrint(stringBuilder, indent + "\t\t");
+        stringBuilder.append(indent).append("\t}\n");
+        stringBuilder.append(indent).append("}\n");
     }
 }

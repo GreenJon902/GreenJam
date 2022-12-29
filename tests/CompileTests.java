@@ -87,7 +87,7 @@ public class CompileTests {
         String expectedAbstractSyntaxTree = //<editor-fold desc="Expected Abstract Syntax Tree" defaultstate="collapsed">
                 "AbstractSyntaxTree{\n" +
                         "\tCodeBlock{\n" +
-                        "\t\t\tCommand.WriteToStream{\n" +
+                        "\t\tCommand.WriteToStream{\n" +
                         "\t\t\tstream={\n" +
                         "\t\t\t\tIdentifier{\"STD_OUT\"}\n" +
                         "\t\t\t},\n" +
@@ -116,7 +116,7 @@ public class CompileTests {
                         "\t\t\t\t\t\t\t\t\t\t\t\tLiteral{\"9\"}\n" +
                         "\t\t\t\t\t\t\t\t\t\t\t}\n" +
                         "\t\t\t\t\t\t\t\t\t\t}\n" +
-                        "\t\t\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\t\t\t},\n" +
                         "\t\t\t\t\t\t\t\t}\n" +
                         "\t\t\t\t\t\t\t},\n" +
                         "\t\t\t\t\t\t\tb={\n" +
@@ -125,6 +125,10 @@ public class CompileTests {
                         "\t\t\t\t\t\t}\n" +
                         "\t\t\t\t\t},\n" +
                         "\t\t\t\t\tb={\n" +
+                        "\t\t\t\t\t\tFunctionArguments{\n" +
+                        "\t\t\t\t\t\t\targuments={\n" +
+                        "\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t}\n" +
                         "\t\t\t\t\t}\n" +
                         "\t\t\t\t}\n" +
                         "\t\t\t}\n" +
@@ -143,66 +147,66 @@ public class CompileTests {
         String expectedTokens = "[Token{type=IDENTIFIER, primaryStorage=\"foo\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=OPERATOR, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"7\"}, Token{type=OPERATOR, primaryStorage=\"GET_ATTRIBUTE\"}, Token{type=IDENTIFIER, primaryStorage=\"test2\"}, Token{type=OPERATOR, primaryStorage=\"MULTIPLY\"}, Token{type=LITERAL, primaryStorage=\"8\"}, Token{type=OPERATOR, primaryStorage=\"SUBTRACT\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=OPERATOR, primaryStorage=\"DIVIDE\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=LITERAL, primaryStorage=\"87.6\"}, Token{type=OPERATOR, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"4\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=OPERATOR, primaryStorage=\"GET_ATTRIBUTE\"}, Token{type=IDENTIFIER, primaryStorage=\"test\"}, Token{type=LINE_END, primaryStorage=\"null\"}]";
         String expectedAbstractSyntaxTree = //<editor-fold desc="Expected Abstract Syntax Tree" defaultstate="collapsed">
                 "AbstractSyntaxTree{\n" +
-                "\tCodeBlock{\n" +
-                "\t\t\tOperation{SET_VARIABLE\n" +
-                "\t\t\ta={\n" +
-                "\t\t\t\tIdentifier{\"foo\"}\n" +
-                "\t\t\t},\n" +
-                "\t\t\tb={\n" +
-                "\t\t\t\tOperation{SUBTRACT\n" +
-                "\t\t\t\t\ta={\n" +
-                "\t\t\t\t\t\tOperation{ADD\n" +
-                "\t\t\t\t\t\t\ta={\n" +
-                "\t\t\t\t\t\t\t\tLiteral{\"5\"}\n" +
-                "\t\t\t\t\t\t\t},\n" +
-                "\t\t\t\t\t\t\tb={\n" +
-                "\t\t\t\t\t\t\t\tOperation{MULTIPLY\n" +
-                "\t\t\t\t\t\t\t\t\ta={\n" +
-                "\t\t\t\t\t\t\t\t\t\tOperation{GET_ATTRIBUTE\n" +
-                "\t\t\t\t\t\t\t\t\t\t\ta={\n" +
-                "\t\t\t\t\t\t\t\t\t\t\t\tLiteral{\"7\"}\n" +
-                "\t\t\t\t\t\t\t\t\t\t\t},\n" +
-                "\t\t\t\t\t\t\t\t\t\t\tb={\n" +
-                "\t\t\t\t\t\t\t\t\t\t\t\tIdentifier{\"test2\"}\n" +
-                "\t\t\t\t\t\t\t\t\t\t\t}\n" +
-                "\t\t\t\t\t\t\t\t\t\t}\n" +
-                "\t\t\t\t\t\t\t\t\t},\n" +
-                "\t\t\t\t\t\t\t\t\tb={\n" +
-                "\t\t\t\t\t\t\t\t\t\tLiteral{\"8\"}\n" +
-                "\t\t\t\t\t\t\t\t\t}\n" +
-                "\t\t\t\t\t\t\t\t}\n" +
-                "\t\t\t\t\t\t\t}\n" +
-                "\t\t\t\t\t\t}\n" +
-                "\t\t\t\t\t},\n" +
-                "\t\t\t\t\tb={\n" +
-                "\t\t\t\t\t\tOperation{DIVIDE\n" +
-                "\t\t\t\t\t\t\ta={\n" +
-                "\t\t\t\t\t\t\t\tLiteral{\"5\"}\n" +
-                "\t\t\t\t\t\t\t},\n" +
-                "\t\t\t\t\t\t\tb={\n" +
-                "\t\t\t\t\t\t\t\tOperation{GET_ATTRIBUTE\n" +
-                "\t\t\t\t\t\t\t\t\ta={\n" +
-                "\t\t\t\t\t\t\t\t\t\tOperation{ADD\n" +
-                "\t\t\t\t\t\t\t\t\t\t\ta={\n" +
-                "\t\t\t\t\t\t\t\t\t\t\t\tLiteral{\"87.6\"}\n" +
-                "\t\t\t\t\t\t\t\t\t\t\t},\n" +
-                "\t\t\t\t\t\t\t\t\t\t\tb={\n" +
-                "\t\t\t\t\t\t\t\t\t\t\t\tLiteral{\"4\"}\n" +
-                "\t\t\t\t\t\t\t\t\t\t\t}\n" +
-                "\t\t\t\t\t\t\t\t\t\t}\n" +
-                "\t\t\t\t\t\t\t\t\t},\n" +
-                "\t\t\t\t\t\t\t\t\tb={\n" +
-                "\t\t\t\t\t\t\t\t\t\tIdentifier{\"test\"}\n" +
-                "\t\t\t\t\t\t\t\t\t}\n" +
-                "\t\t\t\t\t\t\t\t}\n" +
-                "\t\t\t\t\t\t\t}\n" +
-                "\t\t\t\t\t\t}\n" +
-                "\t\t\t\t\t}\n" +
-                "\t\t\t\t}\n" +
-                "\t\t\t}\n" +
-                "\t\t}\n" +
-                "\t}\n" +
-                "}";
+                        "\tCodeBlock{\n" +
+                        "\t\tOperation{SET_VARIABLE\n" +
+                        "\t\t\ta={\n" +
+                        "\t\t\t\tIdentifier{\"foo\"}\n" +
+                        "\t\t\t},\n" +
+                        "\t\t\tb={\n" +
+                        "\t\t\t\tOperation{SUBTRACT\n" +
+                        "\t\t\t\t\ta={\n" +
+                        "\t\t\t\t\t\tOperation{ADD\n" +
+                        "\t\t\t\t\t\t\ta={\n" +
+                        "\t\t\t\t\t\t\t\tLiteral{\"5\"}\n" +
+                        "\t\t\t\t\t\t\t},\n" +
+                        "\t\t\t\t\t\t\tb={\n" +
+                        "\t\t\t\t\t\t\t\tOperation{MULTIPLY\n" +
+                        "\t\t\t\t\t\t\t\t\ta={\n" +
+                        "\t\t\t\t\t\t\t\t\t\tOperation{GET_ATTRIBUTE\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\ta={\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\tLiteral{\"7\"}\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t},\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\tb={\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\tIdentifier{\"test2\"}\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\t\t\t},\n" +
+                        "\t\t\t\t\t\t\t\t\tb={\n" +
+                        "\t\t\t\t\t\t\t\t\t\tLiteral{\"8\"}\n" +
+                        "\t\t\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t},\n" +
+                        "\t\t\t\t\tb={\n" +
+                        "\t\t\t\t\t\tOperation{DIVIDE\n" +
+                        "\t\t\t\t\t\t\ta={\n" +
+                        "\t\t\t\t\t\t\t\tLiteral{\"5\"}\n" +
+                        "\t\t\t\t\t\t\t},\n" +
+                        "\t\t\t\t\t\t\tb={\n" +
+                        "\t\t\t\t\t\t\t\tOperation{GET_ATTRIBUTE\n" +
+                        "\t\t\t\t\t\t\t\t\ta={\n" +
+                        "\t\t\t\t\t\t\t\t\t\tOperation{ADD\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\ta={\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\tLiteral{\"87.6\"}\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t},\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\tb={\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t\tLiteral{\"4\"}\n" +
+                        "\t\t\t\t\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\t\t\t},\n" +
+                        "\t\t\t\t\t\t\t\t\tb={\n" +
+                        "\t\t\t\t\t\t\t\t\t\tIdentifier{\"test\"}\n" +
+                        "\t\t\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t}\n" +
+                        "\t\t\t\t}\n" +
+                        "\t\t\t}\n" +
+                        "\t\t}\n" +
+                        "\t}\n" +
+                        "}";
                 //</editor-fold>
 
         test("tests/variableAssignmentAndMath.jam", expectedTokens, expectedAbstractSyntaxTree);
@@ -215,9 +219,9 @@ public class CompileTests {
         String expectedTokens = "[]";
         String expectedAbstractSyntaxTree = //<editor-fold desc="Expected Abstract Syntax Tree" defaultstate="collapsed">
                 "AbstractSyntaxTree{\n" +
-                "\tCodeBlock\n" +
-                "\t}\n" +
-                "}";
+                        "\tCodeBlock{\n" +
+                        "\t}\n" +
+                        "}";
         //</editor-fold>
 
         test("tests/comments.jam", expectedTokens, expectedAbstractSyntaxTree);

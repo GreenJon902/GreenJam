@@ -14,12 +14,7 @@ public class Identifier extends AbstractSyntaxTreeNode {
     }
 
     @Override
-    public void prettyPrint(StringBuilder stringBuilder, int indent) {
-        String stringIndent = "\t".repeat(indent);
-
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("Identifier{\"");
-        stringBuilder.append(name);
-        stringBuilder.append("\"}\n");
+    public void prettyPrint(StringBuilder stringBuilder, String indent) {
+        stringBuilder.append(indent).append("Identifier{").append("\"").append(name).append("\"").append("}\n");
     }
 }

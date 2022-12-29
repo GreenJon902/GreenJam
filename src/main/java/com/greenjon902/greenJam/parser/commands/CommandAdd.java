@@ -22,39 +22,20 @@ public class CommandAdd extends Command {
     }
 
     @Override
-    public void prettyPrint(StringBuilder stringBuilder, int indent) {
-        String stringIndent = "\t".repeat(indent);
-
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("Command.Add{");
-        stringBuilder.append("\n");
-
-        indent += 1;
-        stringIndent = "\t".repeat(indent);
-        indent += 1;
-
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("input_1={\n");
-        input_1.prettyPrint(stringBuilder, indent);
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("},\n");
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("input_2={\n");
-        input_2.prettyPrint(stringBuilder, indent);
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("}\n");
-
+    public void prettyPrint(StringBuilder stringBuilder, String indent) {
+        stringBuilder.append(indent).append("Command.Add{\n");
+        stringBuilder.append(indent).append("\tinput_1={\n");
+        input_1.prettyPrint(stringBuilder, indent + "\t\t");
+        stringBuilder.append(indent).append("\t},\n");
+        stringBuilder.append(indent).append("\tinput_2={\n");
+        input_2.prettyPrint(stringBuilder, indent + "\t\t");
+        stringBuilder.append(indent).append("\t},\n");
         if (output != null) {
-            stringBuilder.append("output={\n");
-            output.prettyPrint(stringBuilder, indent);
-            stringBuilder.append(stringIndent);
-            stringBuilder.append("}\n");
+            stringBuilder.append(indent).append("\toutput={\n");
+                output.prettyPrint(stringBuilder, indent + "\t\t");
+            stringBuilder.append(indent).append("\t}\n");
         }
-
-        indent -= 2;
-        stringIndent = "\t".repeat(indent);
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("}\n");
+        stringBuilder.append(indent).append("}\n");
     }
 
     @Override

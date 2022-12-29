@@ -18,23 +18,18 @@ public class CodeBlock extends AbstractSyntaxTreeNode {
     }
 
     @Override
-    public void prettyPrint(StringBuilder stringBuilder, int indent) {
-        String stringIndent = "\t".repeat(indent);
-        indent += 1;
-
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("CodeBlock{\n");
-        for (AbstractSyntaxTreeNode astNode : contents) {
-            stringBuilder.append(stringIndent);
-            astNode.prettyPrint(stringBuilder, indent);
-            stringBuilder.delete(stringBuilder.length() - 1, stringBuilder.length());
-            stringBuilder.append(",\n");
+    public void prettyPrint(StringBuilder stringBuilder, String indent) {
+        stringBuilder.append(indent).append("CodeBlock{\n");
+        boolean firstLoop = true;
+        for (AbstractSyntaxTreeNode node : contents) {
+            if (firstLoop) {
+                firstLoop = false;
+            } else {
+                stringBuilder.delete(stringBuilder.length()-1, stringBuilder.length());
+                stringBuilder.append(",\n");
+            }
+            node.prettyPrint(stringBuilder, indent + "\t");
         }
-
-        stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
-        stringBuilder.append("\n"); // last comma
-
-        stringBuilder.append(stringIndent);
-        stringBuilder.append("}\n");
+        stringBuilder.append(indent).append("}\n");
     }
 }

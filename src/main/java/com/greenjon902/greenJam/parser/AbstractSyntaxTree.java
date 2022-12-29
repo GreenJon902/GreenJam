@@ -14,7 +14,7 @@ public class AbstractSyntaxTree {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("AbstractSyntaxTree{\n");
 
-        int indent = 1;
+        String indent = "\t";
         rootNode.prettyPrint(stringBuilder, indent);
 
         stringBuilder.append("}");
