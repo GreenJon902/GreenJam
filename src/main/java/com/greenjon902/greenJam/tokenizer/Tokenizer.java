@@ -100,6 +100,8 @@ public class Tokenizer {
 
         if ((token_info = attemptGetCommand()) != null) {
             tokenType = TokenType.COMMAND;
+        } else if ((token_info = attemptGetKeyword()) != null) {
+            tokenType = TokenType.KEYWORD;
         } else if ((token_info = attemptGetStringLiteral()) != null) {
             tokenType = TokenType.LITERAL;
         } else if ((token_info = attemptGetNumericLiteral()) != null) {
@@ -133,6 +135,21 @@ public class Tokenizer {
                  location += operatorType.symbol.length();
                  return operatorType;
              }
+        }
+
+        return null;
+    }
+
+    /**
+     * Checks of the next token is a keyword. If the next value is not a keyword then null is returned.
+     * @return The keyword or null.
+     */
+    private KeywordType attemptGetKeyword() {
+        for (KeywordType keywordType : KeywordType.values()) {
+            if (string.regionMatches(location, keywordType.name, 0, keywordType.name.length())) {
+                location += keywordType.name.length();
+                return keywordType;
+            }
         }
 
         return null;
