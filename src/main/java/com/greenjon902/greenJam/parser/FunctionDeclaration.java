@@ -5,11 +5,11 @@ import java.util.Arrays;
 
 public class FunctionDeclaration extends AbstractSyntaxTreeNode {
     public final Identifier functionName;
-    public final Identifier returnType;
+    public final AbstractSyntaxTreeNode returnType;
     public final Argument[] arguments;
     public final CodeBlock codeBlock;
 
-    public FunctionDeclaration(Identifier functionName, Identifier returnType, Argument[] arguments, CodeBlock codeBlock) {
+    public FunctionDeclaration(Identifier functionName, AbstractSyntaxTreeNode returnType, Argument[] arguments, CodeBlock codeBlock) {
         super();
         this.functionName = functionName;
         this.returnType = returnType;
@@ -56,10 +56,10 @@ public class FunctionDeclaration extends AbstractSyntaxTreeNode {
 
 
     static class Argument extends AbstractSyntaxTreeNode {
-        public final Identifier type;
+        public final AbstractSyntaxTreeNode type;
         public final Identifier name;
 
-        Argument(Identifier type, Identifier identifier) {
+        Argument(AbstractSyntaxTreeNode type, Identifier identifier) {
             this.type = type;
             this.name = identifier;
         }

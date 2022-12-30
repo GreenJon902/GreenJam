@@ -38,10 +38,10 @@ public class Parser {
         }
 
         // Some things can only occur at the start of a line so are parsed separately --------------
-        if (tokens.next().type == TokenType.IDENTIFIER && tokens.next(1).type == TokenType.IDENTIFIER) {
+        if (isDeclarer(tokens.next()) && tokens.next(1).type == TokenType.IDENTIFIER) {
 
             if (tokens.next(2).isBracket(BracketType.ROUND_OPEN)) { // Function Declaration -------
-                Identifier returnType = new Identifier((String) tokens.consume(TokenType.IDENTIFIER).primaryStorage);
+                AbstractSyntaxTreeNode returnType = getDeclarer(tokens.consume());
                 Identifier functionName = new Identifier((String) tokens.consume(TokenType.IDENTIFIER).primaryStorage);
                 tokens.consume(TokenType.BRACKET, BracketType.ROUND_OPEN);
 
@@ -49,7 +49,7 @@ public class Parser {
                 if (!(tokens.next().isBracket(BracketType.ROUND_CLOSE))) { // Check there are any arguements
                     do {
                         arguments.add(new FunctionDeclaration.Argument(
-                                new Identifier((String) tokens.consume(TokenType.IDENTIFIER).primaryStorage),
+                                getDeclarer(tokens.consume()),
                                 new Identifier((String) tokens.consume(TokenType.IDENTIFIER).primaryStorage)));
                     } while (tokens.consumeIf(TokenType.COMMA));
                 }
@@ -71,7 +71,7 @@ public class Parser {
                 // int a = 5;
                 // turns into {DECLARE, type="int", identifier="a"}, {SET, identifier="a", value=5}
 
-                Identifier type = new Identifier((String) tokens.consume().primaryStorage);
+                AbstractSyntaxTreeNode type = getDeclarer(tokens.consume());
 
                 boolean isInizializing = tokens.next(1).isOperator(OperatorType.SET_VARIABLE);
                 int savedLocation = tokens.currentLocation();
@@ -87,7 +87,7 @@ public class Parser {
             }
 
 
-        } else if (tokens.consumeIf(TokenType.KEYWORD, KeywordType.RETURN)) {
+        } else if (tokens.consumeIf(TokenType.KEYWORD, KeywordName.RETURN)) {
             // Is it returning a value?
             if (tokens.next().type == TokenType.LINE_END) { // No
                 codeBlock.add(new Return());
@@ -251,6 +251,34 @@ public class Parser {
                 yield new CommandWriteToStream(stream, data);
             }
         };
+    }
+
+    /**
+     * Checks if a token can be used to declare a variable, e.g.
+     * <pre>
+     *     int a; // Uses a keyword that is a primitive
+     *     String b; // Uses an identifier
+     *     ) c; // Is not valid as bracket cannot hold a type
+     *     return d; // Is not valid as return is a keyword but is not a type
+     * </pre>
+     */
+    private boolean isDeclarer(Token token) {
+        return (token.type == TokenType.IDENTIFIER) ||
+                (token.type == TokenType.KEYWORD &&
+                        ((KeywordName) token.primaryStorage).type == KeywordName.KeywordType.PRIMITIVE);
+    }
+
+    /**
+     * Get a token that can be used a declarer, expects you have already checked with {@link #isDeclarer}.
+     * <pre>
+     *     int a; // Uses a keyword that is a primitive
+     *     String b; // Uses an identifier
+     * </pre>
+     */
+    private AbstractSyntaxTreeNode getDeclarer(Token token) {
+        return (token.type == TokenType.IDENTIFIER) ?
+                new Identifier((String) token.primaryStorage) :
+                new Primitive((KeywordName) token.primaryStorage);
     }
 
     private void error() {

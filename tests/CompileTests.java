@@ -229,7 +229,7 @@ public class CompileTests {
     public void testFunctions() throws IOException {
         System.out.println(colorize("Functions -----------", stageHeaderFormat));
 
-        String expectedTokens = "[Token{type=IDENTIFIER, primaryStorage=\"void\"}, Token{type=IDENTIFIER, primaryStorage=\"foo\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"CURLY_OPEN\"}, Token{type=COMMAND, primaryStorage=\"WRITE_TO_STREAM\"}, Token{type=IDENTIFIER, primaryStorage=\"STD_OUT\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"Hello World\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=BRACKET, primaryStorage=\"CURLY_CLOSE\"}, Token{type=IDENTIFIER, primaryStorage=\"int\"}, Token{type=IDENTIFIER, primaryStorage=\"bar\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"int\"}, Token{type=IDENTIFIER, primaryStorage=\"a\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"int\"}, Token{type=IDENTIFIER, primaryStorage=\"b\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"CURLY_OPEN\"}, Token{type=KEYWORD, primaryStorage=\"RETURN\"}, Token{type=IDENTIFIER, primaryStorage=\"a\"}, Token{type=OPERATOR, primaryStorage=\"ADD\"}, Token{type=IDENTIFIER, primaryStorage=\"b\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=BRACKET, primaryStorage=\"CURLY_CLOSE\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"foo\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"baz\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=IDENTIFIER, primaryStorage=\"bar\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"8\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=LINE_END, primaryStorage=\"null\"}]";
+        String expectedTokens = "[Token{type=KEYWORD, primaryStorage=\"VOID\"}, Token{type=IDENTIFIER, primaryStorage=\"foo\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"CURLY_OPEN\"}, Token{type=COMMAND, primaryStorage=\"WRITE_TO_STREAM\"}, Token{type=IDENTIFIER, primaryStorage=\"STD_OUT\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"Hello World\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=BRACKET, primaryStorage=\"CURLY_CLOSE\"}, Token{type=KEYWORD, primaryStorage=\"INT\"}, Token{type=IDENTIFIER, primaryStorage=\"bar\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=KEYWORD, primaryStorage=\"INT\"}, Token{type=IDENTIFIER, primaryStorage=\"a\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=KEYWORD, primaryStorage=\"INT\"}, Token{type=IDENTIFIER, primaryStorage=\"b\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"CURLY_OPEN\"}, Token{type=KEYWORD, primaryStorage=\"RETURN\"}, Token{type=IDENTIFIER, primaryStorage=\"a\"}, Token{type=OPERATOR, primaryStorage=\"ADD\"}, Token{type=IDENTIFIER, primaryStorage=\"b\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=BRACKET, primaryStorage=\"CURLY_CLOSE\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"foo\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"baz\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=IDENTIFIER, primaryStorage=\"bar\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"8\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=LINE_END, primaryStorage=\"null\"}]";
         String expectedAbstractSyntaxTree = //<editor-fold desc="Expected Abstract Syntax Tree" defaultstate="collapsed">
                 "AbstractSyntaxTree{\n" +
                         "\tCodeBlock{\n" +
@@ -238,7 +238,7 @@ public class CompileTests {
                         "\t\t\t\tIdentifier{\"foo\"}\n" +
                         "\t\t\t},\n" +
                         "\t\t\treturnType={\n" +
-                        "\t\t\t\tIdentifier{\"void\"}\n" +
+                        "\t\t\t\tPrimitive{VOID}\n" +
                         "\t\t\t}\n" +
                         "\t\t\targuments={\n" +
                         "\t\t\t}\n" +
@@ -260,12 +260,12 @@ public class CompileTests {
                         "\t\t\t\tIdentifier{\"bar\"}\n" +
                         "\t\t\t},\n" +
                         "\t\t\treturnType={\n" +
-                        "\t\t\t\tIdentifier{\"int\"}\n" +
+                        "\t\t\t\tPrimitive{INT}\n" +
                         "\t\t\t}\n" +
                         "\t\t\targuments={\n" +
                         "\t\t\t\tFunctionDeclaration.Argument{\n" +
                         "\t\t\t\t\ttype={\n" +
-                        "\t\t\t\t\t\tIdentifier{\"int\"}\n" +
+                        "\t\t\t\t\t\tPrimitive{INT}\n" +
                         "\t\t\t\t\t},\n" +
                         "\t\t\t\t\tname={\n" +
                         "\t\t\t\t\t\tIdentifier{\"a\"}\n" +
@@ -273,7 +273,7 @@ public class CompileTests {
                         "\t\t\t\t},\n" +
                         "\t\t\t\tFunctionDeclaration.Argument{\n" +
                         "\t\t\t\t\ttype={\n" +
-                        "\t\t\t\t\t\tIdentifier{\"int\"}\n" +
+                        "\t\t\t\t\t\tPrimitive{INT}\n" +
                         "\t\t\t\t\t},\n" +
                         "\t\t\t\t\tname={\n" +
                         "\t\t\t\t\t\tIdentifier{\"b\"}\n" +
@@ -333,13 +333,13 @@ public class CompileTests {
     public void testEverythingOnMultipleLines() throws IOException {
         System.out.println(colorize("Everything On Multiple Lines -----------", stageHeaderFormat));
 
-        String expectedTokens = "[Token{type=IDENTIFIER, primaryStorage=\"int\"}, Token{type=IDENTIFIER, primaryStorage=\"foo\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"int\"}, Token{type=IDENTIFIER, primaryStorage=\"bar\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"int\"}, Token{type=IDENTIFIER, primaryStorage=\"baz\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"String\"}, Token{type=IDENTIFIER, primaryStorage=\"BAZ\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"int\"}, Token{type=IDENTIFIER, primaryStorage=\"FOO\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"BAR\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=COMMAND, primaryStorage=\"WRITE_TO_STREAM\"}, Token{type=IDENTIFIER, primaryStorage=\"STD_OUT\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"I should be printed in console\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=COMMAND, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"4\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"3\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"foo\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=COMMAND, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"7\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=COMMAND, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"7\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"bar\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"FOO\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=COMMAND, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"7\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"BAR\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"baz\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"baz\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=IDENTIFIER, primaryStorage=\"baz\"}, Token{type=OPERATOR, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"4\"}, Token{type=OPERATOR, primaryStorage=\"MULTIPLY\"}, Token{type=LITERAL, primaryStorage=\"3\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"BAZ\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=LITERAL, primaryStorage=\"8\"}, Token{type=OPERATOR, primaryStorage=\"DIVIDE\"}, Token{type=IDENTIFIER, primaryStorage=\"baz\"}, Token{type=OPERATOR, primaryStorage=\"MULTIPLY\"}, Token{type=LITERAL, primaryStorage=\"6\"}, Token{type=OPERATOR, primaryStorage=\"DIVIDE\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=LITERAL, primaryStorage=\"2\"}, Token{type=OPERATOR, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"4\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=OPERATOR, primaryStorage=\"MULTIPLY\"}, Token{type=LITERAL, primaryStorage=\"3\"}, Token{type=OPERATOR, primaryStorage=\"SUBTRACT\"}, Token{type=LITERAL, primaryStorage=\"8\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=OPERATOR, primaryStorage=\"GET_ATTRIBUTE\"}, Token{type=IDENTIFIER, primaryStorage=\"toString\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=OPERATOR, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"8\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"baz\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=IDENTIFIER, primaryStorage=\"BAZ\"}, Token{type=OPERATOR, primaryStorage=\"GET_ATTRIBUTE\"}, Token{type=IDENTIFIER, primaryStorage=\"toInt\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=LITERAL, primaryStorage=\"16\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"int\"}, Token{type=IDENTIFIER, primaryStorage=\"function\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"CURLY_OPEN\"}, Token{type=KEYWORD, primaryStorage=\"RETURN\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=BRACKET, primaryStorage=\"CURLY_CLOSE\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"int\"}, Token{type=IDENTIFIER, primaryStorage=\"add\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"int\"}, Token{type=IDENTIFIER, primaryStorage=\"a\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"int\"}, Token{type=IDENTIFIER, primaryStorage=\"b\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"CURLY_OPEN\"}, Token{type=KEYWORD, primaryStorage=\"RETURN\"}, Token{type=IDENTIFIER, primaryStorage=\"a\"}, Token{type=OPERATOR, primaryStorage=\"ADD\"}, Token{type=IDENTIFIER, primaryStorage=\"b\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=BRACKET, primaryStorage=\"CURLY_CLOSE\"}, Token{type=IDENTIFIER, primaryStorage=\"int\"}, Token{type=IDENTIFIER, primaryStorage=\"result\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"void\"}, Token{type=IDENTIFIER, primaryStorage=\"double\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"int\"}, Token{type=IDENTIFIER, primaryStorage=\"amount\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"CURLY_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"result\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=IDENTIFIER, primaryStorage=\"amount\"}, Token{type=OPERATOR, primaryStorage=\"MULTIPLY\"}, Token{type=LITERAL, primaryStorage=\"2\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=KEYWORD, primaryStorage=\"RETURN\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=BRACKET, primaryStorage=\"CURLY_CLOSE\"}, Token{type=IDENTIFIER, primaryStorage=\"int\"}, Token{type=IDENTIFIER, primaryStorage=\"result2\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"void\"}, Token{type=IDENTIFIER, primaryStorage=\"triple\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"int\"}, Token{type=IDENTIFIER, primaryStorage=\"amount\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"CURLY_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"result2\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=IDENTIFIER, primaryStorage=\"amount\"}, Token{type=OPERATOR, primaryStorage=\"MULTIPLY\"}, Token{type=LITERAL, primaryStorage=\"3\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=BRACKET, primaryStorage=\"CURLY_CLOSE\"}, Token{type=IDENTIFIER, primaryStorage=\"double\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"add\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"function\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"4\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"triple\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"add\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"function\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=LINE_END, primaryStorage=\"null\"}]";
+        String expectedTokens = "[Token{type=KEYWORD, primaryStorage=\"INT\"}, Token{type=IDENTIFIER, primaryStorage=\"foo\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=KEYWORD, primaryStorage=\"INT\"}, Token{type=IDENTIFIER, primaryStorage=\"bar\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=KEYWORD, primaryStorage=\"INT\"}, Token{type=IDENTIFIER, primaryStorage=\"baz\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"String\"}, Token{type=IDENTIFIER, primaryStorage=\"BAZ\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=KEYWORD, primaryStorage=\"INT\"}, Token{type=IDENTIFIER, primaryStorage=\"FOO\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"BAR\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=COMMAND, primaryStorage=\"WRITE_TO_STREAM\"}, Token{type=IDENTIFIER, primaryStorage=\"STD_OUT\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"I should be printed in console\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=COMMAND, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"4\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"3\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"foo\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=COMMAND, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"7\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=COMMAND, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"7\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"bar\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"FOO\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=COMMAND, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"7\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"BAR\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"baz\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"baz\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=IDENTIFIER, primaryStorage=\"baz\"}, Token{type=OPERATOR, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"4\"}, Token{type=OPERATOR, primaryStorage=\"MULTIPLY\"}, Token{type=LITERAL, primaryStorage=\"3\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"BAZ\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=LITERAL, primaryStorage=\"8\"}, Token{type=OPERATOR, primaryStorage=\"DIVIDE\"}, Token{type=IDENTIFIER, primaryStorage=\"baz\"}, Token{type=OPERATOR, primaryStorage=\"MULTIPLY\"}, Token{type=LITERAL, primaryStorage=\"6\"}, Token{type=OPERATOR, primaryStorage=\"DIVIDE\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=LITERAL, primaryStorage=\"2\"}, Token{type=OPERATOR, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"4\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=OPERATOR, primaryStorage=\"MULTIPLY\"}, Token{type=LITERAL, primaryStorage=\"3\"}, Token{type=OPERATOR, primaryStorage=\"SUBTRACT\"}, Token{type=LITERAL, primaryStorage=\"8\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=OPERATOR, primaryStorage=\"GET_ATTRIBUTE\"}, Token{type=IDENTIFIER, primaryStorage=\"toString\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=OPERATOR, primaryStorage=\"ADD\"}, Token{type=LITERAL, primaryStorage=\"8\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"baz\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=IDENTIFIER, primaryStorage=\"BAZ\"}, Token{type=OPERATOR, primaryStorage=\"GET_ATTRIBUTE\"}, Token{type=IDENTIFIER, primaryStorage=\"toInt\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=LITERAL, primaryStorage=\"16\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=KEYWORD, primaryStorage=\"INT\"}, Token{type=IDENTIFIER, primaryStorage=\"function\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"CURLY_OPEN\"}, Token{type=KEYWORD, primaryStorage=\"RETURN\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=BRACKET, primaryStorage=\"CURLY_CLOSE\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=KEYWORD, primaryStorage=\"INT\"}, Token{type=IDENTIFIER, primaryStorage=\"add\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=KEYWORD, primaryStorage=\"INT\"}, Token{type=IDENTIFIER, primaryStorage=\"a\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=KEYWORD, primaryStorage=\"INT\"}, Token{type=IDENTIFIER, primaryStorage=\"b\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"CURLY_OPEN\"}, Token{type=KEYWORD, primaryStorage=\"RETURN\"}, Token{type=IDENTIFIER, primaryStorage=\"a\"}, Token{type=OPERATOR, primaryStorage=\"ADD\"}, Token{type=IDENTIFIER, primaryStorage=\"b\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=BRACKET, primaryStorage=\"CURLY_CLOSE\"}, Token{type=KEYWORD, primaryStorage=\"INT\"}, Token{type=IDENTIFIER, primaryStorage=\"result\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=KEYWORD, primaryStorage=\"VOID\"}, Token{type=IDENTIFIER, primaryStorage=\"double\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=KEYWORD, primaryStorage=\"INT\"}, Token{type=IDENTIFIER, primaryStorage=\"amount\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"CURLY_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"result\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=IDENTIFIER, primaryStorage=\"amount\"}, Token{type=OPERATOR, primaryStorage=\"MULTIPLY\"}, Token{type=LITERAL, primaryStorage=\"2\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=KEYWORD, primaryStorage=\"RETURN\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=BRACKET, primaryStorage=\"CURLY_CLOSE\"}, Token{type=KEYWORD, primaryStorage=\"INT\"}, Token{type=IDENTIFIER, primaryStorage=\"result2\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=KEYWORD, primaryStorage=\"VOID\"}, Token{type=IDENTIFIER, primaryStorage=\"triple\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=KEYWORD, primaryStorage=\"INT\"}, Token{type=IDENTIFIER, primaryStorage=\"amount\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"CURLY_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"result2\"}, Token{type=OPERATOR, primaryStorage=\"SET_VARIABLE\"}, Token{type=IDENTIFIER, primaryStorage=\"amount\"}, Token{type=OPERATOR, primaryStorage=\"MULTIPLY\"}, Token{type=LITERAL, primaryStorage=\"3\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=BRACKET, primaryStorage=\"CURLY_CLOSE\"}, Token{type=IDENTIFIER, primaryStorage=\"double\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"add\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"function\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"4\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=IDENTIFIER, primaryStorage=\"triple\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"add\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"function\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"5\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=LINE_END, primaryStorage=\"null\"}]";
         String expectedAbstractSyntaxTree = //<editor-fold desc="Expected Abstract Syntax Tree" defaultstate="collapsed">
                 "AbstractSyntaxTree{\n" +
                         "\tCodeBlock{\n" +
                         "\t\tVariableDeclaration{\n" +
                         "\t\t\ttype={\n" +
-                        "\t\t\t\tIdentifier{\"int\"}\n" +
+                        "\t\t\t\tPrimitive{INT}\n" +
                         "\t\t\t},\n" +
                         "\t\t\tidentifiers={\n" +
                         "\t\t\t\tIdentifier{\"foo\"}\n" +
@@ -347,7 +347,7 @@ public class CompileTests {
                         "\t\t},\n" +
                         "\t\tVariableDeclaration{\n" +
                         "\t\t\ttype={\n" +
-                        "\t\t\t\tIdentifier{\"int\"}\n" +
+                        "\t\t\t\tPrimitive{INT}\n" +
                         "\t\t\t},\n" +
                         "\t\t\tidentifiers={\n" +
                         "\t\t\t\tIdentifier{\"bar\"}\n" +
@@ -363,7 +363,7 @@ public class CompileTests {
                         "\t\t},\n" +
                         "\t\tVariableDeclaration{\n" +
                         "\t\t\ttype={\n" +
-                        "\t\t\t\tIdentifier{\"int\"}\n" +
+                        "\t\t\t\tPrimitive{INT}\n" +
                         "\t\t\t},\n" +
                         "\t\t\tidentifiers={\n" +
                         "\t\t\t\tIdentifier{\"baz\"}\n" +
@@ -379,7 +379,7 @@ public class CompileTests {
                         "\t\t},\n" +
                         "\t\tVariableDeclaration{\n" +
                         "\t\t\ttype={\n" +
-                        "\t\t\t\tIdentifier{\"int\"}\n" +
+                        "\t\t\t\tPrimitive{INT}\n" +
                         "\t\t\t},\n" +
                         "\t\t\tidentifiers={\n" +
                         "\t\t\t\tIdentifier{\"FOO\"},\n" +
@@ -577,7 +577,7 @@ public class CompileTests {
                         "\t\t\t\tIdentifier{\"function\"}\n" +
                         "\t\t\t},\n" +
                         "\t\t\treturnType={\n" +
-                        "\t\t\t\tIdentifier{\"int\"}\n" +
+                        "\t\t\t\tPrimitive{INT}\n" +
                         "\t\t\t}\n" +
                         "\t\t\targuments={\n" +
                         "\t\t\t}\n" +
@@ -594,12 +594,12 @@ public class CompileTests {
                         "\t\t\t\tIdentifier{\"add\"}\n" +
                         "\t\t\t},\n" +
                         "\t\t\treturnType={\n" +
-                        "\t\t\t\tIdentifier{\"int\"}\n" +
+                        "\t\t\t\tPrimitive{INT}\n" +
                         "\t\t\t}\n" +
                         "\t\t\targuments={\n" +
                         "\t\t\t\tFunctionDeclaration.Argument{\n" +
                         "\t\t\t\t\ttype={\n" +
-                        "\t\t\t\t\t\tIdentifier{\"int\"}\n" +
+                        "\t\t\t\t\t\tPrimitive{INT}\n" +
                         "\t\t\t\t\t},\n" +
                         "\t\t\t\t\tname={\n" +
                         "\t\t\t\t\t\tIdentifier{\"a\"}\n" +
@@ -607,7 +607,7 @@ public class CompileTests {
                         "\t\t\t\t},\n" +
                         "\t\t\t\tFunctionDeclaration.Argument{\n" +
                         "\t\t\t\t\ttype={\n" +
-                        "\t\t\t\t\t\tIdentifier{\"int\"}\n" +
+                        "\t\t\t\t\t\tPrimitive{INT}\n" +
                         "\t\t\t\t\t},\n" +
                         "\t\t\t\t\tname={\n" +
                         "\t\t\t\t\t\tIdentifier{\"b\"}\n" +
@@ -631,7 +631,7 @@ public class CompileTests {
                         "\t\t},\n" +
                         "\t\tVariableDeclaration{\n" +
                         "\t\t\ttype={\n" +
-                        "\t\t\t\tIdentifier{\"int\"}\n" +
+                        "\t\t\t\tPrimitive{INT}\n" +
                         "\t\t\t},\n" +
                         "\t\t\tidentifiers={\n" +
                         "\t\t\t\tIdentifier{\"result\"}\n" +
@@ -642,12 +642,12 @@ public class CompileTests {
                         "\t\t\t\tIdentifier{\"double\"}\n" +
                         "\t\t\t},\n" +
                         "\t\t\treturnType={\n" +
-                        "\t\t\t\tIdentifier{\"void\"}\n" +
+                        "\t\t\t\tPrimitive{VOID}\n" +
                         "\t\t\t}\n" +
                         "\t\t\targuments={\n" +
                         "\t\t\t\tFunctionDeclaration.Argument{\n" +
                         "\t\t\t\t\ttype={\n" +
-                        "\t\t\t\t\t\tIdentifier{\"int\"}\n" +
+                        "\t\t\t\t\t\tPrimitive{INT}\n" +
                         "\t\t\t\t\t},\n" +
                         "\t\t\t\t\tname={\n" +
                         "\t\t\t\t\t\tIdentifier{\"amount\"}\n" +
@@ -677,7 +677,7 @@ public class CompileTests {
                         "\t\t},\n" +
                         "\t\tVariableDeclaration{\n" +
                         "\t\t\ttype={\n" +
-                        "\t\t\t\tIdentifier{\"int\"}\n" +
+                        "\t\t\t\tPrimitive{INT}\n" +
                         "\t\t\t},\n" +
                         "\t\t\tidentifiers={\n" +
                         "\t\t\t\tIdentifier{\"result2\"}\n" +
@@ -688,12 +688,12 @@ public class CompileTests {
                         "\t\t\t\tIdentifier{\"triple\"}\n" +
                         "\t\t\t},\n" +
                         "\t\t\treturnType={\n" +
-                        "\t\t\t\tIdentifier{\"void\"}\n" +
+                        "\t\t\t\tPrimitive{VOID}\n" +
                         "\t\t\t}\n" +
                         "\t\t\targuments={\n" +
                         "\t\t\t\tFunctionDeclaration.Argument{\n" +
                         "\t\t\t\t\ttype={\n" +
-                        "\t\t\t\t\t\tIdentifier{\"int\"}\n" +
+                        "\t\t\t\t\t\tPrimitive{INT}\n" +
                         "\t\t\t\t\t},\n" +
                         "\t\t\t\t\tname={\n" +
                         "\t\t\t\t\t\tIdentifier{\"amount\"}\n" +

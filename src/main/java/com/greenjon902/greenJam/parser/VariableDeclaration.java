@@ -3,10 +3,10 @@ package com.greenjon902.greenJam.parser;
 import java.util.Arrays;
 
 public class VariableDeclaration extends AbstractSyntaxTreeNode {
-    public final Identifier type;
+    public final AbstractSyntaxTreeNode type;
     public final Identifier[] identifiers;
 
-    public VariableDeclaration(Identifier type, Identifier[] identifiers) {
+    public VariableDeclaration(AbstractSyntaxTreeNode type, Identifier[] identifiers) {
         this.type = type;
         this.identifiers = identifiers;
     }

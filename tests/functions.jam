@@ -4,7 +4,7 @@ void foo() {
 
 int bar(int a, int b) {
     return a + b;
-};;
+};
 
 foo();
 baz = bar(5, 8);

@@ -144,11 +144,11 @@ public class Tokenizer {
      * Checks of the next token is a keyword. If the next value is not a keyword then null is returned.
      * @return The keyword or null.
      */
-    private KeywordType attemptGetKeyword() {
-        for (KeywordType keywordType : KeywordType.values()) {
-            if (string.regionMatches(location, keywordType.name, 0, keywordType.name.length())) {
-                location += keywordType.name.length();
-                return keywordType;
+    private KeywordName attemptGetKeyword() {
+        for (KeywordName keywordName : KeywordName.values()) {
+            if (string.regionMatches(location, keywordName.name, 0, keywordName.name.length())) {
+                location += keywordName.name.length();
+                return keywordName;
             }
         }
 
