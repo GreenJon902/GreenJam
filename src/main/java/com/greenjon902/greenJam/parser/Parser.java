@@ -17,10 +17,10 @@ public class Parser {
         return new AbstractSyntaxTree(parseCodeBlock());
     }
 
-    private AbstractSyntaxTreeNode parseCodeBlock() {
+    private CodeBlock parseCodeBlock() {
         ArrayList<AbstractSyntaxTreeNode> codeBlock = new ArrayList<>();
 
-        while (tokens.hasNext()) {
+        while (tokens.hasNext() && !tokens.next().isBracket(BracketType.CURLY_CLOSE)) {
             parseLineInto(codeBlock);
         }
 
@@ -28,31 +28,79 @@ public class Parser {
     }
 
     private void parseLineInto(ArrayList<AbstractSyntaxTreeNode> codeBlock) {
-        //Variable declaration can only happen at the start of a line
+        if (tokens.consumeIf(TokenType.LINE_END)) { // Ignore random line ends, we process one at end of line to make
+                                                    // sure the programmer included one, but you cant stop them putting
+                                                    // them when aren't needed! E.G.:
+                                                    // `int foo() {return 1};` vs `int foo() {return 1}`
+                                                    // So it's parsed for the second one and this if statement protects
+                                                    // against the first one.
+            return;
+        }
+
+        // Some things can only occur at the start of a line so are parsed separately --------------
         if (tokens.next().type == TokenType.IDENTIFIER && tokens.next(1).type == TokenType.IDENTIFIER) {
-            // Declaring and setting in same line results in two nodes:
-            // int a = 5;
-            // turns into {DECLARE, type="int", identifier="a"}, {SET, identifier="a", value=5}
 
-            Identifier type = new Identifier((String) tokens.consume().primaryStorage);
+            if (tokens.next(2).isBracket(BracketType.ROUND_OPEN)) { // Function Declaration -------
+                Identifier returnType = new Identifier((String) tokens.consume(TokenType.IDENTIFIER).primaryStorage);
+                Identifier functionName = new Identifier((String) tokens.consume(TokenType.IDENTIFIER).primaryStorage);
+                tokens.consume(TokenType.BRACKET, BracketType.ROUND_OPEN);
 
-            boolean isInizializing = tokens.next(1).isOperator(OperatorType.SET_VARIABLE);
-            int savedLocation = tokens.currentLocation();
+                ArrayList<FunctionDeclaration.Argument> arguments = new ArrayList<>();
+                if (!(tokens.next().isBracket(BracketType.ROUND_CLOSE))) { // Check there are any arguements
+                    do {
+                        arguments.add(new FunctionDeclaration.Argument(
+                                new Identifier((String) tokens.consume(TokenType.IDENTIFIER).primaryStorage),
+                                new Identifier((String) tokens.consume(TokenType.IDENTIFIER).primaryStorage)));
+                    } while (tokens.consumeIf(TokenType.COMMA));
+                }
+                tokens.consume(TokenType.BRACKET, BracketType.ROUND_CLOSE);
 
-            Identifier[] identifiers = parseIdentifierList();
-            codeBlock.add(new VariableDeclaration(type, identifiers));
+                tokens.consume(TokenType.BRACKET, BracketType.CURLY_OPEN);
+                CodeBlock functionCodeBlock = parseCodeBlock();
+                tokens.consume(TokenType.BRACKET, BracketType.CURLY_CLOSE);
 
-            if (isInizializing) {
-                tokens.setLocation(savedLocation); // So it's back to the location of the variable name
-                codeBlock.add(parseExpression());
+                codeBlock.add(new FunctionDeclaration(functionName, returnType,
+                        arguments.toArray(FunctionDeclaration.Argument[]::new), functionCodeBlock));
+
+                return; // Doesn't require a line end
+
+
+
+            } else { // Variable Declaration -------
+                // Declaring and setting in same line results in two nodes:
+                // int a = 5;
+                // turns into {DECLARE, type="int", identifier="a"}, {SET, identifier="a", value=5}
+
+                Identifier type = new Identifier((String) tokens.consume().primaryStorage);
+
+                boolean isInizializing = tokens.next(1).isOperator(OperatorType.SET_VARIABLE);
+                int savedLocation = tokens.currentLocation();
+
+                Identifier[] identifiers = parseIdentifierList();
+                codeBlock.add(new VariableDeclaration(type, identifiers));
+
+                if (isInizializing) {
+                    tokens.setLocation(savedLocation); // So it's back to the location of the variable name
+                    codeBlock.add(parseExpression());
+                }
+
             }
 
-            tokens.consume(TokenType.LINE_END);
 
-        } else {
+        } else if (tokens.consumeIf(TokenType.KEYWORD, KeywordType.RETURN)) {
+            // Is it returning a value?
+            if (tokens.next().type == TokenType.LINE_END) { // No
+                codeBlock.add(new Return());
+            } else { // Yes
+                codeBlock.add(new Return(parseExpression()));
+            }
+
+
+        } else { // There is nothing special so parse stuff that can be in middle of line ---------------------
             codeBlock.add(parseExpression());
-            tokens.consume(TokenType.LINE_END);
         }
+
+        tokens.consume(TokenType.LINE_END);
     }
 
     private AbstractSyntaxTreeNode parseExpression() {

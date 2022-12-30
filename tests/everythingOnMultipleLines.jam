@@ -22,3 +22,27 @@ baz = 5;
 baz = baz + 4 * 3;
 BAZ = (8 / baz * 6 / (2 + 4) * 3 - 8)>toString() + "8";
 baz = BAZ>toInt(16);
+
+// Functions
+int function() {
+    return 5;
+}; // Test if it works with the optional line end at end of a code block
+
+int add(int a, int b) {
+    return a + b;
+}
+
+int result;
+void double(int amount) {
+    result = amount * 2;
+    return; // Test returning with no value
+}
+
+int result2;
+void triple(int amount) {
+    result2 = amount * 3;
+    // Test no return whatsoever
+}
+
+double(add(function, 4));
+triple(add(function, 5));
