@@ -1,8 +1,0 @@
-::		Means this is a command
-{TEXT}	Means this is an argument, text is info on argument
-->		Means it returns a value
-
-:: WRITE {STREAM}, {DATA}
-
-:: ADD {INPUT_1}, {INPUT_2} ->
-:: ADD {INPUT_1}, {INPUT_2} | {OUTPUT} ->
