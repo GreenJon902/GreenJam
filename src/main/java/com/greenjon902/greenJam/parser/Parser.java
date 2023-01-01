@@ -5,6 +5,7 @@ import com.greenjon902.greenJam.parser.commands.CommandWriteToStream;
 import com.greenjon902.greenJam.tokenizer.*;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class Parser {
     private TokenStream tokens;
@@ -87,7 +88,37 @@ public class Parser {
             }
 
 
-        } else if (tokens.consumeIf(TokenType.KEYWORD, KeywordName.RETURN)) {
+        } else if (tokens.next().isKeyword(KeywordName.IF)) { // If statement -------
+            ArrayList<Conditional> conditionals = new ArrayList<>();
+
+            CodeBlock elseCodeBlock = null;
+            do {
+                if (tokens.consumeIf(TokenType.KEYWORD, KeywordName.IF)) {
+
+                    tokens.consume(TokenType.BRACKET, BracketType.ROUND_OPEN);
+                    AbstractSyntaxTreeNode expression = parseExpression();
+                    tokens.consume(TokenType.BRACKET, BracketType.ROUND_CLOSE);
+
+                    tokens.consume(TokenType.BRACKET, BracketType.CURLY_OPEN);
+                    CodeBlock conditionalCodeBlock = parseCodeBlock();
+                    tokens.consume(TokenType.BRACKET, BracketType.CURLY_CLOSE);
+
+                    conditionals.add(new Conditional(expression, conditionalCodeBlock));
+
+                } else {
+                    tokens.consume(TokenType.BRACKET, BracketType.CURLY_OPEN);
+                    elseCodeBlock = parseCodeBlock();
+                    tokens.consume(TokenType.BRACKET, BracketType.CURLY_CLOSE);
+                    break;
+                }
+            } while  (tokens.consumeIf(TokenType.KEYWORD, KeywordName.ELSE));
+
+            codeBlock.add(new If(conditionals.toArray(Conditional[]::new), elseCodeBlock));
+
+            return; // Doesn't require a line end
+
+
+        } else if (tokens.consumeIf(TokenType.KEYWORD, KeywordName.RETURN)) { // Return statement -------
             // Is it returning a value?
             if (tokens.next().type == TokenType.LINE_END) { // No
                 codeBlock.add(new Return());

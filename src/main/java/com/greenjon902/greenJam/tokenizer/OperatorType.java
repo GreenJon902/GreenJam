@@ -1,14 +1,16 @@
 package com.greenjon902.greenJam.tokenizer;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 public enum OperatorType {
-    // Special Operators:
+    // Special Operators ------------
     SET_VARIABLE("="), CALL("()"), GET_ATTRIBUTE(">"),
 
-    // Normal Operators:
-    ADD("+", 2), SUBTRACT("-", 3), MULTIPLY("*", 1), DIVIDE("/", 0);
+    // Normal Operators ------------
+    // Arithmetic
+    ADD("+", 3), SUBTRACT("-", 4), MULTIPLY("*", 2), DIVIDE("/", 1),
+    // Comparison:
+    EQUALS("==", 0), GREATER_THAN(">", 0), LESS_THAN("<", 0);
 
     public static final HashSet<String> symbols = new HashSet<>();
     static {
@@ -28,9 +30,16 @@ public enum OperatorType {
         highest_precedence = highest;
     }
 
+    public static final OperatorType[] lengthOrderedValues;
+    static {
+        lengthOrderedValues = OperatorType.values();
+        Arrays.sort(lengthOrderedValues, Comparator.comparingInt(o -> o.precedence));
+        Arrays.sort(lengthOrderedValues, Collections.reverseOrder());
+    }
+
     public final String symbol;
     /**
-     * 0 means process first.
+     * 0 means process first. -1 means it is processed separately.
      */
     public final int precedence;
 

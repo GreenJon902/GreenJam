@@ -3,7 +3,6 @@ package com.greenjon902.greenJam.parser;
 import java.util.Arrays;
 
 public class FunctionArguments extends AbstractSyntaxTreeNode {
-
     public final AbstractSyntaxTreeNode[] arguments;
 
     public FunctionArguments(AbstractSyntaxTreeNode[] arguments) {

@@ -16,6 +16,10 @@ public class Token {
         return type == TokenType.OPERATOR && primaryStorage == operatorType;
     }
 
+    public boolean isKeyword(KeywordName keywordName) {
+        return type == TokenType.KEYWORD && primaryStorage == keywordName;
+    }
+
     @Override
     public String toString() {
         return "Token{" +

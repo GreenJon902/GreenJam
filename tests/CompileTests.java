@@ -330,6 +330,85 @@ public class CompileTests {
     }
 
     @Test
+    public void testIfStatement() throws IOException {
+        System.out.println(colorize("Functions -----------", stageHeaderFormat));
+
+        String expectedTokens = "[Token{type=KEYWORD, primaryStorage=\"IF\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"a\"}, Token{type=OPERATOR, primaryStorage=\"EQUALS\"}, Token{type=IDENTIFIER, primaryStorage=\"b\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"CURLY_OPEN\"}, Token{type=COMMAND, primaryStorage=\"WRITE_TO_STREAM\"}, Token{type=IDENTIFIER, primaryStorage=\"STD_OUT\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"A is equal to B\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=BRACKET, primaryStorage=\"CURLY_CLOSE\"}, Token{type=KEYWORD, primaryStorage=\"ELSE\"}, Token{type=KEYWORD, primaryStorage=\"IF\"}, Token{type=BRACKET, primaryStorage=\"ROUND_OPEN\"}, Token{type=IDENTIFIER, primaryStorage=\"a\"}, Token{type=OPERATOR, primaryStorage=\"GREATER_THAN\"}, Token{type=IDENTIFIER, primaryStorage=\"b\"}, Token{type=BRACKET, primaryStorage=\"ROUND_CLOSE\"}, Token{type=BRACKET, primaryStorage=\"CURLY_OPEN\"}, Token{type=COMMAND, primaryStorage=\"WRITE_TO_STREAM\"}, Token{type=IDENTIFIER, primaryStorage=\"STD_OUT\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"A is bigger than B\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=BRACKET, primaryStorage=\"CURLY_CLOSE\"}, Token{type=KEYWORD, primaryStorage=\"ELSE\"}, Token{type=BRACKET, primaryStorage=\"CURLY_OPEN\"}, Token{type=COMMAND, primaryStorage=\"WRITE_TO_STREAM\"}, Token{type=IDENTIFIER, primaryStorage=\"STD_OUT\"}, Token{type=COMMA, primaryStorage=\"null\"}, Token{type=LITERAL, primaryStorage=\"A is smaller than B\"}, Token{type=LINE_END, primaryStorage=\"null\"}, Token{type=BRACKET, primaryStorage=\"CURLY_CLOSE\"}]";
+        String expectedAbstractSyntaxTree = //<editor-fold desc="Expected Abstract Syntax Tree" defaultstate="collapsed">
+                "AbstractSyntaxTree{\n" +
+                        "\tCodeBlock{\n" +
+                        "\t\tIf{\n" +
+                        "\t\t\tconditionals={\n" +
+                        "\t\t\t\tConditional{\n" +
+                        "\t\t\t\t\texpression={\n" +
+                        "\t\t\t\t\t\tOperation{EQUALS\n" +
+                        "\t\t\t\t\t\t\ta={\n" +
+                        "\t\t\t\t\t\t\t\tIdentifier{\"a\"}\n" +
+                        "\t\t\t\t\t\t\t},\n" +
+                        "\t\t\t\t\t\t\tb={\n" +
+                        "\t\t\t\t\t\t\t\tIdentifier{\"b\"}\n" +
+                        "\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t},\n" +
+                        "\t\t\t\t\tcodeBlock={\n" +
+                        "\t\t\t\t\t\tCodeBlock{\n" +
+                        "\t\t\t\t\t\t\tCommand.WriteToStream{\n" +
+                        "\t\t\t\t\t\t\t\tstream={\n" +
+                        "\t\t\t\t\t\t\t\t\tIdentifier{\"STD_OUT\"}\n" +
+                        "\t\t\t\t\t\t\t\t},\n" +
+                        "\t\t\t\t\t\t\t\tdata={\n" +
+                        "\t\t\t\t\t\t\t\t\tLiteral{\"A is equal to B\"}\n" +
+                        "\t\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t}\n" +
+                        "\t\t\t\t},\n" +
+                        "\t\t\t\tConditional{\n" +
+                        "\t\t\t\t\texpression={\n" +
+                        "\t\t\t\t\t\tOperation{GREATER_THAN\n" +
+                        "\t\t\t\t\t\t\ta={\n" +
+                        "\t\t\t\t\t\t\t\tIdentifier{\"a\"}\n" +
+                        "\t\t\t\t\t\t\t},\n" +
+                        "\t\t\t\t\t\t\tb={\n" +
+                        "\t\t\t\t\t\t\t\tIdentifier{\"b\"}\n" +
+                        "\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t},\n" +
+                        "\t\t\t\t\tcodeBlock={\n" +
+                        "\t\t\t\t\t\tCodeBlock{\n" +
+                        "\t\t\t\t\t\t\tCommand.WriteToStream{\n" +
+                        "\t\t\t\t\t\t\t\tstream={\n" +
+                        "\t\t\t\t\t\t\t\t\tIdentifier{\"STD_OUT\"}\n" +
+                        "\t\t\t\t\t\t\t\t},\n" +
+                        "\t\t\t\t\t\t\t\tdata={\n" +
+                        "\t\t\t\t\t\t\t\t\tLiteral{\"A is bigger than B\"}\n" +
+                        "\t\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t}\n" +
+                        "\t\t\t\t}\n" +
+                        "\t\t\t},\n" +
+                        "\t\t\telseCodeBlock={\n" +
+                        "\t\t\t\tCodeBlock{\n" +
+                        "\t\t\t\t\tCommand.WriteToStream{\n" +
+                        "\t\t\t\t\t\tstream={\n" +
+                        "\t\t\t\t\t\t\tIdentifier{\"STD_OUT\"}\n" +
+                        "\t\t\t\t\t\t},\n" +
+                        "\t\t\t\t\t\tdata={\n" +
+                        "\t\t\t\t\t\t\tLiteral{\"A is smaller than B\"}\n" +
+                        "\t\t\t\t\t\t}\n" +
+                        "\t\t\t\t\t}\n" +
+                        "\t\t\t\t}\n" +
+                        "\t\t\t}\n" +
+                        "\t\t}\n" +
+                        "\t}\n" +
+                        "}";
+        //</editor-fold>
+
+        test("tests/ifStatement.jam", expectedTokens, expectedAbstractSyntaxTree);
+    }
+
+    @Test
     public void testEverythingOnMultipleLines() throws IOException {
         System.out.println(colorize("Everything On Multiple Lines -----------", stageHeaderFormat));
 

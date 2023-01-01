@@ -1,0 +1,7 @@
+if (a == b) {
+    :: WRITE STD_OUT, "A is equal to B";
+} else if (a > b) {
+    :: WRITE STD_OUT, "A is bigger than B";
+} else {
+    :: WRITE STD_OUT, "A is smaller than B";
+}

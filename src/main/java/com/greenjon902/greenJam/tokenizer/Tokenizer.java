@@ -126,11 +126,12 @@ public class Tokenizer {
 
 
     /**
-     * Checks of the next token is an operator. If the next value is not an operator then null is returned.
+     * Checks of the next token is an operator. If the next value is not an operator then null is returned. It will
+     * decide based on the longest operator;
      * @return The operator or null.
      */
     private OperatorType attemptGetOperator() {
-        for (OperatorType operatorType : OperatorType.values()) {
+        for (OperatorType operatorType : OperatorType.lengthOrderedValues) {
              if (string.regionMatches(location, operatorType.symbol, 0, operatorType.symbol.length())) {
                  location += operatorType.symbol.length();
                  return operatorType;
