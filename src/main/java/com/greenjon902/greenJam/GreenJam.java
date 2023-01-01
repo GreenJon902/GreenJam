@@ -10,7 +10,7 @@ import java.util.Objects;
 public class GreenJam {
     public static final String NAME = "GreenJam";
     public static final String AUTHOR = "GreenJon902";
-    public static final String VERSION = "V0.1-ALPHA";
+    public static final String VERSION = "Alpha-V2";
 
 
     public static void main(String[] args) {
