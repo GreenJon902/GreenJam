@@ -191,7 +191,7 @@ public class Tokenizer {
 
 
     /**
-     * Checks of the next token is a numeric literal . If the next value is not a numeric literal then null is returned.
+     * Checks of the next token is a numeric literal. If the next value is not a numeric literal then null is returned.
      * @return The numeric literal as string or null.
      */
     private String attemptGetNumericLiteral() {

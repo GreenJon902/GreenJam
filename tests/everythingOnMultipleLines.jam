@@ -20,8 +20,8 @@ FOO = :: ADD 5, 7, BAR;
 // Expression stuff
 baz = 5;
 baz = baz + 4 * 3;
-BAZ = (8 / baz * 6 / (2 + 4) * 3 - 8)>toString() + "8";
-baz = BAZ>toInt(16);
+BAZ = (8 / baz * 6 / (2 + 4) * 3 - 8).toString() + "8";
+baz = BAZ.toInt(16);
 
 // Functions
 int function() {

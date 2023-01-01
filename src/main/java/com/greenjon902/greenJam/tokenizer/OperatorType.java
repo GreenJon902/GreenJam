@@ -4,7 +4,7 @@ import java.util.*;
 
 public enum OperatorType {
     // Special Operators ------------
-    SET_VARIABLE("="), CALL("()"), GET_ATTRIBUTE(">"),
+    SET_VARIABLE("="), CALL("()"), GET_ATTRIBUTE("."),
 
     // Normal Operators ------------
     // Arithmetic
