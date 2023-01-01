@@ -6,7 +6,7 @@
 
     <groupId>com.greenjon902</groupId>
     <artifactId>GreenJam</artifactId>
-    <version>V0.1-ALPHA</version>
+    <version>Alpha-V1</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
