@@ -63,7 +63,7 @@ public class SyntaxTokenizer {
      * See {@link #tokenize(StringInputStream)}
      */
     public static SyntaxToken[] tokenize(String string) {
-        return tokenize(new StringInputStream(string));
+        return tokenize(new StringInputStream("<string>", string));
     }
 
     /**
