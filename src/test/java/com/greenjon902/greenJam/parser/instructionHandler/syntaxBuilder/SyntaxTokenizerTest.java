@@ -46,4 +46,24 @@ class SyntaxTokenizerTest {
                 new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STOP_RECORD, 47))
         }, syntaxTokens);
     }
+
+    @Test
+    void tokenizeComplexExpression() {
+        SyntaxToken[] syntaxTokens;
+
+        syntaxTokens = SyntaxTokenizer.tokenize("if <{expression}> <2== <1{expression}>1>2");
+        assertArrayEquals(new SyntaxToken[] {
+                new SyntaxToken(SyntaxTokenType.LITERAL, "if "),
+                new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.START_RECORD, 0)),
+                new SyntaxToken(SyntaxTokenType.GROUP_SUBSTITUTION, "expression"),
+                new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STOP_RECORD, 0)),
+                new SyntaxToken(SyntaxTokenType.LITERAL, " "),
+                new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.START_RECORD, 2)),
+                new SyntaxToken(SyntaxTokenType.LITERAL, "== "),
+                new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.START_RECORD, 1)),
+                new SyntaxToken(SyntaxTokenType.GROUP_SUBSTITUTION, "expression"),
+                new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STOP_RECORD, 1)),
+                new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STOP_RECORD, 2)),
+        }, syntaxTokens);
+    }
 }

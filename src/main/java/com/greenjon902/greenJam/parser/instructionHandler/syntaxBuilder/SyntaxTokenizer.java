@@ -155,6 +155,12 @@ public class SyntaxTokenizer {
         StringBuilder literal = new StringBuilder();
 
         while (!syntax.isEnd()) {
+            if (syntax.string.charAt(syntax.location) == groupSubstitutionOpen ||
+                    syntax.string.charAt(syntax.location) == groupSubstitutionClose ||
+                    syntax.string.charAt(syntax.location) == startRecord ||
+                    syntax.string.charAt(syntax.location) == stopRecord){
+                break;
+            }
             literal.append(syntax.consume());
         }
 
