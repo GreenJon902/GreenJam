@@ -12,6 +12,10 @@ public class StringInputStream {
         return location + " " + string.charAt(location);
     }
 
+    public char next() {
+        return string.charAt(location);
+    }
+
     public char consume() {
         char character = string.charAt(location);
         location += 1;

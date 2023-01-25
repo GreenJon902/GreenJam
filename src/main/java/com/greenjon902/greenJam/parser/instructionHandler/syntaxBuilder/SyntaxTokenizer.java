@@ -1,5 +1,6 @@
 package com.greenjon902.greenJam.parser.instructionHandler.syntaxBuilder;
 
+import com.greenjon902.greenJam.Errors;
 import com.greenjon902.greenJam.StringInputStream;
 
 import java.util.ArrayList;
@@ -109,13 +110,15 @@ public class SyntaxTokenizer {
         if (syntax.consumeIf(groupSubstitutionOpen)) {
             StringBuilder name = new StringBuilder();
 
-            while (!syntax.isEnd()) {
-                if (syntax.consumeIf(groupSubstitutionClose)) {
+            while (true) {
+                if (syntax.isEnd()) {
+                    Errors.syntaxTokenizer_unterminatedGroupSubstitution(syntax);
+                } else if (syntax.consumeIf(groupSubstitutionClose)) {
                     break;
+                } else if (!groupSubstitutionCharacters.contains(syntax.next())) {
+                    Errors.syntaxTokenizer_invalidGroupCharacter(syntax);
                 }
-                if (groupSubstitutionCharacters.contains(syntax.string.charAt(syntax.location))) {
-                    name.append(syntax.consume());
-                }
+                name.append(syntax.consume());
             }
             return name.toString();
         }
@@ -125,7 +128,7 @@ public class SyntaxTokenizer {
     private static SyntaxOperator attemptGetOperator(StringInputStream syntax) {
         if (syntax.consumeIf(startRecord)) {
             StringBuilder storageLocation = new StringBuilder();
-            while (!syntax.isEnd() && integerNumbers.contains(syntax.string.charAt(syntax.location))) {
+            while (!syntax.isEnd() && integerNumbers.contains(syntax.next())) {
                 storageLocation.append(syntax.consume());
             }
             if (storageLocation.length() == 0) {
@@ -137,7 +140,7 @@ public class SyntaxTokenizer {
 
         } else if (syntax.consumeIf(stopRecord)) {
             StringBuilder storageLocation = new StringBuilder();
-            while (!syntax.isEnd() && integerNumbers.contains(syntax.string.charAt(syntax.location))) {
+            while (!syntax.isEnd() && integerNumbers.contains(syntax.next())) {
                 storageLocation.append(syntax.consume());
             }
             if (storageLocation.length() == 0) {
@@ -155,10 +158,10 @@ public class SyntaxTokenizer {
         StringBuilder literal = new StringBuilder();
 
         while (!syntax.isEnd()) {
-            if (syntax.string.charAt(syntax.location) == groupSubstitutionOpen ||
-                    syntax.string.charAt(syntax.location) == groupSubstitutionClose ||
-                    syntax.string.charAt(syntax.location) == startRecord ||
-                    syntax.string.charAt(syntax.location) == stopRecord){
+            if (syntax.next() == groupSubstitutionOpen ||
+                    syntax.next() == groupSubstitutionClose ||
+                    syntax.next() == startRecord ||
+                    syntax.next() == stopRecord){
                 break;
             }
             literal.append(syntax.consume());
