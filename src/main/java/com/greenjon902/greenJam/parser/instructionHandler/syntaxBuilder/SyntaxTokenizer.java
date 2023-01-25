@@ -58,10 +58,32 @@ public class SyntaxTokenizer {
         //</editor-fold>
     }};
 
+    /**
+     * See {@link #tokenize(StringInputStream)}
+     */
     public static SyntaxToken[] tokenize(String string) {
         return tokenize(new StringInputStream(string));
     }
 
+    /**
+     * Tokenizes a syntax expression. A syntax expression is used by the SyntaxBuilder to create rules on how to parse a
+     * file.
+     *
+     * <p>Syntax expressions have three parts: literals, group substitution and recording.
+     * <br>A literal is just any piece of text that the parser will try to match exactly to what you have written.
+     * <br>A group substitution tells the parser to try and parse the group which you named, e.g. if I write
+     * `if {identifier}` then it will attempt to match the literal if and then look to the rules on parsing
+     * identifiers.
+     * <br>Recording tells it what it needs to save, for example if I wrote `<if {identifier}>` and it matched to
+     * `if foo` then "if foo" would be saved to the storage location 0, if I specify a location by putting a number
+     * afterwards then you can have multiple items being stored. Note: If no location is specified then 0 is assumed.
+     *
+     * <p>Examples:<br>
+     * `&lt;if {identifier}>` -> Match and then save "if " and an identifier name to the first bit of primary storage.
+     * <br>
+     * `&lt;0 identifier>0 == <0 identifier>0` -> Match an identifier, the literal "==", and another identifier then save
+     * the identifiers to the specified locations location.
+     */
     public static SyntaxToken[] tokenize(StringInputStream syntax) {
         List<SyntaxToken> tokens = new ArrayList<>();
 
