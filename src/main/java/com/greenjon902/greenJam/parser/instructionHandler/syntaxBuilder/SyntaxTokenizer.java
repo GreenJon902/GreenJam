@@ -83,7 +83,7 @@ public class SyntaxTokenizer {
      * `&lt;if {identifier}>` -> Match and then save "if " and an identifier name to the first bit of primary storage.
      * <br>
      * `&lt;0 identifier>0 == <0 identifier>0` -> Match an identifier, the literal "==", and another identifier then save
-     * the identifiers to the specified locations location.
+     * the identifiers to the specified locations' location.
      */
     public static SyntaxToken[] tokenize(StringInputStream syntax) {
         List<SyntaxToken> tokens = new ArrayList<>();
