@@ -58,6 +58,7 @@ public class SyntaxTokenizer {
         add('0');
         //</editor-fold>
     }};
+    public final static char escapeCharacter = '\\';
 
     /**
      * See {@link #tokenize(StringInputStream)}
@@ -163,8 +164,13 @@ public class SyntaxTokenizer {
                     syntax.next() == startRecord ||
                     syntax.next() == stopRecord){
                 break;
+
+            } else if (syntax.consumeIf(escapeCharacter)) {
+                literal.append(getEscapeCharacter(syntax));
+
+            } else {
+                literal.append(syntax.consume());
             }
-            literal.append(syntax.consume());
         }
 
         if (literal.length() == 0) {
@@ -172,5 +178,35 @@ public class SyntaxTokenizer {
         }
 
         return literal.toString();
+    }
+
+    private static char getEscapeCharacter(StringInputStream syntax) {
+        Character ret = switch (syntax.next()) {
+            case 'x' -> (char) parseHexCharacter(syntax);
+            case '\'' -> '\'';
+            case '\"' ->  '\"';
+            case '\\' -> '\\';
+            case 'n' -> '\n';
+            case 'r' -> '\r';
+            case 't' -> '\t';
+            case 'b' -> '\b';
+            case 'f' -> '\f';
+            case '0' -> '\0';
+            default -> null;
+        };
+        if (ret != null) {
+            if (syntax.consume() == 'x') { // We need to consume anyway but if it's a hex character then we need to
+                syntax.consume();          // consume twice more
+                syntax.consume();
+            }
+            return ret;
+        }
+
+        Errors.syntaxTokenizer_invalidEscapeSequence(syntax);
+        return '\0'; // It will never get here
+    }
+
+    private static int parseHexCharacter(StringInputStream syntax) {
+        return Integer.valueOf(String.valueOf(syntax.next(1)) + syntax.next(2), 16);
     }
 }

@@ -15,7 +15,11 @@ public class StringInputStream {
     }
 
     public char next() {
-        return string.charAt(location);
+        return next(0);
+    }
+
+    public char next(int offset) {
+        return string.charAt(location + offset);
     }
 
     public char consume() {
