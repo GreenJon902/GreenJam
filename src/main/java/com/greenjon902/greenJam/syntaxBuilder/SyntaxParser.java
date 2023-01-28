@@ -31,17 +31,17 @@ public class SyntaxParser {
                                     new Tuple.Two<>((Integer) ((SyntaxOperator) currentToken.storage).storage, // Memory location
                                             (String) tokens[i + 1].storage)); // Group name
                             i += 2; // Group, Stop Record
-                            highestMemoryLocation = highest(highestMemoryLocation, (Integer) ((SyntaxOperator) currentToken.storage).storage);
+                            highestMemoryLocation = Math.max(highestMemoryLocation, (Integer) ((SyntaxOperator) currentToken.storage).storage);
 
                         } else {
                             syntaxInstructions.add(SyntaxInstruction.START_RECORD_CHARACTER);
                             syntaxInstructionData.add(((SyntaxOperator) currentToken.storage).storage); // Memory location
-                            highestMemoryLocation = highest(highestMemoryLocation, (Integer) ((SyntaxOperator) currentToken.storage).storage);
+                            highestMemoryLocation = Math.max(highestMemoryLocation, (Integer) ((SyntaxOperator) currentToken.storage).storage);
                         }
                     } else if ((((SyntaxOperator) currentToken.storage).type == SyntaxOperator.SyntaxOperatorType.STOP_RECORD)) {
                         syntaxInstructions.add(SyntaxInstruction.STOP_RECORD_CHARACTER);
                         syntaxInstructionData.add(((SyntaxOperator) currentToken.storage).storage); // Memory location
-                        highestMemoryLocation = highest(highestMemoryLocation, (Integer) ((SyntaxOperator) currentToken.storage).storage);
+                        highestMemoryLocation = Math.max(highestMemoryLocation, (Integer) ((SyntaxOperator) currentToken.storage).storage);
 
                     } else {
                         throw new RuntimeException();
@@ -57,10 +57,5 @@ public class SyntaxParser {
 
         return new SyntaxMatcherImpl(highestMemoryLocation + 1, syntaxInstructions.toArray(SyntaxInstruction[]::new),
                 syntaxInstructionData.toArray(Object[]::new));
-    }
-
-    public static int highest(int a, int b) {
-        if (a > b) return a;
-        return b;
     }
 }

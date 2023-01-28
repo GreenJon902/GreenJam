@@ -9,13 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class SyntaxParserTest {
 
     @Test
-    void highest() {
-        assertEquals(5, SyntaxParser.highest(4, 5));
-        assertEquals(10, SyntaxParser.highest(10, 5));
-        assertEquals(52, SyntaxParser.highest(-1, 52));
-    }
-
-    @Test
     void parseLiteral() {
         SyntaxMatcherImpl syntaxMatcher;
 
