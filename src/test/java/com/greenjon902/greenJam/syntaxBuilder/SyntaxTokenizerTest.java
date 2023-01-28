@@ -1,4 +1,4 @@
-package com.greenjon902.greenJam.parser.instructionHandler.syntaxBuilder;
+package com.greenjon902.greenJam.syntaxBuilder;
 
 import org.junit.jupiter.api.Test;
 
@@ -8,9 +8,16 @@ class SyntaxTokenizerTest {
 
     @Test
     void tokenizeLiterals() {
-        SyntaxToken[] syntaxTokens = SyntaxTokenizer.tokenize("foo");
+        SyntaxToken[] syntaxTokens;
+
+        syntaxTokens = SyntaxTokenizer.tokenize("foo");
         assertArrayEquals(new SyntaxToken[] {
                 new SyntaxToken(SyntaxTokenType.LITERAL, "foo")
+        }, syntaxTokens);
+
+        syntaxTokens = SyntaxTokenizer.tokenize("foo bar");
+        assertArrayEquals(new SyntaxToken[] {
+                new SyntaxToken(SyntaxTokenType.LITERAL, "foo bar")
         }, syntaxTokens);
     }
 

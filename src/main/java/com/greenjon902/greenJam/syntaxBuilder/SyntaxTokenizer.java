@@ -1,7 +1,7 @@
-package com.greenjon902.greenJam.parser.instructionHandler.syntaxBuilder;
+package com.greenjon902.greenJam.syntaxBuilder;
 
-import com.greenjon902.greenJam.Errors;
-import com.greenjon902.greenJam.StringInputStream;
+import com.greenjon902.greenJam.common.Errors;
+import com.greenjon902.greenJam.common.StringInputStream;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,7 +12,7 @@ public class SyntaxTokenizer {
     public final static char groupSubstitutionOpen = '{';
     public final static char groupSubstitutionClose = '}';
     public static Set<Character> groupSubstitutionCharacters = new HashSet<>() {{
-            //<editor-fold desc="Identifier Characters" defaultstate="collapsed">
+            //<editor-fold desc="Group Name Characters" defaultstate="collapsed">
             add('a');
             add('b');
             add('c');
@@ -45,7 +45,7 @@ public class SyntaxTokenizer {
     public final static char startRecord = '<';
     public final static char stopRecord = '>';
     public static Set<Character> integerNumbers = new HashSet<>() {{
-        //<editor-fold desc="Identifier Characters" defaultstate="collapsed">
+        //<editor-fold desc="Integer Characters" defaultstate="collapsed">
         add('1');
         add('2');
         add('3');
@@ -76,9 +76,12 @@ public class SyntaxTokenizer {
      * <br>A group substitution tells the parser to try and parse the group which you named, e.g. if I write
      * `if {identifier}` then it will attempt to match the literal if and then look to the rules on parsing
      * identifiers.
-     * <br>Recording tells it what it needs to save, for example if I wrote `<if {identifier}>` and it matched to
+     * <br>Recording tells it what it needs to save, for example if I wrote `&lt;if {identifier}>` and it matched to
      * `if foo` then "if foo" would be saved to the storage location 0, if I specify a location by putting a number
      * afterwards then you can have multiple items being stored. Note: If no location is specified then 0 is assumed.
+     * If a record has only one group in it then it will save the node returned by parsing the group, otherwise it will
+     * record the characters. If the same memory location is used for nodes then it will crash, if used for characters
+     * then it will append to the end of the string at the location.
      *
      * <p>Examples:<br>
      * `&lt;if {identifier}>` -> Match and then save "if " and an identifier name to the first bit of primary storage.

@@ -1,4 +1,4 @@
-package com.greenjon902.greenJam;
+package com.greenjon902.greenJam.common;
 
 public class Errors {
     /**
