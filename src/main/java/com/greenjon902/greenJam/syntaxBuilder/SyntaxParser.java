@@ -60,9 +60,6 @@ public class SyntaxParser {
     }
 
     public static int highest(int a, int b) {
-        System.out.println(a);
-        System.out.println(b);
-        System.out.println();
         if (a > b) return a;
         return b;
     }
