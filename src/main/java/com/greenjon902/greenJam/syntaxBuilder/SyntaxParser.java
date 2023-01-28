@@ -10,7 +10,7 @@ public class SyntaxParser {
     public static SyntaxMatcher parse(SyntaxToken[] tokens) {
         ArrayList<SyntaxInstruction> syntaxInstructions = new ArrayList<>();
         ArrayList<Object> syntaxInstructionData = new ArrayList<>();
-        int highestMemoryLocation = 0;
+        int highestMemoryLocation = -1;
 
         for (int i=0; i < tokens.length; i++) {
             SyntaxToken currentToken = tokens[i];
@@ -55,11 +55,14 @@ public class SyntaxParser {
             }
         }
 
-        return new SyntaxMatcherImpl(highestMemoryLocation, syntaxInstructions.toArray(SyntaxInstruction[]::new),
+        return new SyntaxMatcherImpl(highestMemoryLocation + 1, syntaxInstructions.toArray(SyntaxInstruction[]::new),
                 syntaxInstructionData.toArray(Object[]::new));
     }
 
     public static int highest(int a, int b) {
+        System.out.println(a);
+        System.out.println(b);
+        System.out.println();
         if (a > b) return a;
         return b;
     }

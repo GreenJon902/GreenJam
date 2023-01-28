@@ -44,7 +44,7 @@ class SyntaxParserTest {
                 new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STOP_RECORD, 0))
         });
         assertEquals(new SyntaxMatcherImpl(
-                0, new SyntaxInstruction[]{
+                1, new SyntaxInstruction[]{
                         SyntaxInstruction.START_RECORD_CHARACTER,
                         SyntaxInstruction.MATCH_LITERAL,
                 SyntaxInstruction.STOP_RECORD_CHARACTER
@@ -58,7 +58,7 @@ class SyntaxParserTest {
                 new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STOP_RECORD, 7))
         });
         assertEquals(new SyntaxMatcherImpl(
-                7, new SyntaxInstruction[]{
+                8, new SyntaxInstruction[]{
                 SyntaxInstruction.START_RECORD_CHARACTER,
                 SyntaxInstruction.MATCH_GROUP,
                 SyntaxInstruction.MATCH_LITERAL,
@@ -72,7 +72,7 @@ class SyntaxParserTest {
                 new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STOP_RECORD, 0))
         });
         assertEquals(new SyntaxMatcherImpl(
-                0, new SyntaxInstruction[]{
+                1, new SyntaxInstruction[]{
                 SyntaxInstruction.RECORD_GROUP
         }, new Object[]{new Tuple.Two<>(0, "baz")}
         ), syntaxMatcher);
