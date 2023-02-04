@@ -36,6 +36,14 @@ public class StringInputStream {
         return false;
     }
 
+    public boolean consumeIf(String other_string) {
+        if (string.regionMatches(location, other_string, 0, other_string.length())) {
+            location += string.length();
+            return true;
+        }
+        return false;
+    }
+
     public boolean isEnd() {
         return !(location < string.length());
     }
@@ -80,5 +88,19 @@ public class StringInputStream {
             pos += 1;
         }
         return pos;
+    }
+
+    @Override
+    public String toString() {
+        String formatted_string = string;
+        formatted_string = formatted_string.replaceAll("\n", "\\n");
+        formatted_string = formatted_string.replaceAll("\t", "\\t");
+
+        return "StringInputStream{" +
+                "string=\n\t" + formatted_string + "\n" +
+                '\t' + " ".repeat(location) + "^\n" +
+                '\t' + ", location=" + location +
+                ", fileName='" + fileName + '\'' +
+                '}';
     }
 }
