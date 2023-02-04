@@ -41,4 +41,20 @@ class SyntaxBuilderTest {
                         }
         ), syntaxMatcher);
     }
+
+    @Test
+    void parseWithEnd() {
+        SyntaxRule syntaxMatcher = SyntaxBuilder.build("while <{identifier}>`i do not matter");
+        assertEquals(
+                new SyntaxRule(1,
+                        new SyntaxInstruction[]{
+                                SyntaxInstruction.MATCH_LITERAL,
+                                SyntaxInstruction.RECORD_GROUP,
+                        },
+                        new Object[]{
+                                "while ",
+                                new Tuple.Two<>(0, "identifier"),
+                        }
+                ), syntaxMatcher);
+    }
 }

@@ -49,6 +49,10 @@ class SyntaxTokenizerTest {
         assertArrayEquals(new SyntaxToken[] {
                 new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STOP_RECORD, 47))
         }, syntaxTokens);
+        syntaxTokens = SyntaxTokenizer.tokenize("`");
+        assertArrayEquals(new SyntaxToken[0], syntaxTokens);
+        syntaxTokens = SyntaxTokenizer.tokenize("`<");
+        assertArrayEquals(new SyntaxToken[0], syntaxTokens);
     }
 
     @Test
@@ -123,7 +127,7 @@ class SyntaxTokenizerTest {
     void tokenizeComplexExpression() {
         SyntaxToken[] syntaxTokens;
 
-        syntaxTokens = SyntaxTokenizer.tokenize("if <{expression}> <2== <1{expression}>1>2");
+        syntaxTokens = SyntaxTokenizer.tokenize("if <{expression}> <2== <1{expression}>1>2`not recorded");
         assertArrayEquals(new SyntaxToken[] {
                 new SyntaxToken(SyntaxTokenType.LITERAL, "if "),
                 new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.START_RECORD, 0)),

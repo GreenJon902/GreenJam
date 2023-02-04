@@ -3,16 +3,20 @@ package com.greenjon902.greenJam.syntaxBuilder;
 import java.util.Objects;
 
 public class SyntaxOperator {
-    SyntaxOperatorType type;
-    Object storage;
+    public final SyntaxOperatorType type;
+    public final Object storage;
 
     public SyntaxOperator(SyntaxOperatorType type, Object storage) {
         this.type = type;
         this.storage = storage;
     }
 
+    public SyntaxOperator(SyntaxOperatorType type) {
+        this(type, null);
+    }
+
     enum SyntaxOperatorType {
-        START_RECORD, STOP_RECORD;
+        START_RECORD, STOP_RECORD, END;
     }
 
     @Override

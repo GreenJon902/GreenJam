@@ -59,6 +59,7 @@ public class SyntaxTokenizer {
         //</editor-fold>
     }};
     public final static char escapeCharacter = '\\';
+    public final static char endCharacter = '`';
 
     /**
      * See {@link #tokenize(StringInputStream)}
@@ -99,6 +100,7 @@ public class SyntaxTokenizer {
                 tokenType = SyntaxTokenType.GROUP_SUBSTITUTION;
             } else if ((tokenStorage = attemptGetOperator(syntax)) != null) {
                 tokenType = SyntaxTokenType.OPERATOR;
+                if (((SyntaxOperator) tokenStorage).type == SyntaxOperator.SyntaxOperatorType.END) break;
             } else if ((tokenStorage = attemptGetLiteral(syntax)) != null) {
                 tokenType = SyntaxTokenType.LITERAL;
             } else {
@@ -152,6 +154,10 @@ public class SyntaxTokenizer {
             }
 
             return new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STOP_RECORD, Integer.valueOf(storageLocation.toString()));
+
+
+        } else if (syntax.consumeIf(endCharacter)) {
+            return new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.END);
         }
 
         return null;
