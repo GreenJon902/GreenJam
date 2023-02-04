@@ -104,7 +104,8 @@ public class SyntaxTokenizer {
             } else if ((tokenStorage = attemptGetLiteral(syntax)) != null) {
                 tokenType = SyntaxTokenType.LITERAL;
             } else {
-                throw new RuntimeException("Failed to recognise next token at location - " + syntax.currentLocationString());
+                Errors.syntaxTokenizer_unrecognisedToken(syntax);
+                tokenType = null; // It will never get here
             }
             tokens.add(new SyntaxToken(tokenType, tokenStorage));
         }

@@ -1,5 +1,6 @@
 package com.greenjon902.greenJam.instructionHandler;
 
+import com.greenjon902.greenJam.common.Errors;
 import com.greenjon902.greenJam.common.StringInputStream;
 import com.greenjon902.greenJam.common.SyntaxRule;
 import com.greenjon902.greenJam.syntaxBuilder.SyntaxBuilder;
@@ -77,7 +78,8 @@ public class InstructionTokenizer {
             } else if ((tokenStorage = attemptGetIdentifier(instruction)) != null) {
                 tokenType = InstructionToken.InstructionTokenType.IDENTIFIER;
             } else {
-                throw new RuntimeException("Failed to recognise next token at location - " + instruction.currentLocationString());
+                Errors.instructionTokenizer_unrecognisedToken(instruction);
+                tokenType = null; // It will never get here
             }
             tokens.add(new InstructionToken(tokenType, tokenStorage));
         }
