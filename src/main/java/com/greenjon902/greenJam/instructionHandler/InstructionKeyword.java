@@ -18,6 +18,7 @@ public enum InstructionKeyword {
             i += 1;
         }
         Arrays.sort(lengthOrderedKeywords, Comparator.comparingInt(o -> o.string.length()));
+        Arrays.sort(lengthOrderedKeywords, Comparator.reverseOrder());
     }
 
     InstructionKeyword(String string) {
