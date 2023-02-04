@@ -50,4 +50,18 @@ class InstructionTokenizerTest {
                                 new Object[]{"test"}))
         }, instructionTokens);
     }
+
+    @Test
+    void tokenizeIdentifier() {
+        InstructionToken[] instructionTokens;
+
+        instructionTokens = InstructionTokenizer.tokenize("foo");
+        assertArrayEquals(new InstructionToken[] {
+                new InstructionToken(InstructionToken.InstructionTokenType.IDENTIFIER, "foo")
+        }, instructionTokens);
+        instructionTokens = InstructionTokenizer.tokenize("bar_baz");
+        assertArrayEquals(new InstructionToken[] {
+                new InstructionToken(InstructionToken.InstructionTokenType.IDENTIFIER, "bar_baz")
+        }, instructionTokens);
+    }
 }

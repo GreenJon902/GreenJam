@@ -14,6 +14,38 @@ import java.util.Set;
 
 
 public class InstructionTokenizer {
+    public static Set<Character> identifier_characters = new HashSet<>() {{
+        //<editor-fold desc="Group Name Characters" defaultstate="collapsed">
+        add('a');
+        add('b');
+        add('c');
+        add('d');
+        add('e');
+        add('f');
+        add('g');
+        add('h');
+        add('i');
+        add('j');
+        add('k');
+        add('l');
+        add('m');
+        add('n');
+        add('o');
+        add('p');
+        add('q');
+        add('r');
+        add('s');
+        add('t');
+        add('u');
+        add('v');
+        add('w');
+        add('x');
+        add('y');
+        add('z');
+        add('_');
+        //</editor-fold>
+    }};
+
     public static InstructionToken[] tokenize(String string) {
         return tokenize(new StringInputStream("<string>", string));
     }
@@ -27,6 +59,8 @@ public class InstructionTokenizer {
             tokenType = InstructionToken.InstructionTokenType.KEYWORD;
         } else if ((tokenStorage = attemptGetSyntaxRule(instruction)) != null) {
             tokenType = InstructionToken.InstructionTokenType.SYNTAX_RULE;
+        } else if ((tokenStorage = attemptGetIdentifier(instruction)) != null) {
+            tokenType = InstructionToken.InstructionTokenType.IDENTIFIER;
         } else {
             throw new RuntimeException("Failed to recognise next token at location - " + instruction.currentLocationString());
         }
@@ -49,5 +83,17 @@ public class InstructionTokenizer {
             return SyntaxBuilder.build(instruction);
         }
         return null;
+    }
+
+    private static String attemptGetIdentifier(StringInputStream instruction) {
+        StringBuilder stringBuilder = new StringBuilder();
+        while (!instruction.isEnd() && identifier_characters.contains(instruction.next())) {
+            stringBuilder.append(instruction.consume());
+        }
+        if (stringBuilder.length() == 0) {
+            return null;
+        } else {
+            return stringBuilder.toString();
+        }
     }
 }
