@@ -1,6 +1,8 @@
 package com.greenjon902.greenJam.instructionHandler;
 
 import com.greenjon902.greenJam.common.StringInputStream;
+import com.greenjon902.greenJam.common.SyntaxRule;
+import com.greenjon902.greenJam.syntaxBuilder.SyntaxBuilder;
 import com.greenjon902.greenJam.syntaxBuilder.SyntaxOperator;
 import com.greenjon902.greenJam.syntaxBuilder.SyntaxToken;
 import com.greenjon902.greenJam.syntaxBuilder.SyntaxTokenType;
@@ -23,6 +25,8 @@ public class InstructionTokenizer {
         Object tokenStorage;
         if ((tokenStorage = attemptGetKeyword(instruction)) != null) {
             tokenType = InstructionToken.InstructionTokenType.KEYWORD;
+        } else if ((tokenStorage = attemptGetSyntaxRule(instruction)) != null) {
+            tokenType = InstructionToken.InstructionTokenType.SYNTAX_RULE;
         } else {
             throw new RuntimeException("Failed to recognise next token at location - " + instruction.currentLocationString());
         }
@@ -36,6 +40,13 @@ public class InstructionTokenizer {
             if (instruction.consumeIf(keyword.string)) {
                 return keyword;
             }
+        }
+        return null;
+    }
+
+    private static SyntaxRule attemptGetSyntaxRule(StringInputStream instruction) {
+        if (instruction.consumeIf('`')) {
+            return SyntaxBuilder.build(instruction);
         }
         return null;
     }

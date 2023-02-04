@@ -12,7 +12,7 @@ public class InstructionToken {
     }
 
     enum InstructionTokenType {
-        KEYWORD
+        SYNTAX_RULE, KEYWORD
     }
 
     @Override

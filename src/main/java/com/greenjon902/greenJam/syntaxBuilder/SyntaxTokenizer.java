@@ -171,7 +171,8 @@ public class SyntaxTokenizer {
             if (syntax.next() == groupSubstitutionOpen ||
                     syntax.next() == groupSubstitutionClose ||
                     syntax.next() == startRecord ||
-                    syntax.next() == stopRecord){
+                    syntax.next() == stopRecord ||
+                    syntax.next() == endCharacter){
                 break;
 
             } else if (syntax.consumeIf(escapeCharacter)) {
