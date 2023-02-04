@@ -1,13 +1,13 @@
 package com.greenjon902.greenJam.syntaxBuilder;
 
 import com.greenjon902.greenJam.common.SyntaxInstruction;
-import com.greenjon902.greenJam.common.SyntaxMatcher;
+import com.greenjon902.greenJam.common.SyntaxRule;
 import com.greenjon902.greenJam.common.Tuple;
 
 import java.util.ArrayList;
 
 public class SyntaxParser {
-    public static SyntaxMatcher parse(SyntaxToken[] tokens) {
+    public static SyntaxRule parse(SyntaxToken[] tokens) {
         ArrayList<SyntaxInstruction> syntaxInstructions = new ArrayList<>();
         ArrayList<Object> syntaxInstructionData = new ArrayList<>();
         int highestMemoryLocation = -1;
@@ -55,7 +55,7 @@ public class SyntaxParser {
             }
         }
 
-        return new SyntaxMatcherImpl(highestMemoryLocation + 1, syntaxInstructions.toArray(SyntaxInstruction[]::new),
+        return new SyntaxRule(highestMemoryLocation + 1, syntaxInstructions.toArray(SyntaxInstruction[]::new),
                 syntaxInstructionData.toArray(Object[]::new));
     }
 }

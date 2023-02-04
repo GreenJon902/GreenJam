@@ -1,9 +1,9 @@
 package com.greenjon902.greenJam.syntaxBuilder;
 
-import com.greenjon902.greenJam.common.SyntaxMatcher;
+import com.greenjon902.greenJam.common.SyntaxRule;
 
 public class SyntaxBuilder {
-    public static SyntaxMatcher build(String string) {
+    public static SyntaxRule build(String string) {
         return SyntaxParser.parse(SyntaxTokenizer.tokenize(string));
     }
 }

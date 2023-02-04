@@ -1,34 +1,25 @@
-package com.greenjon902.greenJam.syntaxBuilder;
+package com.greenjon902.greenJam.common;
 
-import com.greenjon902.greenJam.common.StringInputStream;
-import com.greenjon902.greenJam.common.AstNode;
-import com.greenjon902.greenJam.common.SyntaxInstruction;
-import com.greenjon902.greenJam.common.SyntaxMatcher;
 
 import java.util.Arrays;
 import java.util.Objects;
 
-public class SyntaxMatcherImpl implements SyntaxMatcher {
+public class SyntaxRule {
     final int memoryLocations;
     final SyntaxInstruction[] syntaxInstructions;
     final Object[] syntaxInstructionData;
 
-    public SyntaxMatcherImpl(int memoryLocations, SyntaxInstruction[] syntaxInstructions, Object[] syntaxInstructionData) {
+    public SyntaxRule(int memoryLocations, SyntaxInstruction[] syntaxInstructions, Object[] syntaxInstructionData) {
         this.memoryLocations = memoryLocations;
         this.syntaxInstructions = syntaxInstructions;
         this.syntaxInstructionData = syntaxInstructionData;
     }
 
     @Override
-    public AstNode parse(StringInputStream inputStream) {
-        return null;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SyntaxMatcherImpl that = (SyntaxMatcherImpl) o;
+        SyntaxRule that = (SyntaxRule) o;
         return memoryLocations == that.memoryLocations && Arrays.equals(syntaxInstructions, that.syntaxInstructions) && Arrays.equals(syntaxInstructionData, that.syntaxInstructionData);
     }
 
@@ -42,7 +33,7 @@ public class SyntaxMatcherImpl implements SyntaxMatcher {
 
     @Override
     public String toString() {
-        return "SyntaxMatcherImpl{" +
+        return "SyntaxRuleImpl{" +
                 "memoryLocations=" + memoryLocations +
                 ", syntaxInstructions=" + Arrays.toString(syntaxInstructions) +
                 ", syntaxInstructionData=" + Arrays.toString(syntaxInstructionData) +
