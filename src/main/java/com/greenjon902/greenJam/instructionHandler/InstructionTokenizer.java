@@ -14,6 +14,13 @@ import java.util.Set;
 
 
 public class InstructionTokenizer {
+    public final static char instruction_end_character = ';';
+    public static HashSet<Character> whitespace_characters = new HashSet<>() {{
+        add(' ');
+        add('\t');
+        add('\n');
+    }};
+
     public static Set<Character> identifier_characters = new HashSet<>() {{
         //<editor-fold desc="Group Name Characters" defaultstate="collapsed">
         add('a');
@@ -53,18 +60,27 @@ public class InstructionTokenizer {
     public static InstructionToken[] tokenize(StringInputStream instruction) {
         List<InstructionToken> tokens = new ArrayList<>();
 
-        InstructionToken.InstructionTokenType tokenType;
-        Object tokenStorage;
-        if ((tokenStorage = attemptGetKeyword(instruction)) != null) {
-            tokenType = InstructionToken.InstructionTokenType.KEYWORD;
-        } else if ((tokenStorage = attemptGetSyntaxRule(instruction)) != null) {
-            tokenType = InstructionToken.InstructionTokenType.SYNTAX_RULE;
-        } else if ((tokenStorage = attemptGetIdentifier(instruction)) != null) {
-            tokenType = InstructionToken.InstructionTokenType.IDENTIFIER;
-        } else {
-            throw new RuntimeException("Failed to recognise next token at location - " + instruction.currentLocationString());
+        boolean firstLoop = true;
+        while (!instruction.isEnd() && !instruction.consumeIf(instruction_end_character)) {
+            if (!firstLoop) {
+                skipButRequireWhitespace(instruction);
+            } else {
+                firstLoop = false;
+            }
+
+            InstructionToken.InstructionTokenType tokenType;
+            Object tokenStorage;
+            if ((tokenStorage = attemptGetKeyword(instruction)) != null) {
+                tokenType = InstructionToken.InstructionTokenType.KEYWORD;
+            } else if ((tokenStorage = attemptGetSyntaxRule(instruction)) != null) {
+                tokenType = InstructionToken.InstructionTokenType.SYNTAX_RULE;
+            } else if ((tokenStorage = attemptGetIdentifier(instruction)) != null) {
+                tokenType = InstructionToken.InstructionTokenType.IDENTIFIER;
+            } else {
+                throw new RuntimeException("Failed to recognise next token at location - " + instruction.currentLocationString());
+            }
+            tokens.add(new InstructionToken(tokenType, tokenStorage));
         }
-        tokens.add(new InstructionToken(tokenType, tokenStorage));
 
         return tokens.toArray(InstructionToken[]::new);
     }
@@ -95,5 +111,13 @@ public class InstructionTokenizer {
         } else {
             return stringBuilder.toString();
         }
+    }
+
+    public static void skipButRequireWhitespace(StringInputStream instruction) {
+        if (!whitespace_characters.contains(instruction.next())) throw new RuntimeException();
+
+        while (whitespace_characters.contains(instruction.next())){
+            instruction.consume();
+        };
     }
 }

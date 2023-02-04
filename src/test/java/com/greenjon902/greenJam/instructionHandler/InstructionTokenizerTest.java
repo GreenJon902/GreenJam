@@ -64,4 +64,32 @@ class InstructionTokenizerTest {
                 new InstructionToken(InstructionToken.InstructionTokenType.IDENTIFIER, "bar_baz")
         }, instructionTokens);
     }
+
+    @Test
+    void tokenizeWholeCommand() {
+        InstructionToken[] instructionTokens;
+
+        instructionTokens = InstructionTokenizer.tokenize("SYNTAX RULE ADD identifier `<{identifier_characters}{identifier}>`;this is ignored");
+        assertArrayEquals(new InstructionToken[] {
+                new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.SYNTAX),
+                new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.RULE),
+                new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.ADD),
+                new InstructionToken(InstructionToken.InstructionTokenType.IDENTIFIER, "identifier"),
+                new InstructionToken(InstructionToken.InstructionTokenType.SYNTAX_RULE,
+                        new SyntaxRule(1,
+                                new SyntaxInstruction[]{
+                                        SyntaxInstruction.START_RECORD_CHARACTER,
+                                        SyntaxInstruction.MATCH_GROUP,
+                                        SyntaxInstruction.MATCH_GROUP,
+                                        SyntaxInstruction.STOP_RECORD_CHARACTER
+                                },
+                                new Object[]{
+                                        0,
+                                        "identifier_characters",
+                                        "identifier",
+                                        0
+                                })),
+
+        }, instructionTokens);
+    }
 }

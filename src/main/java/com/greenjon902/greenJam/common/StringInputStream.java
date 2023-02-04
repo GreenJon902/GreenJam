@@ -38,7 +38,7 @@ public class StringInputStream {
 
     public boolean consumeIf(String other_string) {
         if (string.regionMatches(location, other_string, 0, other_string.length())) {
-            location += string.length();
+            location += other_string.length();
             return true;
         }
         return false;
