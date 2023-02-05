@@ -11,7 +11,7 @@ public class InstructionToken {
         this.storage = storage;
     }
 
-    enum InstructionTokenType {
+    public enum InstructionTokenType {
         SYNTAX_RULE, IDENTIFIER, KEYWORD
     }
 

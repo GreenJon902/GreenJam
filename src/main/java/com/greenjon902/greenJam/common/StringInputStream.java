@@ -2,8 +2,8 @@ package com.greenjon902.greenJam.common;
 
 public class StringInputStream {
     public final String string;
-    public int location = 0;
     public final String fileName;
+    public int location = 0;
 
     public StringInputStream(String fileName, String string) {
         this.fileName = fileName;
