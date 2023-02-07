@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class SyntaxRule {
-    final int memoryLocations;
-    final SyntaxInstruction[] syntaxInstructions;
-    final Object[] syntaxInstructionData;
+    public final int memoryLocations;
+    public final SyntaxInstruction[] syntaxInstructions;
+    public final Object[] syntaxInstructionData;
 
     public SyntaxRule(int memoryLocations, SyntaxInstruction[] syntaxInstructions, Object[] syntaxInstructionData) {
         this.memoryLocations = memoryLocations;

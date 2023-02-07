@@ -33,4 +33,8 @@ public class SyntaxContext {
     public SyntaxRule[] getRules(String group) {
         return syntaxRules.get(group).toArray(SyntaxRule[]::new);
     }
+
+    public boolean hasGroup(String name) {
+        return syntaxRules.containsKey(name);
+    }
 }

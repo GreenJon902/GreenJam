@@ -2,10 +2,6 @@ package com.greenjon902.greenJam.instructionHandler;
 
 import com.greenjon902.greenJam.common.SyntaxInstruction;
 import com.greenjon902.greenJam.common.SyntaxRule;
-import com.greenjon902.greenJam.syntaxBuilder.SyntaxOperator;
-import com.greenjon902.greenJam.syntaxBuilder.SyntaxToken;
-import com.greenjon902.greenJam.syntaxBuilder.SyntaxTokenType;
-import com.greenjon902.greenJam.syntaxBuilder.SyntaxTokenizer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -78,10 +74,10 @@ class InstructionTokenizerTest {
                 new InstructionToken(InstructionToken.InstructionTokenType.SYNTAX_RULE,
                         new SyntaxRule(1,
                                 new SyntaxInstruction[]{
-                                        SyntaxInstruction.START_RECORD_CHARACTER,
+                                        SyntaxInstruction.START_RECORD,
                                         SyntaxInstruction.MATCH_GROUP,
                                         SyntaxInstruction.MATCH_GROUP,
-                                        SyntaxInstruction.STOP_RECORD_CHARACTER
+                                        SyntaxInstruction.STOP_RECORD
                                 },
                                 new Object[]{
                                         0,

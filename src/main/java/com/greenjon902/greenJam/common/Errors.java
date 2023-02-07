@@ -26,6 +26,18 @@ public class Errors {
         throw new RuntimeException("Syntax Error: " + message);
     }
 
+    /**
+     * Formats and throws syntax errors for instructions.
+     */
+    private static void throwParserError(String message, StringInputStream stringInputStream, SyntaxRule syntaxRule) throws RuntimeException {
+        System.err.println("File \"" + stringInputStream.fileName + "\", line " + stringInputStream.getCurrentLineNumber());
+        System.err.println(stringInputStream.getCurrentLine());
+        System.err.println(" ".repeat(stringInputStream.getCurrentLinePosition() - 1) + "^");
+        System.out.println(syntaxRule);
+
+        throw new RuntimeException("Parser Error: " + message);
+    }
+
     public static void syntaxTokenizer_invalidGroupCharacter(StringInputStream stringInputStream) throws RuntimeException {
         throwSyntaxError("Invalid character \"" + stringInputStream.next() + "\" for a group name" + stringInputStream.location, stringInputStream);
     }
@@ -66,5 +78,17 @@ public class Errors {
 
 
         throw new RuntimeException("Syntax Error: " + "Invalid length of instruction when using a " + syntax + "instruction, expected " + expected_left + " items left");
+    }
+
+    public static void syntaxMatcher_alreadyRecording(StringInputStream stringInputStream, SyntaxRule syntaxRule, int memoryLocation) {
+        throwParserError("Tried to start recording when already recording to " + memoryLocation, stringInputStream, syntaxRule);
+    }
+
+    public static void syntaxMatcher_triedToStopRecordingWhenNotRecording(StringInputStream stringInputStream, SyntaxRule syntaxRule, int memoryLocation) {
+        throwParserError("Tried to stop recording to a location that wasn't being recorded to - " + memoryLocation, stringInputStream, syntaxRule);
+    }
+
+    public static void syntaxMatcher_unknownGroup(StringInputStream stringInputStream, SyntaxRule syntaxRule, String group) {
+        throwParserError("Tried to match unknown group - \"" + group + "\"", stringInputStream, syntaxRule);
     }
 }

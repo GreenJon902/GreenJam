@@ -34,12 +34,12 @@ public class SyntaxParser {
                             highestMemoryLocation = Math.max(highestMemoryLocation, (Integer) ((SyntaxOperator) currentToken.storage).storage);
 
                         } else {
-                            syntaxInstructions.add(SyntaxInstruction.START_RECORD_CHARACTER);
+                            syntaxInstructions.add(SyntaxInstruction.START_RECORD);
                             syntaxInstructionData.add(((SyntaxOperator) currentToken.storage).storage); // Memory location
                             highestMemoryLocation = Math.max(highestMemoryLocation, (Integer) ((SyntaxOperator) currentToken.storage).storage);
                         }
                     } else if ((((SyntaxOperator) currentToken.storage).type == SyntaxOperator.SyntaxOperatorType.STOP_RECORD)) {
-                        syntaxInstructions.add(SyntaxInstruction.STOP_RECORD_CHARACTER);
+                        syntaxInstructions.add(SyntaxInstruction.STOP_RECORD);
                         syntaxInstructionData.add(((SyntaxOperator) currentToken.storage).storage); // Memory location
                         highestMemoryLocation = Math.max(highestMemoryLocation, (Integer) ((SyntaxOperator) currentToken.storage).storage);
 

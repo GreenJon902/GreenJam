@@ -39,9 +39,9 @@ class SyntaxParserTest {
         });
         assertEquals(new SyntaxRule(
                 1, new SyntaxInstruction[]{
-                        SyntaxInstruction.START_RECORD_CHARACTER,
+                        SyntaxInstruction.START_RECORD,
                         SyntaxInstruction.MATCH_LITERAL,
-                SyntaxInstruction.STOP_RECORD_CHARACTER
+                SyntaxInstruction.STOP_RECORD
                 }, new Object[]{0, "bar", 0}
         ), syntaxMatcher);
 
@@ -53,10 +53,10 @@ class SyntaxParserTest {
         });
         assertEquals(new SyntaxRule(
                 8, new SyntaxInstruction[]{
-                SyntaxInstruction.START_RECORD_CHARACTER,
+                SyntaxInstruction.START_RECORD,
                 SyntaxInstruction.MATCH_GROUP,
                 SyntaxInstruction.MATCH_LITERAL,
-                SyntaxInstruction.STOP_RECORD_CHARACTER
+                SyntaxInstruction.STOP_RECORD
         }, new Object[]{7, "baz", "bar", 7}
         ), syntaxMatcher);
 
