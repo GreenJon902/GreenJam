@@ -40,7 +40,8 @@ public class SyntaxMatcher {
                 }
                 case STOP_RECORD -> {
                     if (!currentRecordings.containsKey((Integer) data)) Errors.syntaxMatcher_triedToStopRecordingWhenNotRecording(string, rule, (Integer) data);
-                    memoryLocations[(Integer) data] = string.string.substring(currentRecordings.get(data), string.location);
+                    if (memoryLocations[(Integer) data] == null) memoryLocations[(Integer) data] = "";
+                    memoryLocations[(Integer) data] += string.string.substring(currentRecordings.get(data), string.location);
                     currentRecordings.remove((Integer) data);
                 }
                 case MATCH_GROUP -> {
@@ -53,6 +54,7 @@ public class SyntaxMatcher {
                 }
                 case RECORD_GROUP -> {
                     if (!syntaxContext.hasGroup(((Tuple.Two<Integer, String>) data).B)) Errors.syntaxMatcher_unknownGroup(string, rule, ((Tuple.Two<Integer, String>) data).B);
+                    if (memoryLocations[(Integer) data] != null) Errors.syntaxMatcher_triedToRerecordNode(string, rule, ((Tuple.Two<Integer, String>) data).A, ((Tuple.Two<Integer, String>) data).B);;
                     AstNode astNode = match(string, ((Tuple.Two<Integer, String>) data).B, syntaxContext);
                     if (astNode == null) {
                         string.location = stringLocationSave;

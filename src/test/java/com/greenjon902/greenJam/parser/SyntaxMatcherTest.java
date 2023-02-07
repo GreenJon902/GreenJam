@@ -89,4 +89,26 @@ class SyntaxMatcherTest {
                     "baz",
                     syntaxContext));
     }
+
+    @Test
+    void joiningStrings() {
+        SyntaxContext syntaxContext = new SyntaxContext();
+        syntaxContext.add("test_one", new SyntaxRule(1,
+                new SyntaxInstruction[]{SyntaxInstruction.START_RECORD, SyntaxInstruction.MATCH_LITERAL, SyntaxInstruction.MATCH_LITERAL, SyntaxInstruction.STOP_RECORD},
+                new Object[]{0, "hello ", "world", 0}));
+        syntaxContext.add("test_two", new SyntaxRule(1,
+                new SyntaxInstruction[]{SyntaxInstruction.START_RECORD, SyntaxInstruction.MATCH_LITERAL, SyntaxInstruction.STOP_RECORD, SyntaxInstruction.START_RECORD, SyntaxInstruction.MATCH_LITERAL, SyntaxInstruction.STOP_RECORD},
+                new Object[]{0, "hello ", 0, 0, "world", 0}));
+
+        assertEquals(new AstNode("hello world"),
+                SyntaxMatcher.match(
+                        new StringInputStream("<string>", "hello world"),
+                        "test_one",
+                        syntaxContext));
+        assertEquals(new AstNode("hello world"),
+                SyntaxMatcher.match(
+                        new StringInputStream("<string>", "hello world"),
+                        "test_two",
+                        syntaxContext));
+    }
 }

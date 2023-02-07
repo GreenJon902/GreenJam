@@ -91,4 +91,8 @@ public class Errors {
     public static void syntaxMatcher_unknownGroup(StringInputStream stringInputStream, SyntaxRule syntaxRule, String group) {
         throwParserError("Tried to match unknown group - \"" + group + "\"", stringInputStream, syntaxRule);
     }
+
+    public static void syntaxMatcher_triedToRerecordNode(StringInputStream stringInputStream, SyntaxRule syntaxRule, int memoryLocation, String group) {
+        throwParserError("Tried to rerecord a node at the location " + memoryLocation + " from group \"" + group + "\"", stringInputStream, syntaxRule);
+    }
 }
