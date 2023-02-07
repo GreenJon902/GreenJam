@@ -44,9 +44,7 @@ public class SyntaxMatcher {
                     currentRecordings.remove((Integer) data);
                 }
                 case MATCH_GROUP -> {
-                    if (!syntaxContext.hasGroup((String) data)) {
-                        Errors.syntaxMatcher_unknownGroup(string, rule, (String) data);
-                    }
+                    if (!syntaxContext.hasGroup((String) data)) Errors.syntaxMatcher_unknownGroup(string, rule, (String) data);
                     AstNode astNode = match(string, (String) data, syntaxContext);
                     if (astNode == null) {
                         string.location = stringLocationSave;
@@ -54,9 +52,7 @@ public class SyntaxMatcher {
                     }
                 }
                 case RECORD_GROUP -> {
-                    if (!syntaxContext.hasGroup(((Tuple.Two<Integer, String>) data).B)) {
-                        Errors.syntaxMatcher_unknownGroup(string, rule, ((Tuple.Two<Integer, String>) data).B);
-                    }
+                    if (!syntaxContext.hasGroup(((Tuple.Two<Integer, String>) data).B)) Errors.syntaxMatcher_unknownGroup(string, rule, ((Tuple.Two<Integer, String>) data).B);
                     AstNode astNode = match(string, ((Tuple.Two<Integer, String>) data).B, syntaxContext);
                     if (astNode == null) {
                         string.location = stringLocationSave;
