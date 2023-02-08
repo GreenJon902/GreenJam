@@ -18,6 +18,10 @@ public class SyntaxMatcher {
     }
 
     public static AstNode match(StringInputStream string, SyntaxRule rule, SyntaxContext syntaxContext) {
+        if (rule instanceof SyntaxRule.Link) {
+            return match(string, ((SyntaxRule.Link) rule).otherGroup, syntaxContext);
+        }
+
         int stringLocationSave = string.location;
 
         HashMap<Integer, Integer> currentRecordings = new HashMap<>();
@@ -54,7 +58,7 @@ public class SyntaxMatcher {
                 }
                 case RECORD_GROUP -> {
                     if (!syntaxContext.hasGroup(((Tuple.Two<Integer, String>) data).B)) Errors.syntaxMatcher_unknownGroup(string, rule, ((Tuple.Two<Integer, String>) data).B);
-                    if (memoryLocations[(Integer) data] != null) Errors.syntaxMatcher_triedToRerecordNode(string, rule, ((Tuple.Two<Integer, String>) data).A, ((Tuple.Two<Integer, String>) data).B);;
+                    if (memoryLocations[((Tuple.Two<Integer, String>) data).A] != null) Errors.syntaxMatcher_triedToRerecordNode(string, rule, ((Tuple.Two<Integer, String>) data).A, ((Tuple.Two<Integer, String>) data).B);
                     AstNode astNode = match(string, ((Tuple.Two<Integer, String>) data).B, syntaxContext);
                     if (astNode == null) {
                         string.location = stringLocationSave;

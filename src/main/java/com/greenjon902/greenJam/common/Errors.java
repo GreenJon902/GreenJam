@@ -33,7 +33,7 @@ public class Errors {
         System.err.println("File \"" + stringInputStream.fileName + "\", line " + stringInputStream.getCurrentLineNumber());
         System.err.println(stringInputStream.getCurrentLine());
         System.err.println(" ".repeat(stringInputStream.getCurrentLinePosition() - 1) + "^");
-        System.out.println(syntaxRule);
+        System.out.println(syntaxRule.format());
 
         throw new RuntimeException("Parser Error: " + message);
     }

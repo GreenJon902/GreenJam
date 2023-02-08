@@ -111,4 +111,107 @@ class SyntaxMatcherTest {
                         "test_two",
                         syntaxContext));
     }
+
+    @Test
+    void matchComplexExpression() {
+        SyntaxContext syntaxContext = new SyntaxContext();
+        syntaxContext.add("identifier", new SyntaxRule(1,
+                new SyntaxInstruction[]{
+                        SyntaxInstruction.START_RECORD,
+                        SyntaxInstruction.MATCH_LITERAL,
+                        SyntaxInstruction.STOP_RECORD},
+                new Object[]{0,
+                        "test",
+                        0}));
+
+
+        syntaxContext.add("expression_level_one", new SyntaxRule(3,
+                new SyntaxInstruction[]{
+                        SyntaxInstruction.RECORD_GROUP,
+                        SyntaxInstruction.START_RECORD,
+                        SyntaxInstruction.MATCH_LITERAL,
+                        SyntaxInstruction.STOP_RECORD,
+                        SyntaxInstruction.RECORD_GROUP},
+                new Object[]{
+                        new Tuple.Two<>(1, "expression_level_two"),
+                        0,
+                        "+",
+                        0,
+                        new Tuple.Two<>(2, "expression_level_one")}));
+        syntaxContext.addLink("expression_level_one", "expression_level_two");
+
+
+        syntaxContext.add("expression_level_two", new SyntaxRule(3,
+                new SyntaxInstruction[]{
+                        SyntaxInstruction.RECORD_GROUP,
+                        SyntaxInstruction.START_RECORD,
+                        SyntaxInstruction.MATCH_LITERAL,
+                        SyntaxInstruction.STOP_RECORD,
+                        SyntaxInstruction.RECORD_GROUP},
+                new Object[]{
+                        new Tuple.Two<>(1, "identifier"),
+                        0,
+                        "*",
+                        0,
+                        new Tuple.Two<>(2, "expression_level_two")}));
+        syntaxContext.addLink("expression_level_two", "identifier");
+
+
+
+        assertEquals(new AstNode("test"),
+                SyntaxMatcher.match(
+                        new StringInputStream("<string>", "test"),
+                        "expression_level_one",
+                        syntaxContext));
+        assertEquals(new AstNode("*", new AstNode("test"), new AstNode("test")),
+                SyntaxMatcher.match(
+                        new StringInputStream("<string>", "test*test"),
+                        "expression_level_one",
+                        syntaxContext));
+        assertEquals(new AstNode("+", new AstNode("test"), new AstNode("test")),
+                SyntaxMatcher.match(
+                        new StringInputStream("<string>", "test+test"),
+                        "expression_level_one",
+                        syntaxContext));
+        assertEquals(new AstNode("+",
+                                new AstNode("*",
+                                        new AstNode("test"),
+                                        new AstNode("test")),
+                                new AstNode("test")),
+                SyntaxMatcher.match(
+                        new StringInputStream("<string>", "test*test+test"),
+                        "expression_level_one",
+                        syntaxContext));
+        assertEquals(new AstNode("+",
+                        new AstNode("test"),
+                        new AstNode("*",
+                                new AstNode("test"),
+                                new AstNode("test"))),
+                SyntaxMatcher.match(
+                        new StringInputStream("<string>", "test+test*test"),
+                        "expression_level_one",
+                        syntaxContext));
+        assertEquals(new AstNode("+",
+                        new AstNode("test"),
+                        new AstNode("+",
+                                new AstNode("*",
+                                        new AstNode("test"),
+                                        new AstNode("test")),
+                                new AstNode("test"))),
+                SyntaxMatcher.match(
+                        new StringInputStream("<string>", "test+test*test+test"),
+                        "expression_level_one",
+                        syntaxContext));
+        assertEquals(new AstNode("+",
+                        new AstNode("test"),
+                        new AstNode("*",
+                                new AstNode("test"),
+                                new AstNode("*",
+                                        new AstNode("test"),
+                                        new AstNode("test")))),
+                SyntaxMatcher.match(
+                        new StringInputStream("<string>", "test+test*test*test"),
+                        "expression_level_one",
+                        syntaxContext));
+    }
 }

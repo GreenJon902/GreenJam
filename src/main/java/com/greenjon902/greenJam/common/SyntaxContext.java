@@ -22,6 +22,14 @@ public class SyntaxContext {
         }
     }
 
+    public void addLink(String group, String other_group) {
+        add(group, new SyntaxRule.Link(other_group));
+    }
+
+    public void removeLink(String group, String other_group) {
+        remove(group, new SyntaxRule.Link(other_group));
+    }
+
     public int groupAmount() {
         return syntaxRules.size();
     }
