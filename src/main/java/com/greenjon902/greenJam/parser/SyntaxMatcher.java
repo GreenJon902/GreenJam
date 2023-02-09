@@ -22,6 +22,8 @@ public class SyntaxMatcher {
             return match(string, ((SyntaxRule.Link) rule).otherGroup, syntaxContext);
         }
 
+        while (string.consumeIfAny(syntaxContext.getIgnored()));
+
         int stringLocationSave = string.location;
 
         HashMap<Integer, Integer> currentRecordings = new HashMap<>();

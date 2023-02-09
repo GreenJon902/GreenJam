@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 public class SyntaxContext {
     private final HashMap<String, ArrayList<SyntaxRule>> syntaxRules = new HashMap<>();
+    private final ArrayList<String> ignored = new ArrayList<>();
 
     public void add(String group, SyntaxRule rule) {
         if (!syntaxRules.containsKey(group)) {
@@ -44,5 +45,17 @@ public class SyntaxContext {
 
     public boolean hasGroup(String name) {
         return syntaxRules.containsKey(name);
+    }
+
+    public String[] getIgnored() {
+        return ignored.toArray(String[]::new);
+    }
+
+    public void ignore(String string) {
+        ignored.add(string);
+    }
+
+    public void removeIgnore(String string) {
+        ignored.remove(string);
     }
 }

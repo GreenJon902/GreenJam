@@ -31,7 +31,6 @@ class FirstInstructionHandlerTest {
                                 }))
             }
         ));
-        assertEquals(1, syntaxContext.groupAmount());
         assertArrayEquals(new String[]{"foo"}, syntaxContext.getGroupNames());
         assertArrayEquals(new SyntaxRule[]{
                 new SyntaxRule(0,
@@ -59,5 +58,38 @@ class FirstInstructionHandlerTest {
         }
         ));
         assertEquals(0, syntaxContext.groupAmount()); // No more items in group so shouldn't exist
+    }
+
+    @Test
+    public void syntaxIgnoredInstructionHandling() {
+        SyntaxContext syntaxContext = new SyntaxContext();
+        FirstInstructionHandler firstInstructionHandler = new FirstInstructionHandler(syntaxContext);
+
+        firstInstructionHandler.handle(new InstructionTokenInputStream(
+                "TestInstruction", 5, new InstructionToken[]    {
+                new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.SYNTAX),
+                new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.IGNORED),
+                new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.ADD),
+                new InstructionToken(InstructionToken.InstructionTokenType.STRING, " ")
+                }));
+        assertArrayEquals(new String[]{" "}, syntaxContext.getIgnored());
+
+        firstInstructionHandler.handle(new InstructionTokenInputStream(
+                "TestInstruction", 5, new InstructionToken[]    {
+                new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.SYNTAX),
+                new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.IGNORED),
+                new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.ADD),
+                new InstructionToken(InstructionToken.InstructionTokenType.STRING, "\t")
+        }));
+        assertArrayEquals(new String[]{" ", "\t"}, syntaxContext.getIgnored());
+
+        firstInstructionHandler.handle(new InstructionTokenInputStream(
+                "TestInstruction", 5, new InstructionToken[]    {
+                new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.SYNTAX),
+                new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.IGNORED),
+                new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.REMOVE),
+                new InstructionToken(InstructionToken.InstructionTokenType.STRING, " ")
+        }));
+        assertArrayEquals(new String[]{"\t"}, syntaxContext.getIgnored());
     }
 }

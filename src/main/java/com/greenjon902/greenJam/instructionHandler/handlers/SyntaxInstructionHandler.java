@@ -9,9 +9,11 @@ import com.greenjon902.greenJam.instructionHandler.InstructionToken;
 
 public class SyntaxInstructionHandler extends InstructionHandlerBase {
     private final SyntaxRuleInstructionHandler syntaxRuleInstructionHandler;
+    private final SyntaxIgnoredInstructionHandler syntaxIgnoredInstructionHandler;
 
     public SyntaxInstructionHandler(SyntaxContext syntaxContext) {
         this.syntaxRuleInstructionHandler = new SyntaxRuleInstructionHandler(syntaxContext);
+        this.syntaxIgnoredInstructionHandler = new SyntaxIgnoredInstructionHandler(syntaxContext);
     }
 
     @Override
@@ -24,6 +26,10 @@ public class SyntaxInstructionHandler extends InstructionHandlerBase {
             case RULE -> {
                 tokens.consume();
                 syntaxRuleInstructionHandler.handle(tokens);
+            }
+            case IGNORED -> {
+                tokens.consume();
+                syntaxIgnoredInstructionHandler.handle(tokens);
             }
             default -> Errors.instructionHandler_invalidTokenAtLocation(tokens);
         }

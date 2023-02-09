@@ -44,6 +44,16 @@ public class StringInputStream {
         return false;
     }
 
+
+    public boolean consumeIfAny(String[] otherStrings) {
+        for (String otherString : otherStrings) {
+            if (consumeIf(otherString)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isEnd() {
         return !(location < string.length());
     }
