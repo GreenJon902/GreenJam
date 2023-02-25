@@ -42,7 +42,11 @@ public class SyntaxContext {
     }
 
     public SyntaxRule[] getRules(String group) {
-        return syntaxRules.get(group).toArray(SyntaxRule[]::new);
+        ArrayList<SyntaxRule> rules = syntaxRules.get(group);
+        if (rules == null) {
+            return new SyntaxRule[0];
+        }
+        return rules.toArray(SyntaxRule[]::new);
     }
 
     public boolean hasGroup(String name) {

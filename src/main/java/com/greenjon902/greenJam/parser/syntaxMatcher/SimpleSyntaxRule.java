@@ -19,22 +19,6 @@ public class SimpleSyntaxRule extends SyntaxRule {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SimpleSyntaxRule that = (SimpleSyntaxRule) o;
-        return memoryLocationNumber == that.memoryLocationNumber && Arrays.equals(syntaxInstructions, that.syntaxInstructions) && Arrays.equals(syntaxInstructionData, that.syntaxInstructionData);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(memoryLocationNumber);
-        result = 31 * result + Arrays.hashCode(syntaxInstructions);
-        result = 31 * result + Arrays.hashCode(syntaxInstructionData);
-        return result;
-    }
-
-    @Override
     public String toString() {
         return "SimpleSyntaxRule{" +
                 "memoryLocations=" + memoryLocationNumber +
@@ -120,5 +104,21 @@ public class SimpleSyntaxRule extends SyntaxRule {
         }
 
         return new AstNode(memoryLocations);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimpleSyntaxRule rule = (SimpleSyntaxRule) o;
+        return memoryLocationNumber == rule.memoryLocationNumber && Arrays.equals(syntaxInstructions, rule.syntaxInstructions) && Arrays.equals(syntaxInstructionData, rule.syntaxInstructionData);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(memoryLocationNumber);
+        result = 31 * result + Arrays.hashCode(syntaxInstructions);
+        result = 31 * result + Arrays.hashCode(syntaxInstructionData);
+        return result;
     }
 }

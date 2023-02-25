@@ -21,7 +21,10 @@ public enum InstructionKeyword {
         Arrays.sort(lengthOrderedKeywords, Comparator.reverseOrder());
     }
 
+    public final InstructionToken instructionToken;
+
     InstructionKeyword(String string) {
         this.string = string;
+        instructionToken = new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, this);
     }
 }

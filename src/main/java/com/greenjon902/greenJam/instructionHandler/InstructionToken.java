@@ -11,8 +11,12 @@ public class InstructionToken {
         this.storage = storage;
     }
 
+    public static InstructionToken makeArgument(InstructionTokenType type) {
+        return new InstructionToken(InstructionTokenType.__ARGUMENT__, type);
+    }
+
     public enum InstructionTokenType {
-        SYNTAX_RULE, IDENTIFIER, STRING, KEYWORD
+        SYNTAX_RULE, IDENTIFIER, STRING, KEYWORD, __ARGUMENT__ // __ARGUMENT__ is used internally for parsing of commands
     }
 
     @Override
