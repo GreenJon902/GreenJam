@@ -1,5 +1,7 @@
 package com.greenjon902.greenJam.common;
 
+import com.greenjon902.greenJam.parser.syntaxMatcher.LinkSyntaxRule;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -24,11 +26,11 @@ public class SyntaxContext {
     }
 
     public void addLink(String group, String other_group) {
-        add(group, new SyntaxRule.Link(other_group));
+        add(group, new LinkSyntaxRule(other_group));
     }
 
     public void removeLink(String group, String other_group) {
-        remove(group, new SyntaxRule.Link(other_group));
+        remove(group, new LinkSyntaxRule(other_group));
     }
 
     public int groupAmount() {

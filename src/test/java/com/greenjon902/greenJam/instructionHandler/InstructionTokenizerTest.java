@@ -2,6 +2,7 @@ package com.greenjon902.greenJam.instructionHandler;
 
 import com.greenjon902.greenJam.common.SyntaxInstruction;
 import com.greenjon902.greenJam.common.SyntaxRule;
+import com.greenjon902.greenJam.parser.syntaxMatcher.SimpleSyntaxRule;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,7 +42,7 @@ class InstructionTokenizerTest {
         instructionTokens = InstructionTokenizer.tokenize("`test`");
         assertArrayEquals(new InstructionToken[] {
                 new InstructionToken(InstructionToken.InstructionTokenType.SYNTAX_RULE,
-                        new SyntaxRule(0,
+                        new SimpleSyntaxRule(0,
                                 new SyntaxInstruction[]{SyntaxInstruction.MATCH_LITERAL},
                                 new Object[]{"test"}))
         }, instructionTokens);
@@ -72,7 +73,7 @@ class InstructionTokenizerTest {
                 new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.ADD),
                 new InstructionToken(InstructionToken.InstructionTokenType.IDENTIFIER, "identifier"),
                 new InstructionToken(InstructionToken.InstructionTokenType.SYNTAX_RULE,
-                        new SyntaxRule(1,
+                        new SimpleSyntaxRule(1,
                                 new SyntaxInstruction[]{
                                         SyntaxInstruction.START_RECORD,
                                         SyntaxInstruction.MATCH_GROUP,

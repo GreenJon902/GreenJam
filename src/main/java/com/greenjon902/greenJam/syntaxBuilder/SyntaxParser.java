@@ -3,6 +3,7 @@ package com.greenjon902.greenJam.syntaxBuilder;
 import com.greenjon902.greenJam.common.SyntaxInstruction;
 import com.greenjon902.greenJam.common.SyntaxRule;
 import com.greenjon902.greenJam.common.Tuple;
+import com.greenjon902.greenJam.parser.syntaxMatcher.SimpleSyntaxRule;
 
 import java.util.ArrayList;
 
@@ -55,7 +56,7 @@ public class SyntaxParser {
             }
         }
 
-        return new SyntaxRule(highestMemoryLocation + 1, syntaxInstructions.toArray(SyntaxInstruction[]::new),
+        return new SimpleSyntaxRule(highestMemoryLocation + 1, syntaxInstructions.toArray(SyntaxInstruction[]::new),
                 syntaxInstructionData.toArray(Object[]::new));
     }
 }

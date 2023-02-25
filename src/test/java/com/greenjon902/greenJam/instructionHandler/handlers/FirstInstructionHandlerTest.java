@@ -6,6 +6,7 @@ import com.greenjon902.greenJam.common.SyntaxInstruction;
 import com.greenjon902.greenJam.common.SyntaxRule;
 import com.greenjon902.greenJam.instructionHandler.InstructionKeyword;
 import com.greenjon902.greenJam.instructionHandler.InstructionToken;
+import com.greenjon902.greenJam.parser.syntaxMatcher.SimpleSyntaxRule;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +23,7 @@ class FirstInstructionHandlerTest {
                         new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.RULE),
                         new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.ADD),
                         new InstructionToken(InstructionToken.InstructionTokenType.IDENTIFIER, "foo"),
-                        new InstructionToken(InstructionToken.InstructionTokenType.SYNTAX_RULE, new SyntaxRule(0,
+                        new InstructionToken(InstructionToken.InstructionTokenType.SYNTAX_RULE, new SimpleSyntaxRule(0,
                                 new SyntaxInstruction[]{
                                         SyntaxInstruction.MATCH_LITERAL
                                 },
@@ -33,7 +34,7 @@ class FirstInstructionHandlerTest {
         ));
         assertArrayEquals(new String[]{"foo"}, syntaxContext.getGroupNames());
         assertArrayEquals(new SyntaxRule[]{
-                new SyntaxRule(0,
+                new SimpleSyntaxRule(0,
                         new SyntaxInstruction[]{
                                 SyntaxInstruction.MATCH_LITERAL
                         },
@@ -48,7 +49,7 @@ class FirstInstructionHandlerTest {
                 new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.RULE),
                 new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.REMOVE),
                 new InstructionToken(InstructionToken.InstructionTokenType.IDENTIFIER, "foo"),
-                new InstructionToken(InstructionToken.InstructionTokenType.SYNTAX_RULE, new SyntaxRule(0,
+                new InstructionToken(InstructionToken.InstructionTokenType.SYNTAX_RULE, new SimpleSyntaxRule(0,
                         new SyntaxInstruction[]{
                                 SyntaxInstruction.MATCH_LITERAL
                         },
