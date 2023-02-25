@@ -120,6 +120,6 @@ public class InstructionTokenizer {
 
         while (whitespace_characters.contains(instruction.next())){
             instruction.consume();
-        };
+        }
     }
 }
