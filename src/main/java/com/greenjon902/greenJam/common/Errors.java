@@ -58,28 +58,6 @@ public class Errors {
         throwSyntaxError("Invalid syntax for instruction", stringInputStream);
     }
 
-    public static void instructionHandler_invalidTokenAtLocation(InstructionTokenInputStream instructionTokenInputStream) {
-        throwInstructionSyntaxError("Invalid syntax of instruction", instructionTokenInputStream);
-    }
-
-    public static void instructionHandler_invalidInstructionAmountLeftForType(InstructionTokenInputStream instructionTokenInputStream, String syntax, int expected_left) {
-        System.err.println("File \"" + instructionTokenInputStream.fileName + "\", line " + instructionTokenInputStream.lineNumber);
-        System.err.println(instructionTokenInputStream.format());
-        if (instructionTokenInputStream.instructionTokens.length - instructionTokenInputStream.location > expected_left) { // Too many
-            // We want to arrow every item past how far it should be
-            instructionTokenInputStream.location += expected_left; // This should never return so can modify any items
-            System.err.println(" ".repeat(instructionTokenInputStream.getStringPosition()) +
-                    "^".repeat(instructionTokenInputStream.getString().length() - instructionTokenInputStream.getStringPosition()));
-        } else { // Too few
-            // Arrow after last item
-            System.err.println(" ".repeat(instructionTokenInputStream.getString().length()) +
-                    "^");
-        }
-
-
-        throw new RuntimeException("Syntax Error: " + "Invalid length of instruction when using a " + syntax + "instruction, expected " + expected_left + " items left");
-    }
-
     public static void syntaxMatcher_alreadyRecording(StringInputStream stringInputStream, SyntaxRule syntaxRule, int memoryLocation) {
         throwParserError("Tried to start recording when already recording to " + memoryLocation, stringInputStream, syntaxRule);
     }
