@@ -13,5 +13,9 @@ public abstract class SyntaxRule implements Printable { // Exists for a few util
 
     public abstract AstNode match(StringInputStream string, SyntaxContext syntaxContext);
 
+    public AstNode match(String string, SyntaxContext syntaxContext) {
+        return match(new StringInputStream("<string>", string), syntaxContext);
+    }
+
     public abstract boolean equals(Object o);
 }
