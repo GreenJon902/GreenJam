@@ -15,6 +15,11 @@ public class InstructionToken {
         return new InstructionToken(InstructionTokenType.__ARGUMENT__, type);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, storage);
+    }
+
     public enum InstructionTokenType {
         SYNTAX_RULE, IDENTIFIER, STRING, KEYWORD, __ARGUMENT__ // __ARGUMENT__ is used internally for parsing of commands
     }

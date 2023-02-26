@@ -26,4 +26,9 @@ public class SyntaxToken {
                 ", storage=" + storage +
                 '}';
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, storage);
+    }
 }

@@ -15,6 +15,11 @@ public class SyntaxOperator {
         this(type, null);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, storage);
+    }
+
     enum SyntaxOperatorType {
         START_RECORD, STOP_RECORD, END;
     }
