@@ -1,17 +1,14 @@
 package com.greenjon902.greenJam.instructionHandler;
 
+import com.greenjon902.greenJam.common.CharacterLists;
 import com.greenjon902.greenJam.common.Errors;
 import com.greenjon902.greenJam.common.StringInputStream;
 import com.greenjon902.greenJam.common.SyntaxRule;
 import com.greenjon902.greenJam.syntaxBuilder.SyntaxBuilder;
-import com.greenjon902.greenJam.syntaxBuilder.SyntaxOperator;
-import com.greenjon902.greenJam.syntaxBuilder.SyntaxToken;
-import com.greenjon902.greenJam.syntaxBuilder.SyntaxTokenType;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 public class InstructionTokenizer {
@@ -20,38 +17,6 @@ public class InstructionTokenizer {
         add(' ');
         add('\t');
         add('\n');
-    }};
-
-    public static Set<Character> identifier_characters = new HashSet<>() {{
-        //<editor-fold desc="Group Name Characters" defaultstate="collapsed">
-        add('a');
-        add('b');
-        add('c');
-        add('d');
-        add('e');
-        add('f');
-        add('g');
-        add('h');
-        add('i');
-        add('j');
-        add('k');
-        add('l');
-        add('m');
-        add('n');
-        add('o');
-        add('p');
-        add('q');
-        add('r');
-        add('s');
-        add('t');
-        add('u');
-        add('v');
-        add('w');
-        add('x');
-        add('y');
-        add('z');
-        add('_');
-        //</editor-fold>
     }};
 
     public static InstructionToken[] tokenize(String string) {
@@ -105,7 +70,7 @@ public class InstructionTokenizer {
 
     private static String attemptGetIdentifier(StringInputStream instruction) {
         StringBuilder stringBuilder = new StringBuilder();
-        while (!instruction.isEnd() && identifier_characters.contains(instruction.next())) {
+        while (!instruction.isEnd() && CharacterLists.identifierCharacters.contains(instruction.next())) {
             stringBuilder.append(instruction.consume());
         }
         if (stringBuilder.length() == 0) {

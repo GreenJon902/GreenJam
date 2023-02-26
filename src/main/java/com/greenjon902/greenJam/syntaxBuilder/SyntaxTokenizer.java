@@ -1,5 +1,6 @@
 package com.greenjon902.greenJam.syntaxBuilder;
 
+import com.greenjon902.greenJam.common.CharacterLists;
 import com.greenjon902.greenJam.common.Errors;
 import com.greenjon902.greenJam.common.StringInputStream;
 
@@ -11,37 +12,6 @@ import java.util.Set;
 public class SyntaxTokenizer {
     public final static char groupSubstitutionOpen = '{';
     public final static char groupSubstitutionClose = '}';
-    public static Set<Character> groupSubstitutionCharacters = new HashSet<>() {{
-            //<editor-fold desc="Group Name Characters" defaultstate="collapsed">
-            add('a');
-            add('b');
-            add('c');
-            add('d');
-            add('e');
-            add('f');
-            add('g');
-            add('h');
-            add('i');
-            add('j');
-            add('k');
-            add('l');
-            add('m');
-            add('n');
-            add('o');
-            add('p');
-            add('q');
-            add('r');
-            add('s');
-            add('t');
-            add('u');
-            add('v');
-            add('w');
-            add('x');
-            add('y');
-            add('z');
-            add('_');
-            //</editor-fold>
-        }};
     public final static char startRecord = '<';
     public final static char stopRecord = '>';
     public static Set<Character> integerNumbers = new HashSet<>() {{
@@ -122,7 +92,7 @@ public class SyntaxTokenizer {
                     Errors.syntaxTokenizer_unterminatedGroupSubstitution(syntax);
                 } else if (syntax.consumeIf(groupSubstitutionClose)) {
                     break;
-                } else if (!groupSubstitutionCharacters.contains(syntax.next())) {
+                } else if (!CharacterLists.identifierCharacters.contains(syntax.next())) {
                     Errors.syntaxTokenizer_invalidGroupCharacter(syntax);
                 }
                 name.append(syntax.consume());
