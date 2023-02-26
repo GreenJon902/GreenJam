@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class SimpleSyntaxRule extends SyntaxRule {
-    public final int memoryLocationNumber;
-    public final SyntaxInstruction[] syntaxInstructions;
-    public final Object[] syntaxInstructionData;
+    private final int memoryLocationNumber;
+    private final SyntaxInstruction[] syntaxInstructions;
+    private final Object[] syntaxInstructionData;
 
     public SimpleSyntaxRule(int memoryLocations, SyntaxInstruction[] syntaxInstructions, Object[] syntaxInstructionData) {
         this.memoryLocationNumber = memoryLocations;

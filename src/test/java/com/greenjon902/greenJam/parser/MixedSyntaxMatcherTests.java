@@ -4,13 +4,12 @@ import com.greenjon902.greenJam.common.*;
 import com.greenjon902.greenJam.parser.syntaxMatcher.SimpleSyntaxRule;
 import org.junit.jupiter.api.Test;
 
+import static com.greenjon902.greenJam.parser.ParserTestResources.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MixedSyntaxMatcherTests {
-    public static char[] alphaNumericCharacterList = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_".toCharArray();
-
     @Test
-    void matchComplexExpressions1() {
+    void matchMixedExpressions1() {
         SyntaxContext syntaxContext = new SyntaxContext();
         syntaxContext.add("identifier", new SimpleSyntaxRule(1,
                 new SyntaxInstruction[]{
@@ -112,32 +111,18 @@ public class MixedSyntaxMatcherTests {
     }
 
     @Test
-    void matchComplexExpressions2() {
+    void matchMixedExpressions2() { // Matching of quadratic formula before we have ExpressionSyntaxParser
         SyntaxContext syntaxContext = new SyntaxContext();
 
-        // Setup ---------
+        // Operands ---------
         for (char character : alphaNumericCharacterList) {
-            syntaxContext.add("identifier_character", new SimpleSyntaxRule(0,
-                    new SyntaxInstruction[]{SyntaxInstruction.MATCH_LITERAL},
-                    new Object[]{String.valueOf(character)})); // The actual program doesn't know difference between string and character so make string
+            syntaxContext.add("operand", new SimpleSyntaxRule(1,
+                    new SyntaxInstruction[]{
+                            SyntaxInstruction.START_RECORD,
+                            SyntaxInstruction.MATCH_LITERAL,
+                            SyntaxInstruction.STOP_RECORD},
+                    new Object[]{0, String.valueOf(character), 0})); // The actual program doesn't know difference between string and character so make string
         }
-        syntaxContext.ignore(" ");
-
-
-        // Identifiers ---------
-        syntaxContext.add("identifier_characters", new SimpleSyntaxRule(0,
-                new SyntaxInstruction[]{
-                        SyntaxInstruction.MATCH_GROUP,
-                        SyntaxInstruction.MATCH_GROUP},
-                new Object[]{
-                        "identifier_character", "identifier_characters"}));
-        syntaxContext.add("identifier_characters", new SimpleSyntaxRule(0,
-                new SyntaxInstruction[]{SyntaxInstruction.MATCH_GROUP},
-                new Object[]{"identifier_character"}));
-
-        syntaxContext.add("identifier", new SimpleSyntaxRule(1,
-                new SyntaxInstruction[]{SyntaxInstruction.START_RECORD, SyntaxInstruction.MATCH_GROUP, SyntaxInstruction.STOP_RECORD},
-                new Object[]{0, "identifier_characters", 0}));
 
 
         // BIDMAS ---------
@@ -227,78 +212,14 @@ public class MixedSyntaxMatcherTests {
                         new Tuple.Two<>(0, "expression_level_one"),
                         ")"
                 }));
-        syntaxContext.addLink("expression_level_six", "identifier");
+        syntaxContext.addLink("expression_level_six", "operand");
 
 
-        // Testing
-        assertEquals(new AstNode("hello"),
-                SyntaxRule.match(
-                        new StringInputStream("<string>", "hello"),
-                        "expression_level_one",
-                        syntaxContext));
-
-        assertEquals(new AstNode("+",
-                        new AstNode("hello"),
-                        new AstNode("world")),
-                SyntaxRule.match(
-                        new StringInputStream("<string>", "hello+world"),
-                        "expression_level_one",
-                        syntaxContext));
-
-        assertEquals(new AstNode("+",
-                        new AstNode("how"),
-                        new AstNode("*",
-                                new AstNode("are"),
-                                new AstNode("you"))),
-                SyntaxRule.match(
-                        new StringInputStream("<string>", "how+are*you"),
-                        "expression_level_one",
-                        syntaxContext));
-
-        // Quadratic formula!!
+        // Testing ---------
         assertEquals(
-                new AstNode("/",
-                        new AstNode(
-                                new AstNode("+",
-                                        new AstNode(
-                                                new AstNode("-",
-                                                        new AstNode("zero"),
-                                                        new AstNode("b")
-                                                )
-                                        ),
-                                        new AstNode("^",
-                                                new AstNode(
-                                                        new AstNode("-",
-                                                                new AstNode("^",
-                                                                        new AstNode("b"),
-                                                                        new AstNode("two")
-                                                                ),
-                                                                new AstNode("*",
-                                                                        new AstNode("four"),
-                                                                        new AstNode("*",
-                                                                                new AstNode("a"),
-                                                                                new AstNode("c")
-                                                                        )
-                                                                )
-                                                        )
-                                                ),
-                                                new AstNode(
-                                                        new AstNode("/",
-                                                                new AstNode("one"),
-                                                                new AstNode("two")
-                                                        )
-                                                )
-                                        )
-                                )
-                        ),
-                        new AstNode(
-                                new AstNode("*",
-                                        new AstNode("two"),
-                                        new AstNode("a"))
-                        )
-                ),
+                quadraticFormulaNodeVer1,
                 SyntaxRule.match(
-                        new StringInputStream("<string>", "((zero-b)+(b^two-four*a*c)^(one/two))/(two*a)"),
+                        new StringInputStream("<string>", quadraticFormulaString),
                         "expression_level_one",
                         syntaxContext));
     }

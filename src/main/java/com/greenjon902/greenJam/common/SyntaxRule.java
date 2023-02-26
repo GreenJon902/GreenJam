@@ -11,6 +11,10 @@ public abstract class SyntaxRule implements Printable { // Exists for a few util
         return null;
     }
 
+    /**
+     * Match the next characters in the given string to this rule. This may use other rules inside the parsing.
+     * @return The created AstNode or null if it couldn't match it.
+     */
     public abstract AstNode match(StringInputStream string, SyntaxContext syntaxContext);
 
     public AstNode match(String string, SyntaxContext syntaxContext) {

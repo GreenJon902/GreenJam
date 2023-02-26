@@ -2,7 +2,7 @@ package com.greenjon902.greenJam.common;
 
 import java.util.Arrays;
 
-public class AstNode {
+public class AstNode implements Printable {
     public final Object[] storage;
 
     public AstNode(Object... storage) {
@@ -18,9 +18,19 @@ public class AstNode {
     }
 
     @Override
+    public int hashCode() {
+        return Arrays.hashCode(storage);
+    }
+
+    @Override
     public String toString() {
         return "AstNode{" +
                 "storage=" + Arrays.toString(storage) +
                 '}';
+    }
+
+    @Override
+    public String format() {
+        return toString();
     }
 }

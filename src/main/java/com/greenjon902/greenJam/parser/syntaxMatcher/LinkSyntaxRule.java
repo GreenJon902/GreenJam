@@ -8,7 +8,7 @@ import com.greenjon902.greenJam.common.SyntaxRule;
 import java.util.Objects;
 
 public class LinkSyntaxRule extends SyntaxRule {
-    public final String otherGroup;
+    private final String otherGroup;
 
     public LinkSyntaxRule(String otherGroup) {
         this.otherGroup = otherGroup;
@@ -21,7 +21,7 @@ public class LinkSyntaxRule extends SyntaxRule {
     @Override
     public String toString() {
         return "LinkSyntaxRule{" +
-                "otherGroup" + otherGroup +
+                "otherGroup=" + otherGroup +
                 '}';
     }
 
