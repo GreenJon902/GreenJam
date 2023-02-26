@@ -7,7 +7,7 @@ import com.greenjon902.greenJam.parser.syntaxMatcher.LinkSyntaxRule;
 import com.greenjon902.greenJam.parser.syntaxMatcher.SimpleSyntaxRule;
 import org.junit.jupiter.api.Test;
 
-import static com.greenjon902.greenJam.instructionHandler.InstructionHandlerUtils.*;
+import static com.greenjon902.greenJam.instructionHandler.InstructionHandlerTestResources.*;
 import static com.greenjon902.greenJam.instructionHandler.InstructionToken.InstructionTokenType.*;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
