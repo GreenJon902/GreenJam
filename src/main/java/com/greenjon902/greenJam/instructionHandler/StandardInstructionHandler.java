@@ -28,14 +28,15 @@ public class StandardInstructionHandler extends InstructionHandlerBase {
         final InstructionToken IGNORED = InstructionKeyword.IGNORED.instructionToken;
         final InstructionToken ADD = InstructionKeyword.ADD.instructionToken;
         final InstructionToken REMOVE = InstructionKeyword.REMOVE.instructionToken;
+        final InstructionToken LINK = InstructionKeyword.LINK.instructionToken;
         final InstructionToken SYNTAX_RULE_ARG = InstructionToken.makeArgument(SYNTAX_RULE);
         final InstructionToken IDENTIFIER_ARG = InstructionToken.makeArgument(IDENTIFIER);
         final InstructionToken STRING_ARG = InstructionToken.makeArgument(STRING);
 
         addPathway(syntaxRuleAddSimple, SYNTAX, RULE, ADD, IDENTIFIER_ARG, SYNTAX_RULE_ARG);
         addPathway(syntaxRuleRemoveSimple, SYNTAX, RULE, REMOVE, IDENTIFIER_ARG, SYNTAX_RULE_ARG);
-        addPathway(syntaxRuleAddLink, SYNTAX, RULE, ADD, IDENTIFIER_ARG, IDENTIFIER_ARG);
-        addPathway(syntaxRuleRemoveLink, SYNTAX, RULE, REMOVE, IDENTIFIER_ARG, IDENTIFIER_ARG);
+        addPathway(syntaxRuleAddLink, SYNTAX, RULE, ADD, LINK, IDENTIFIER_ARG, IDENTIFIER_ARG);
+        addPathway(syntaxRuleRemoveLink, SYNTAX, RULE, REMOVE, LINK, IDENTIFIER_ARG, IDENTIFIER_ARG);
         addPathway(syntaxIgnoredAdd, SYNTAX, IGNORED, ADD, STRING_ARG);
         addPathway(syntaxIgnoredRemove, SYNTAX, IGNORED, REMOVE, STRING_ARG);
     }

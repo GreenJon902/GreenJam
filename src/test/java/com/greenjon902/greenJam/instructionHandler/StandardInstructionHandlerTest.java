@@ -41,9 +41,9 @@ public class StandardInstructionHandlerTest {
         SyntaxContext syntaxContext = new SyntaxContext();
         StandardInstructionHandler standardInstructionHandler = new StandardInstructionHandler(syntaxContext);
 
-        assertEquals(0, standardInstructionHandler.handle(SYNTAX, RULE, ADD, group1Instruction, group2Instruction));
+        assertEquals(0, standardInstructionHandler.handle(SYNTAX, RULE, ADD, LINK, group1Instruction, group2Instruction));
         assertArrayEquals(new SyntaxRule[] {group2Rule}, syntaxContext.getRules(group1));
-        assertEquals(0, standardInstructionHandler.handle(SYNTAX, RULE, REMOVE, group1Instruction, group2Instruction));
+        assertEquals(0, standardInstructionHandler.handle(SYNTAX, RULE, REMOVE, LINK, group1Instruction, group2Instruction));
         assertArrayEquals(new SyntaxRule[] {}, syntaxContext.getRules(group1));
     }
 

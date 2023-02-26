@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public enum InstructionKeyword {
-    SYNTAX("SYNTAX"), RULE("RULE"), ADD("ADD"), REMOVE("REMOVE"), ALL("ALL"), IGNORED("IGNORED");
+    SYNTAX("SYNTAX"), RULE("RULE"), ADD("ADD"), REMOVE("REMOVE"), ALL("ALL"), IGNORED("IGNORED"), LINK("LINK");
 
     public final String string;
 
