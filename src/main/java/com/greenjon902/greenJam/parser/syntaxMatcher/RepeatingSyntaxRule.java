@@ -63,6 +63,8 @@ public class RepeatingSyntaxRule extends SyntaxRule {
 
     @Override
     public AstNode match(StringInputStream string, SyntaxContext syntaxContext) {
+        while (string.consumeIfAny(syntaxContext.getIgnored()));
+
         ArrayList<AstNode> nodes = new ArrayList<>();
         while (maxLength == -1 || nodes.size() < maxLength) {
             AstNode node = SyntaxRule.match(string, group, syntaxContext);

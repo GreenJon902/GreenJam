@@ -32,6 +32,8 @@ public class ExpressionSyntaxRule extends SyntaxRule {
 
     @Override
     public AstNode match(StringInputStream string, SyntaxContext syntaxContext) {
+        while (string.consumeIfAny(syntaxContext.getIgnored()));
+
         Object last = getOperand(string, syntaxContext);
         if (last == null) {
             return null;
