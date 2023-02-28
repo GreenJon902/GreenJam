@@ -3,10 +3,17 @@ package com.greenjon902.greenJam.common;
 public class EscapeCharacterUtil {
 
     /**
+     * See {@link #getEscapeCharacter(StringInputStream, boolean)}.
+     */
+    public static char getEscapeCharacter(StringInputStream string) {
+        return getEscapeCharacter(string, false);
+    }
+
+    /**
      * Gets the escape character from the next character(s) supplies in the {@link StringInputStream}. This expects any
      * \ to already be consumed.
      */
-    public static char getEscapeCharacter(StringInputStream string) {
+    public static char getEscapeCharacter(StringInputStream string, boolean includeSyntaxBuilder) {
         Character ret = switch (string.next()) {
             case 'x' -> (char) parseHexCharacter(string);
             case '\'' -> '\'';
@@ -20,6 +27,15 @@ public class EscapeCharacterUtil {
             case '0' -> '\0';
             default -> null;
         };
+        if (ret == null && includeSyntaxBuilder) {
+            ret = switch (string.next()) {
+                case '{' -> '{';
+                case '}' -> '}';
+                case '<' -> '<';
+                case '>' -> '>';
+                default -> null;
+            };
+        }
         if (ret != null) {
             if (string.consume() == 'x') { // We need to consume anyway but if it's a hex character then we need to
                 string.consume();          // consume twice more

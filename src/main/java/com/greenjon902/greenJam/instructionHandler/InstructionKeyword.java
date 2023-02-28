@@ -1,11 +1,12 @@
 package com.greenjon902.greenJam.instructionHandler;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
 public enum InstructionKeyword {
-    SYNTAX("SYNTAX"), RULE("RULE"), ADD("ADD"), REMOVE("REMOVE"), ALL("ALL"), IGNORED("IGNORED"), LINK("LINK");
+    SYNTAX("SYNTAX"), RULE("RULE"), ADD("ADD"), REMOVE("REMOVE"), ALL("ALL"),
+    IGNORED("IGNORED"), LINK("LINK"), REPEATING("REPEATING"), ROOT_NODE("ROOT_NODE"),
+    SET("SET");
 
     public final String string;
 

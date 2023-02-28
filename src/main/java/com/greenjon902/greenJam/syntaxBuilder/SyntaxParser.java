@@ -22,7 +22,9 @@ public class SyntaxParser {
                 }
                 case OPERATOR -> {
                     if (((SyntaxOperator) currentToken.storage).type == SyntaxOperator.SyntaxOperatorType.START_RECORD) {
-                        if (i + 2 < tokens.length && tokens[i + 1].type == SyntaxTokenType.GROUP_SUBSTITUTION && // Is next group?
+                        if (i + 2 < tokens.length && !((tokens[i + 1].storage instanceof SyntaxOperator) && // If being forced to string then record normally
+                                ((SyntaxOperator) tokens[i + 1].storage).type == SyntaxOperator.SyntaxOperatorType.STRING_FORCER)
+                                && tokens[i + 1].type == SyntaxTokenType.GROUP_SUBSTITUTION && // Is next group?
                                 tokens[i + 2].type == SyntaxTokenType.OPERATOR && // Is next next operator?
                                 ((SyntaxOperator) tokens[i + 2].storage).type == SyntaxOperator.SyntaxOperatorType.STOP_RECORD && // Is next next stop?
                                 ((SyntaxOperator) currentToken.storage).storage == ((SyntaxOperator) tokens[i + 2].storage).storage) { // Is next next same location?
@@ -38,6 +40,11 @@ public class SyntaxParser {
                             syntaxInstructions.add(SyntaxInstruction.START_RECORD);
                             syntaxInstructionData.add(((SyntaxOperator) currentToken.storage).storage); // Memory location
                             highestMemoryLocation = Math.max(highestMemoryLocation, (Integer) ((SyntaxOperator) currentToken.storage).storage);
+
+                            if ((tokens[i + 1].storage instanceof SyntaxOperator) &&
+                                    ((SyntaxOperator) tokens[i + 1].storage).type == SyntaxOperator.SyntaxOperatorType.STRING_FORCER) {
+                                i += 1; // Ignored, just used to stop record group!
+                            }
                         }
                     } else if ((((SyntaxOperator) currentToken.storage).type == SyntaxOperator.SyntaxOperatorType.STOP_RECORD)) {
                         syntaxInstructions.add(SyntaxInstruction.STOP_RECORD);

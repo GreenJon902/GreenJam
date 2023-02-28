@@ -21,7 +21,7 @@ public class SyntaxOperator {
     }
 
     enum SyntaxOperatorType {
-        START_RECORD, STOP_RECORD, END;
+        START_RECORD, STOP_RECORD, END, STRING_FORCER;
     }
 
     @Override

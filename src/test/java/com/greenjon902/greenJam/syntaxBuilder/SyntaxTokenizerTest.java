@@ -2,7 +2,7 @@ package com.greenjon902.greenJam.syntaxBuilder;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 class SyntaxTokenizerTest {
 
@@ -48,6 +48,10 @@ class SyntaxTokenizerTest {
         syntaxTokens = SyntaxTokenizer.tokenize(">47");
         assertArrayEquals(new SyntaxToken[] {
                 new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STOP_RECORD, 47))
+        }, syntaxTokens);
+        syntaxTokens = SyntaxTokenizer.tokenize("|");
+        assertArrayEquals(new SyntaxToken[] {
+                new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STRING_FORCER))
         }, syntaxTokens);
         syntaxTokens = SyntaxTokenizer.tokenize("`");
         assertArrayEquals(new SyntaxToken[0], syntaxTokens);

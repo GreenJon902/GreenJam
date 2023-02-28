@@ -15,6 +15,7 @@ public class SyntaxTokenizer {
     public final static char groupSubstitutionClose = '}';
     public final static char startRecord = '<';
     public final static char stopRecord = '>';
+    public final static char stringForce = '|';
     public static Set<Character> integerNumbers = new HashSet<>() {{
         //<editor-fold desc="Integer Characters" defaultstate="collapsed">
         add('1');
@@ -130,6 +131,10 @@ public class SyntaxTokenizer {
 
         } else if (syntax.consumeIf(endCharacter)) {
             return new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.END);
+
+
+        } else if (syntax.consumeIf(stringForce)) {
+            return new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STRING_FORCER);
         }
 
         return null;
@@ -148,7 +153,7 @@ public class SyntaxTokenizer {
                 break;
 
             } else if (syntax.consumeIf(escapeCharacter)) {
-                literal.append(EscapeCharacterUtil.getEscapeCharacter(syntax));
+                literal.append(EscapeCharacterUtil.getEscapeCharacter(syntax, true));
 
             } else {
                 literal.append(syntax.consume());

@@ -1,6 +1,7 @@
 package com.greenjon902.greenJam.common;
 
 import com.greenjon902.greenJam.parser.syntaxMatcher.LinkSyntaxRule;
+import com.greenjon902.greenJam.parser.syntaxMatcher.RepeatingSyntaxRule;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +35,15 @@ public class SyntaxContext {
     public void removeLink(String group, String other_group) {
         remove(group, new LinkSyntaxRule(other_group));
     }
+
+    public void addRepeating(String group, String other_group) {
+        add(group, new RepeatingSyntaxRule(other_group, false));
+    }
+
+    public void removeRepeating(String group, String other_group) {
+        remove(group, new RepeatingSyntaxRule(other_group, false));
+    }
+
 
     public int groupAmount() {
         return syntaxRules.size();
