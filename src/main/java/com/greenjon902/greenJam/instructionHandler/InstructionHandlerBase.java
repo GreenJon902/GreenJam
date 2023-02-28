@@ -1,5 +1,7 @@
 package com.greenjon902.greenJam.instructionHandler;
 
+import com.greenjon902.greenJam.common.StringInputStream;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Consumer;
@@ -9,6 +11,14 @@ public abstract class InstructionHandlerBase {
 
     protected void addPathway(Consumer<InstructionToken[]> handler, InstructionToken... route) {
         pathways.put(route, handler);
+    }
+
+    /**
+     * See {@link #handle(InstructionToken...)}
+     */
+    public int handle(StringInputStream instruction) {
+        InstructionToken[] instructionTokens = InstructionTokenizer.tokenize(instruction);
+        return handle(instructionTokens);
     }
 
     /**

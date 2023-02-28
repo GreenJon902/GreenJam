@@ -1,9 +1,6 @@
 package com.greenjon902.greenJam.instructionHandler;
 
-import com.greenjon902.greenJam.common.CharacterLists;
-import com.greenjon902.greenJam.common.Errors;
-import com.greenjon902.greenJam.common.StringInputStream;
-import com.greenjon902.greenJam.common.SyntaxRule;
+import com.greenjon902.greenJam.common.*;
 import com.greenjon902.greenJam.syntaxBuilder.SyntaxBuilder;
 
 import java.util.ArrayList;
@@ -31,6 +28,7 @@ public class InstructionTokenizer {
             if (!firstLoop) {
                 skipButRequireWhitespace(instruction);
             } else {
+                skipWhitespace(instruction); // Optional whitespace
                 firstLoop = false;
             }
 
@@ -42,6 +40,8 @@ public class InstructionTokenizer {
                 tokenType = InstructionToken.InstructionTokenType.SYNTAX_RULE;
             } else if ((tokenStorage = attemptGetIdentifier(instruction)) != null) {
                 tokenType = InstructionToken.InstructionTokenType.IDENTIFIER;
+            } else if ((tokenStorage = attemptGetString(instruction)) != null) {
+                tokenType = InstructionToken.InstructionTokenType.STRING;
             } else {
                 Errors.instructionTokenizer_unrecognisedToken(instruction);
                 tokenType = null; // It will never get here
@@ -68,6 +68,24 @@ public class InstructionTokenizer {
         return null;
     }
 
+    private static String attemptGetString(StringInputStream instruction) {
+        if (instruction.consumeIf('\"')) {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            while (true) {
+                char character = instruction.consume();
+                if (character == '\"') {
+                    break;
+                } else if (character == '\\') {
+                    character = EscapeCharacterUtil.getEscapeCharacter(instruction);
+                }
+                stringBuilder.append(character);
+            }
+            return stringBuilder.toString();
+        }
+        return null;
+    }
+
     private static String attemptGetIdentifier(StringInputStream instruction) {
         StringBuilder stringBuilder = new StringBuilder();
         while (!instruction.isEnd() && CharacterLists.identifierCharacters.contains(instruction.next())) {
@@ -83,6 +101,10 @@ public class InstructionTokenizer {
     public static void skipButRequireWhitespace(StringInputStream instruction) {
         if (!whitespace_characters.contains(instruction.next())) throw new RuntimeException();
 
+        skipWhitespace(instruction);
+    }
+
+    public static void skipWhitespace(StringInputStream instruction) {
         while (whitespace_characters.contains(instruction.next())){
             instruction.consume();
         }

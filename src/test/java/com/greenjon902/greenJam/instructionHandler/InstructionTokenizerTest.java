@@ -1,11 +1,10 @@
 package com.greenjon902.greenJam.instructionHandler;
 
 import com.greenjon902.greenJam.common.SyntaxInstruction;
-import com.greenjon902.greenJam.common.SyntaxRule;
 import com.greenjon902.greenJam.parser.syntaxMatcher.SimpleSyntaxRule;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 class InstructionTokenizerTest {
 
@@ -46,6 +45,21 @@ class InstructionTokenizerTest {
                                 new SyntaxInstruction[]{SyntaxInstruction.MATCH_LITERAL},
                                 new Object[]{"test"}))
         }, instructionTokens);
+    }
+
+    @Test
+    void tokenizeString() {
+        InstructionToken[] instructionTokens;
+
+        instructionTokens = InstructionTokenizer.tokenize("\"test\"");
+        assertArrayEquals(new InstructionToken[] {
+                new InstructionToken(InstructionToken.InstructionTokenType.STRING, "test"
+                )}, instructionTokens);
+
+        instructionTokens = InstructionTokenizer.tokenize("\" \"");
+        assertArrayEquals(new InstructionToken[] {
+                new InstructionToken(InstructionToken.InstructionTokenType.STRING, " "
+                )}, instructionTokens);
     }
 
     @Test
