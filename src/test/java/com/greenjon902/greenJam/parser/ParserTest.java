@@ -1,5 +1,6 @@
 package com.greenjon902.greenJam.parser;
 
+import com.greenjon902.greenJam.common.AstNode;
 import com.greenjon902.greenJam.common.StringInputStream;
 import com.greenjon902.greenJam.common.SyntaxContext;
 import com.greenjon902.greenJam.instructionHandler.StandardInstructionHandler;
@@ -48,8 +49,9 @@ public class ParserTest {
                         public static foo = {1, 2, 3, 4}
                         """
         );
-
-        System.out.println(parser.parse(string));
+        AstNode node = parser.parse(string);
+        System.out.println(node.toString());
+        System.out.println(node.format());
 
         assertTrue(string.isEnd());
     }
