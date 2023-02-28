@@ -12,23 +12,23 @@ class InstructionTokenizerTest {
     void tokenizeKeyword() {
         InstructionToken[] instructionTokens;
 
-        instructionTokens = InstructionTokenizer.tokenize("SYNTAX");
+        instructionTokens = InstructionTokenizer.tokenize("SYNTAX;");
         assertArrayEquals(new InstructionToken[] {
                 new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.SYNTAX)
         }, instructionTokens);
-        instructionTokens = InstructionTokenizer.tokenize("RULE");
+        instructionTokens = InstructionTokenizer.tokenize("RULE;");
         assertArrayEquals(new InstructionToken[] {
                 new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.RULE)
         }, instructionTokens);
-        instructionTokens = InstructionTokenizer.tokenize("ADD");
+        instructionTokens = InstructionTokenizer.tokenize("ADD;");
         assertArrayEquals(new InstructionToken[] {
                 new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.ADD)
         }, instructionTokens);
-        instructionTokens = InstructionTokenizer.tokenize("REMOVE");
+        instructionTokens = InstructionTokenizer.tokenize("REMOVE;");
         assertArrayEquals(new InstructionToken[] {
                 new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.REMOVE)
         }, instructionTokens);
-        instructionTokens = InstructionTokenizer.tokenize("ALL");
+        instructionTokens = InstructionTokenizer.tokenize("ALL;");
         assertArrayEquals(new InstructionToken[] {
                 new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.ALL)
         }, instructionTokens);
@@ -38,7 +38,7 @@ class InstructionTokenizerTest {
     void tokenizeSyntaxRule() {
         InstructionToken[] instructionTokens;
 
-        instructionTokens = InstructionTokenizer.tokenize("`test`");
+        instructionTokens = InstructionTokenizer.tokenize("`test`;");
         assertArrayEquals(new InstructionToken[] {
                 new InstructionToken(InstructionToken.InstructionTokenType.SYNTAX_RULE,
                         new SimpleSyntaxRule(0,
@@ -51,12 +51,12 @@ class InstructionTokenizerTest {
     void tokenizeString() {
         InstructionToken[] instructionTokens;
 
-        instructionTokens = InstructionTokenizer.tokenize("\"test\"");
+        instructionTokens = InstructionTokenizer.tokenize("\"test\";");
         assertArrayEquals(new InstructionToken[] {
                 new InstructionToken(InstructionToken.InstructionTokenType.STRING, "test"
                 )}, instructionTokens);
 
-        instructionTokens = InstructionTokenizer.tokenize("\" \"");
+        instructionTokens = InstructionTokenizer.tokenize("\" \";");
         assertArrayEquals(new InstructionToken[] {
                 new InstructionToken(InstructionToken.InstructionTokenType.STRING, " "
                 )}, instructionTokens);
@@ -66,11 +66,11 @@ class InstructionTokenizerTest {
     void tokenizeIdentifier() {
         InstructionToken[] instructionTokens;
 
-        instructionTokens = InstructionTokenizer.tokenize("foo");
+        instructionTokens = InstructionTokenizer.tokenize("foo;");
         assertArrayEquals(new InstructionToken[] {
                 new InstructionToken(InstructionToken.InstructionTokenType.IDENTIFIER, "foo")
         }, instructionTokens);
-        instructionTokens = InstructionTokenizer.tokenize("bar_baz");
+        instructionTokens = InstructionTokenizer.tokenize("bar_baz;");
         assertArrayEquals(new InstructionToken[] {
                 new InstructionToken(InstructionToken.InstructionTokenType.IDENTIFIER, "bar_baz")
         }, instructionTokens);

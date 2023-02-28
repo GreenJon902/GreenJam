@@ -39,7 +39,7 @@ public abstract class InstructionHandlerBase {
                             break;
                         }
                         arguments.add(instructionTokens[i]);
-                    } else if (part != instructionTokens[i]) {
+                    } else if (!part.equals(instructionTokens[i])) {
                         failed = true;
                         break;
                     }

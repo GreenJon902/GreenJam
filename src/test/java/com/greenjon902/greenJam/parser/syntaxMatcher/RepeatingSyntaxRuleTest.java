@@ -1,14 +1,12 @@
-package com.greenjon902.greenJam.parser;
+package com.greenjon902.greenJam.parser.syntaxMatcher;
 
 import com.greenjon902.greenJam.common.AstNode;
 import com.greenjon902.greenJam.common.SyntaxContext;
 import com.greenjon902.greenJam.common.SyntaxInstruction;
 import com.greenjon902.greenJam.common.SyntaxRule;
-import com.greenjon902.greenJam.parser.syntaxMatcher.RepeatingSyntaxRule;
-import com.greenjon902.greenJam.parser.syntaxMatcher.SimpleSyntaxRule;
 import org.junit.jupiter.api.Test;
 
-import static com.greenjon902.greenJam.parser.ParserTestResources.alphaNumericCharacterList;
+import static com.greenjon902.greenJam.parser.syntaxMatcher.ParserTestResources.alphaNumericCharacterList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RepeatingSyntaxRuleTest {

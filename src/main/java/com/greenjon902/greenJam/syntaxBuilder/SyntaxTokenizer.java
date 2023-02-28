@@ -2,6 +2,7 @@ package com.greenjon902.greenJam.syntaxBuilder;
 
 import com.greenjon902.greenJam.common.CharacterLists;
 import com.greenjon902.greenJam.common.Errors;
+import com.greenjon902.greenJam.common.EscapeCharacterUtil;
 import com.greenjon902.greenJam.common.StringInputStream;
 
 import java.util.ArrayList;
@@ -147,7 +148,7 @@ public class SyntaxTokenizer {
                 break;
 
             } else if (syntax.consumeIf(escapeCharacter)) {
-                literal.append(getEscapeCharacter(syntax));
+                literal.append(EscapeCharacterUtil.getEscapeCharacter(syntax));
 
             } else {
                 literal.append(syntax.consume());
@@ -159,35 +160,5 @@ public class SyntaxTokenizer {
         }
 
         return literal.toString();
-    }
-
-    private static char getEscapeCharacter(StringInputStream syntax) {
-        Character ret = switch (syntax.next()) {
-            case 'x' -> (char) parseHexCharacter(syntax);
-            case '\'' -> '\'';
-            case '\"' ->  '\"';
-            case '\\' -> '\\';
-            case 'n' -> '\n';
-            case 'r' -> '\r';
-            case 't' -> '\t';
-            case 'b' -> '\b';
-            case 'f' -> '\f';
-            case '0' -> '\0';
-            default -> null;
-        };
-        if (ret != null) {
-            if (syntax.consume() == 'x') { // We need to consume anyway but if it's a hex character then we need to
-                syntax.consume();          // consume twice more
-                syntax.consume();
-            }
-            return ret;
-        }
-
-        Errors.syntaxTokenizer_invalidEscapeSequence(syntax);
-        return '\0'; // It will never get here
-    }
-
-    private static int parseHexCharacter(StringInputStream syntax) {
-        return Integer.valueOf(String.valueOf(syntax.next(1)) + syntax.next(2), 16);
     }
 }

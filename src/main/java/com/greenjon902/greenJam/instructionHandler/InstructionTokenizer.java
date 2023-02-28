@@ -23,14 +23,8 @@ public class InstructionTokenizer {
     public static InstructionToken[] tokenize(StringInputStream instruction) {
         List<InstructionToken> tokens = new ArrayList<>();
 
-        boolean firstLoop = true;
-        while (!instruction.isEnd() && !instruction.consumeIf(instruction_end_character)) {
-            if (!firstLoop) {
-                skipButRequireWhitespace(instruction);
-            } else {
-                skipWhitespace(instruction); // Optional whitespace
-                firstLoop = false;
-            }
+        skipWhitespace(instruction); // Optional whitespace at start
+        while (true) {
 
             InstructionToken.InstructionTokenType tokenType;
             Object tokenStorage;
@@ -47,6 +41,20 @@ public class InstructionTokenizer {
                 tokenType = null; // It will never get here
             }
             tokens.add(new InstructionToken(tokenType, tokenStorage));
+
+
+            if (instruction.isEnd()) {
+                Errors.instructionTokenizer_missingEndOfInstructionCharacter(instruction);
+
+            } else if (instruction.consumeIf(instruction_end_character)) {
+                break;
+
+            } else {
+                if (!whitespace_characters.contains(instruction.next())) { // Require whitespace between arguments
+                    Errors.instructionTokenizer_unrecognisedToken(instruction);
+                }
+                skipWhitespace(instruction); // Skip any whitespace
+            }
         }
 
         return tokens.toArray(InstructionToken[]::new);
@@ -96,12 +104,6 @@ public class InstructionTokenizer {
         } else {
             return stringBuilder.toString();
         }
-    }
-
-    public static void skipButRequireWhitespace(StringInputStream instruction) {
-        if (!whitespace_characters.contains(instruction.next())) throw new RuntimeException();
-
-        skipWhitespace(instruction);
     }
 
     public static void skipWhitespace(StringInputStream instruction) {

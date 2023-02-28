@@ -8,6 +8,8 @@ import java.util.HashMap;
 public class SyntaxContext {
     private final HashMap<String, ArrayList<SyntaxRule>> syntaxRules = new HashMap<>();
     private final ArrayList<String> ignored = new ArrayList<>();
+    private String commandStartStartString = ";;";
+    private String rootGroup = null;
 
     public void add(String group, SyntaxRule rule) {
         if (!syntaxRules.containsKey(group)) {
@@ -63,5 +65,33 @@ public class SyntaxContext {
 
     public void removeIgnore(String string) {
         ignored.remove(string);
+    }
+
+    public String getCommandStartStartString() {
+        return commandStartStartString;
+    }
+
+    public void setCommandStartStartString(String commandStartStartString) {
+        this.commandStartStartString = commandStartStartString;
+    }
+
+    public boolean hasRootGroup() {
+        return rootGroup != null;
+    }
+
+    /**
+     * The root group is the group that it tries to parse when it first comes across a none-instruction.
+     * This expects you to have already ran {@link #hasRootGroup()}. Once it has started parsing the root group,
+     * changing this value will have no effect.
+     */
+    public String getRootGroup() {
+        if (rootGroup == null) {
+            throw new RuntimeException("No root group has been given.");
+        }
+        return rootGroup;
+    }
+
+    public void setRootGroup(String rootGroup) {
+        this.rootGroup = rootGroup;
     }
 }

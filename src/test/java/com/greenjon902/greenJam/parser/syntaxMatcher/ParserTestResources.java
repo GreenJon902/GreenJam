@@ -1,4 +1,4 @@
-package com.greenjon902.greenJam.parser;
+package com.greenjon902.greenJam.parser.syntaxMatcher;
 
 import com.greenjon902.greenJam.common.AstNode;
 import com.greenjon902.greenJam.common.ObjectCloner;

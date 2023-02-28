@@ -1,7 +1,5 @@
 package com.greenjon902.greenJam.common;
 
-import com.greenjon902.greenJam.instructionHandler.InstructionToken;
-
 public class Errors {
     /**
      * Formats and throws syntax errors.
@@ -27,13 +25,24 @@ public class Errors {
     }
 
     /**
-     * Formats and throws syntax errors for instructions.
+     * Formats and throws syntax matcher errors.
      */
-    private static void throwParserError(String message, StringInputStream stringInputStream, SyntaxRule syntaxRule) throws RuntimeException {
+    private static void throwSyntaxMatcherError(String message, StringInputStream stringInputStream, SyntaxRule syntaxRule) throws RuntimeException {
         System.err.println("File \"" + stringInputStream.fileName + "\", line " + stringInputStream.getCurrentLineNumber());
         System.err.println(stringInputStream.getCurrentLine());
         System.err.println(" ".repeat(stringInputStream.getCurrentLinePosition() - 1) + "^");
         System.out.println(syntaxRule.format());
+
+        throw new RuntimeException("Syntax Matcher Error: " + message);
+    }
+
+    /**
+     * Formats and throws syntax matcher errors.
+     */
+    private static void throwParserError(String message, StringInputStream stringInputStream) throws RuntimeException {
+        System.err.println("File \"" + stringInputStream.fileName + "\", line " + stringInputStream.getCurrentLineNumber());
+        System.err.println(stringInputStream.getCurrentLine());
+        System.err.println(" ".repeat(stringInputStream.getCurrentLinePosition() - 1) + "^");
 
         throw new RuntimeException("Parser Error: " + message);
     }
@@ -46,7 +55,7 @@ public class Errors {
         throwSyntaxError("Unterminated group substitution", stringInputStream);
     }
 
-    public static void syntaxTokenizer_invalidEscapeSequence(StringInputStream stringInputStream) throws RuntimeException {
+    public static void invalidEscapeSequence(StringInputStream stringInputStream) throws RuntimeException {
         throwSyntaxError("Invalid escape sequence", stringInputStream);
     }
 
@@ -58,19 +67,27 @@ public class Errors {
         throwSyntaxError("Invalid syntax for instruction", stringInputStream);
     }
 
+    public static void instructionTokenizer_missingEndOfInstructionCharacter(StringInputStream stringInputStream) {
+        throwSyntaxError("Missing end of instruction character", stringInputStream);
+    }
+
     public static void syntaxMatcher_alreadyRecording(StringInputStream stringInputStream, SyntaxRule syntaxRule, int memoryLocation) {
-        throwParserError("Tried to start recording when already recording to " + memoryLocation, stringInputStream, syntaxRule);
+        throwSyntaxMatcherError("Tried to start recording when already recording to " + memoryLocation, stringInputStream, syntaxRule);
     }
 
     public static void syntaxMatcher_triedToStopRecordingWhenNotRecording(StringInputStream stringInputStream, SyntaxRule syntaxRule, int memoryLocation) {
-        throwParserError("Tried to stop recording to a location that wasn't being recorded to - " + memoryLocation, stringInputStream, syntaxRule);
+        throwSyntaxMatcherError("Tried to stop recording to a location that wasn't being recorded to - " + memoryLocation, stringInputStream, syntaxRule);
     }
 
     public static void syntaxMatcher_unknownGroup(StringInputStream stringInputStream, SyntaxRule syntaxRule, String group) {
-        throwParserError("Tried to match unknown group - \"" + group + "\"", stringInputStream, syntaxRule);
+        throwSyntaxMatcherError("Tried to match unknown group - \"" + group + "\"", stringInputStream, syntaxRule);
     }
 
     public static void syntaxMatcher_triedToRerecordNode(StringInputStream stringInputStream, SyntaxRule syntaxRule, int memoryLocation, String group) {
-        throwParserError("Tried to rerecord a node at the location " + memoryLocation + " from group \"" + group + "\"", stringInputStream, syntaxRule);
+        throwSyntaxMatcherError("Tried to rerecord a node at the location " + memoryLocation + " from group \"" + group + "\"", stringInputStream, syntaxRule);
+    }
+
+    public static void parser_noRootGroup(StringInputStream stringInputStream) {
+        throwParserError("No root group has been set", stringInputStream);
     }
 }
