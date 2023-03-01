@@ -1,9 +1,6 @@
 package com.greenjon902.greenJam.syntaxBuilder;
 
-import com.greenjon902.greenJam.common.CharacterLists;
-import com.greenjon902.greenJam.common.Errors;
-import com.greenjon902.greenJam.common.EscapeCharacterUtil;
-import com.greenjon902.greenJam.common.StringInputStream;
+import com.greenjon902.greenJam.common.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,8 +8,10 @@ import java.util.List;
 import java.util.Set;
 
 public class SyntaxTokenizer {
-    public final static char groupSubstitutionOpen = '{';
-    public final static char groupSubstitutionClose = '}';
+    public final static char recordedGroupSubstitutionOpen = '{';
+    public final static char recordedGroupSubstitutionClose = '}';
+    public final static char groupSubstitutionOpen = '[';
+    public final static char groupSubstitutionClose = ']';
     public final static char startRecord = '<';
     public final static char stopRecord = '>';
     public final static char stringForce = '|';
@@ -41,11 +40,12 @@ public class SyntaxTokenizer {
     }
 
     /**
+     * NOTE: This may be out of date!
+     * <p>
      * Tokenizes a syntax expression. A syntax expression is used by the SyntaxBuilder to create rules on how to parse a
      * file.
      *
-     * <p>Syntax expressions have three parts: literals, group substitution and recording.
-     * <br>A literal is just any piece of text that the parser will try to match exactly to what you have written.
+     * <p> A literal is just any piece of text that the parser will try to match exactly to what you have written.
      * <br>A group substitution tells the parser to try and parse the group which you named, e.g. if I write
      * `if {identifier}` then it will attempt to match the literal if and then look to the rules on parsing
      * identifiers.
@@ -70,6 +70,8 @@ public class SyntaxTokenizer {
             Object tokenStorage;
             if ((tokenStorage = attemptGetGroupSubstitution(syntax)) != null) {
                 tokenType = SyntaxTokenType.GROUP_SUBSTITUTION;
+            } else if ((tokenStorage = attemptGetRecordedGroupSubstitution(syntax)) != null) {
+                tokenType = SyntaxTokenType.RECORDED_GROUP_SUBSTITUTION;
             } else if ((tokenStorage = attemptGetOperator(syntax)) != null) {
                 tokenType = SyntaxTokenType.OPERATOR;
                 if (((SyntaxOperator) tokenStorage).type == SyntaxOperator.SyntaxOperatorType.END) break;
@@ -104,6 +106,32 @@ public class SyntaxTokenizer {
         return null;
     }
 
+    private static Tuple.Two<Integer, String> attemptGetRecordedGroupSubstitution(StringInputStream syntax) {
+        if (syntax.consumeIf(recordedGroupSubstitutionOpen)) {
+            StringBuilder storageLocation = new StringBuilder();
+            while (!syntax.isEnd() && integerNumbers.contains(syntax.next())) {
+                storageLocation.append(syntax.consume());
+            }
+            if (storageLocation.length() == 0) {
+                storageLocation.append("0");
+            }
+
+            StringBuilder name = new StringBuilder();
+            while (true) {
+                if (syntax.isEnd()) {
+                    Errors.syntaxTokenizer_unterminatedGroupSubstitution(syntax);
+                } else if (syntax.consumeIf(recordedGroupSubstitutionClose)) {
+                    break;
+                } else if (!CharacterLists.identifierCharacters.contains(syntax.next())) {
+                    Errors.syntaxTokenizer_invalidGroupCharacter(syntax);
+                }
+                name.append(syntax.consume());
+            }
+            return new Tuple.Two<>(Integer.valueOf(storageLocation.toString()), name.toString());
+        }
+        return null;
+    }
+
     private static SyntaxOperator attemptGetOperator(StringInputStream syntax) {
         if (syntax.consumeIf(startRecord)) {
             StringBuilder storageLocation = new StringBuilder();
@@ -133,8 +161,6 @@ public class SyntaxTokenizer {
             return new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.END);
 
 
-        } else if (syntax.consumeIf(stringForce)) {
-            return new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STRING_FORCER);
         }
 
         return null;
@@ -147,6 +173,8 @@ public class SyntaxTokenizer {
         while (!syntax.isEnd()) {
             if (syntax.next() == groupSubstitutionOpen ||
                     syntax.next() == groupSubstitutionClose ||
+                    syntax.next() == recordedGroupSubstitutionOpen ||
+                    syntax.next() == recordedGroupSubstitutionClose ||
                     syntax.next() == startRecord ||
                     syntax.next() == stopRecord ||
                     syntax.next() == endCharacter){

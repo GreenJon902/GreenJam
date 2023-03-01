@@ -22,33 +22,13 @@ public class SyntaxParser {
                 }
                 case OPERATOR -> {
                     if (((SyntaxOperator) currentToken.storage).type == SyntaxOperator.SyntaxOperatorType.START_RECORD) {
-                        if (i + 2 < tokens.length && !((tokens[i + 1].storage instanceof SyntaxOperator) && // If being forced to string then record normally
-                                ((SyntaxOperator) tokens[i + 1].storage).type == SyntaxOperator.SyntaxOperatorType.STRING_FORCER)
-                                && tokens[i + 1].type == SyntaxTokenType.GROUP_SUBSTITUTION && // Is next group?
-                                tokens[i + 2].type == SyntaxTokenType.OPERATOR && // Is next next operator?
-                                ((SyntaxOperator) tokens[i + 2].storage).type == SyntaxOperator.SyntaxOperatorType.STOP_RECORD && // Is next next stop?
-                                ((SyntaxOperator) currentToken.storage).storage == ((SyntaxOperator) tokens[i + 2].storage).storage) { // Is next next same location?
+                        syntaxInstructions.add(SyntaxInstruction.START_RECORD);
+                        syntaxInstructionData.add(((SyntaxOperator) currentToken.storage).storage);
+                        highestMemoryLocation = Math.max(highestMemoryLocation, (Integer) ((SyntaxOperator) currentToken.storage).storage);
 
-                            syntaxInstructions.add(SyntaxInstruction.RECORD_GROUP);
-                            syntaxInstructionData.add(
-                                    new Tuple.Two<>((Integer) ((SyntaxOperator) currentToken.storage).storage, // Memory location
-                                            (String) tokens[i + 1].storage)); // Group name
-                            i += 2; // Group, Stop Record
-                            highestMemoryLocation = Math.max(highestMemoryLocation, (Integer) ((SyntaxOperator) currentToken.storage).storage);
-
-                        } else {
-                            syntaxInstructions.add(SyntaxInstruction.START_RECORD);
-                            syntaxInstructionData.add(((SyntaxOperator) currentToken.storage).storage); // Memory location
-                            highestMemoryLocation = Math.max(highestMemoryLocation, (Integer) ((SyntaxOperator) currentToken.storage).storage);
-
-                            if ((tokens[i + 1].storage instanceof SyntaxOperator) &&
-                                    ((SyntaxOperator) tokens[i + 1].storage).type == SyntaxOperator.SyntaxOperatorType.STRING_FORCER) {
-                                i += 1; // Ignored, just used to stop record group!
-                            }
-                        }
                     } else if ((((SyntaxOperator) currentToken.storage).type == SyntaxOperator.SyntaxOperatorType.STOP_RECORD)) {
                         syntaxInstructions.add(SyntaxInstruction.STOP_RECORD);
-                        syntaxInstructionData.add(((SyntaxOperator) currentToken.storage).storage); // Memory location
+                        syntaxInstructionData.add(((SyntaxOperator) currentToken.storage).storage);
                         highestMemoryLocation = Math.max(highestMemoryLocation, (Integer) ((SyntaxOperator) currentToken.storage).storage);
 
                     } else {
@@ -58,6 +38,11 @@ public class SyntaxParser {
                 case GROUP_SUBSTITUTION -> {
                     syntaxInstructions.add(SyntaxInstruction.MATCH_GROUP);
                     syntaxInstructionData.add(currentToken.storage); // Group name
+                }
+                case RECORDED_GROUP_SUBSTITUTION -> {
+                    syntaxInstructions.add(SyntaxInstruction.RECORD_GROUP);
+                    syntaxInstructionData.add(currentToken.storage); // Group name
+                    highestMemoryLocation = Math.max(highestMemoryLocation, ((Tuple.Two<Integer, String>) currentToken.storage).A);
                 }
                 default -> throw new RuntimeException();
             }

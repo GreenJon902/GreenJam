@@ -42,7 +42,7 @@ class SyntaxParserTest {
                 1, new SyntaxInstruction[]{
                         SyntaxInstruction.START_RECORD,
                         SyntaxInstruction.MATCH_LITERAL,
-                SyntaxInstruction.STOP_RECORD
+                        SyntaxInstruction.STOP_RECORD
                 }, new Object[]{0, "bar", 0}
         ), syntaxMatcher);
 
@@ -58,32 +58,17 @@ class SyntaxParserTest {
                 SyntaxInstruction.MATCH_GROUP,
                 SyntaxInstruction.MATCH_LITERAL,
                 SyntaxInstruction.STOP_RECORD
-        }, new Object[]{7, "baz", "bar", 7}
+            }, new Object[]{7, "baz", "bar", 7}
         ), syntaxMatcher);
 
+
         syntaxMatcher = SyntaxParser.parse(new SyntaxToken[] {
-                new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.START_RECORD, 0)),
-                new SyntaxToken(SyntaxTokenType.GROUP_SUBSTITUTION, "baz"),
-                new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STOP_RECORD, 0))
+                new SyntaxToken(SyntaxTokenType.RECORDED_GROUP_SUBSTITUTION, new Tuple.Two<>(5, "test")),
         });
         assertEquals(new SimpleSyntaxRule(
-                1, new SyntaxInstruction[]{
+                6, new SyntaxInstruction[]{
                 SyntaxInstruction.RECORD_GROUP
-        }, new Object[]{new Tuple.Two<>(0, "baz")}
-        ), syntaxMatcher);
-
-        syntaxMatcher = SyntaxParser.parse(new SyntaxToken[] {
-                new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.START_RECORD, 0)),
-                new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STRING_FORCER)),
-                new SyntaxToken(SyntaxTokenType.GROUP_SUBSTITUTION, "baz"),
-                new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STOP_RECORD, 0))
-        });
-        assertEquals(new SimpleSyntaxRule(
-                1, new SyntaxInstruction[]{
-                SyntaxInstruction.START_RECORD,
-                SyntaxInstruction.MATCH_GROUP,
-                SyntaxInstruction.STOP_RECORD
-        }, new Object[]{0, "baz", 0}
+            }, new Object[]{new Tuple.Two<>(5, "test")}
         ), syntaxMatcher);
     }
 

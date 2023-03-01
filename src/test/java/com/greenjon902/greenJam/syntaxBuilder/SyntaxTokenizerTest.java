@@ -1,6 +1,9 @@
 package com.greenjon902.greenJam.syntaxBuilder;
 
+import com.greenjon902.greenJam.common.Tuple;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
@@ -23,9 +26,22 @@ class SyntaxTokenizerTest {
 
     @Test
     void tokenizeGroupSubstitution() {
-        SyntaxToken[] syntaxTokens = SyntaxTokenizer.tokenize("{bar}");
+        SyntaxToken[] syntaxTokens = SyntaxTokenizer.tokenize("[bar]");
         assertArrayEquals(new SyntaxToken[] {
                 new SyntaxToken(SyntaxTokenType.GROUP_SUBSTITUTION, "bar")
+        }, syntaxTokens);
+    }
+
+    @Test
+    void tokenizeRecordedGroupSubstitution() {
+        SyntaxToken[] syntaxTokens = SyntaxTokenizer.tokenize("{foo}");
+        assertArrayEquals(new SyntaxToken[] {
+                new SyntaxToken(SyntaxTokenType.RECORDED_GROUP_SUBSTITUTION, new Tuple.Two<>(0, "foo"))
+        }, syntaxTokens);
+
+        syntaxTokens = SyntaxTokenizer.tokenize("{6bar}");
+        assertArrayEquals(new SyntaxToken[] {
+                new SyntaxToken(SyntaxTokenType.RECORDED_GROUP_SUBSTITUTION, new Tuple.Two<>(6, "bar"))
         }, syntaxTokens);
     }
 
@@ -48,10 +64,6 @@ class SyntaxTokenizerTest {
         syntaxTokens = SyntaxTokenizer.tokenize(">47");
         assertArrayEquals(new SyntaxToken[] {
                 new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STOP_RECORD, 47))
-        }, syntaxTokens);
-        syntaxTokens = SyntaxTokenizer.tokenize("|");
-        assertArrayEquals(new SyntaxToken[] {
-                new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STRING_FORCER))
         }, syntaxTokens);
         syntaxTokens = SyntaxTokenizer.tokenize("`");
         assertArrayEquals(new SyntaxToken[0], syntaxTokens);
@@ -131,18 +143,16 @@ class SyntaxTokenizerTest {
     void tokenizeComplexExpression() {
         SyntaxToken[] syntaxTokens;
 
-        syntaxTokens = SyntaxTokenizer.tokenize("if <{expression}> <2== <1{expression}>1>2`not recorded");
+        syntaxTokens = SyntaxTokenizer.tokenize("[if_keyword] {expression} <2== {1expression}>2`not recorded");
+        System.out.println(Arrays.toString(syntaxTokens));
         assertArrayEquals(new SyntaxToken[] {
-                new SyntaxToken(SyntaxTokenType.LITERAL, "if "),
-                new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.START_RECORD, 0)),
-                new SyntaxToken(SyntaxTokenType.GROUP_SUBSTITUTION, "expression"),
-                new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STOP_RECORD, 0)),
+                new SyntaxToken(SyntaxTokenType.GROUP_SUBSTITUTION, "if_keyword"),
+                new SyntaxToken(SyntaxTokenType.LITERAL, " "),
+                new SyntaxToken(SyntaxTokenType.RECORDED_GROUP_SUBSTITUTION, new Tuple.Two<>(0, "expression")),
                 new SyntaxToken(SyntaxTokenType.LITERAL, " "),
                 new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.START_RECORD, 2)),
                 new SyntaxToken(SyntaxTokenType.LITERAL, "== "),
-                new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.START_RECORD, 1)),
-                new SyntaxToken(SyntaxTokenType.GROUP_SUBSTITUTION, "expression"),
-                new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STOP_RECORD, 1)),
+                new SyntaxToken(SyntaxTokenType.RECORDED_GROUP_SUBSTITUTION, new Tuple.Two<>(1, "expression")),
                 new SyntaxToken(SyntaxTokenType.OPERATOR, new SyntaxOperator(SyntaxOperator.SyntaxOperatorType.STOP_RECORD, 2)),
         }, syntaxTokens);
     }

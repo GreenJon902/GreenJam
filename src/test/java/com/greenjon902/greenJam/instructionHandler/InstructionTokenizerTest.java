@@ -80,7 +80,7 @@ class InstructionTokenizerTest {
     void tokenizeWholeCommand() {
         InstructionToken[] instructionTokens;
 
-        instructionTokens = InstructionTokenizer.tokenize("SYNTAX RULE ADD identifier `<{identifier_characters}{identifier}>`;this is ignored");
+        instructionTokens = InstructionTokenizer.tokenize("SYNTAX RULE ADD identifier `<[identifier_characters][identifier]>`;this is ignored");
         assertArrayEquals(new InstructionToken[] {
                 new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.SYNTAX),
                 new InstructionToken(InstructionToken.InstructionTokenType.KEYWORD, InstructionKeyword.RULE),

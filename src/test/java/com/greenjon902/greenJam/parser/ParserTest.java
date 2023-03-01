@@ -24,7 +24,7 @@ public class ParserTest {
                         ;; SYNTAX RULE ADD character `o`;
                         
                         ;; SYNTAX RULE ADD word REPEATING character;
-                        ;; SYNTAX RULE ADD identifier `<|{word}> `;
+                        ;; SYNTAX RULE ADD identifier `<[word]>`;
                         
                         ;; SYNTAX RULE ADD keyword `<0public>0 `;
                         ;; SYNTAX RULE ADD keyword `<0private>0 `;
@@ -36,13 +36,13 @@ public class ParserTest {
                         ;; SYNTAX RULE ADD number `3`;
                         ;; SYNTAX RULE ADD number `4`;
  
-                        ;; SYNTAX RULE ADD list_item `<0|{number}>0, `;
+                        ;; SYNTAX RULE ADD list_item `<[number]>, `;
                         ;; SYNTAX RULE ADD list_contents REPEATING list_item;
-                        ;; SYNTAX RULE ADD list `\\{<0{list_contents}>0<1|{number}>1\\}`;
+                        ;; SYNTAX RULE ADD list `\\{{0list_contents}{1number}\\}`;
                         
-                        ;; SYNTAX RULE ADD variable_declaration `<1{keywords}>1<0{identifier}>0`;
-                        ;; SYNTAX RULE ADD variable_declaration `<0{identifier}>0`;
-                        ;; SYNTAX RULE ADD variable_assignment `<0{variable_declaration}>0= <1{list}>1`;
+                        ;; SYNTAX RULE ADD variable_declaration `{1keywords}{0identifier}`;
+                        ;; SYNTAX RULE ADD variable_declaration `{identifier}`;
+                        ;; SYNTAX RULE ADD variable_assignment `{0variable_declaration} = {1list}`;
                         
                         ;; ROOT_NODE SET variable_assignment;
                         

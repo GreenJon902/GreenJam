@@ -39,7 +39,10 @@ public class AstNode implements Printable {
                 stringBuilder.append(" ").append(object.toString().replace("\n", "\n ")).append("\n");
             }
         }
-        stringBuilder.setCharAt(0, '>');
+        if (stringBuilder.length() != 0) {
+            stringBuilder.deleteCharAt(0);
+        }
+        stringBuilder.insert(0, '>');
 
         if (stringBuilder.charAt(stringBuilder.length() - 1) == '\n') {
             stringBuilder.deleteCharAt(stringBuilder.length() - 1);

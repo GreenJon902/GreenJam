@@ -6,12 +6,12 @@ import com.greenjon902.greenJam.common.Tuple;
 import com.greenjon902.greenJam.parser.syntaxMatcher.SimpleSyntaxRule;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SyntaxBuilderTest {
     @Test
     void parse() {
-        SyntaxRule syntaxMatcher = SyntaxBuilder.build("if <1{identifier}>1 <==> <2{identifier}:>2");
+        SyntaxRule syntaxMatcher = SyntaxBuilder.build("if {1identifier} <==> <2[identifier]:>2");
         assertEquals(
                 new SimpleSyntaxRule(3,
                         new SyntaxInstruction[]{
@@ -45,7 +45,7 @@ class SyntaxBuilderTest {
 
     @Test
     void parseWithEnd() {
-        SyntaxRule syntaxMatcher = SyntaxBuilder.build("while <{identifier}>`i do not matter");
+        SyntaxRule syntaxMatcher = SyntaxBuilder.build("while {identifier}`i do not matter");
         assertEquals(
                 new SimpleSyntaxRule(1,
                         new SyntaxInstruction[]{
