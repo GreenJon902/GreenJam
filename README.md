@@ -12,7 +12,9 @@ One of the core parts of GreenJam is that everything is customizable, therefor s
 Take for example this script, it creates the syntax for a variable and a list completely from scratch.  
 While it may look like a lot, much of it will also be used in other parts of the language.
 
-_Note: we are using `//` for comments as there is no current support._
+_Note: we are using `//` for comments as there is no current support._  
+
+[Demonstration based of the PaserTest](https://github.com/GreenJon902/GreenJam/blob/01245799fb8636733721342b2428fd67723e8d12/src/test/java/com/greenjon902/greenJam/parser/ParserTest.java#L11)
 ```
 ;; SYNTAX IGNORED ADD "\n";
 
@@ -51,7 +53,7 @@ _Note: we are using `//` for comments as there is no current support._
 
 ;; ROOT_NODE SET variable_assignment;  // Tell it that this is what it should parse.
 
-public static foo = {1, 2, 3, 4}
+public static foo = {1, 2, 3, 4} // The actual line that we now parse
 ```
 There are many things that are going to be changed and improved, for example character ignoring doesn't work too well.  
 I also intend to add a method to make it so if I use a repeating rule followed by a different rule (like for the list) i can have them all in the same node instead of having `AstNode{AstNode{1, 2, 3}, 4}` as the result.
