@@ -38,14 +38,22 @@ _Note: we are using `//` for comments as there is no current support._
 ;; SYNTAX RULE ADD number `3`;
 ;; SYNTAX RULE ADD number `4`;
 
+
 ;; SYNTAX RULE ADD list_item `<[number]>, `;  // Tell it it needs a comma.
 ;; SYNTAX RULE ADD list_contents REPEATING list_item;  // Mutliple items in list.
-;; SYNTAX RULE ADD list `\{{0list_contents}<1[number]>1\}`;  // Lists need to be
-                                                             // surrounded by a {
-                                                             // that has to be escaped.
-                                                             // We also need last
-                                                             // term that has no
-                                                             // comma.
+
+// The last item of the list doesn't need a comma, use join to connect the nodes
+// together so its not [[1, 2, 3], [4]], but [1, 2, 3, 4]. Also some stuff to
+// get all nodes at the same level.
+;; SYNTAX RULE ADD recorded_number `<[number]>`;
+;; SYNTAX RULE ADD last_list_item `{recorded_number}`;
+;; SYNTAX RULE ADD list_contents JOIN repeating_list_item last_list_item;
+
+;; SYNTAX RULE ADD list `\{{list_contents}\}`; // Lists need to be surrounded by a { 
+                                               // that has to be escaped. We also
+                                               // need last term that has no comma.
+                                                             
+                                                             
 
 ;; SYNTAX RULE ADD variable_declaration `{1keywords}{0identifier}`;
 ;; SYNTAX RULE ADD variable_declaration `{identifier}`;
