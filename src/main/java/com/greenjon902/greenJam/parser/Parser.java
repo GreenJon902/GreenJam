@@ -33,7 +33,7 @@ public class Parser {
         if (string.consumeIf(syntaxContext.getCommandStartStartString())) {
             int ret = instructionHandler.handle(string);
             if (ret != 0) {
-                throw new RuntimeException();
+                Errors.parser_invalidCommand(string);
             }
             return true;
         }

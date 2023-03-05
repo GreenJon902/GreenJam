@@ -6,7 +6,7 @@ import com.greenjon902.greenJam.common.SyntaxInstruction;
 import com.greenjon902.greenJam.common.SyntaxRule;
 import org.junit.jupiter.api.Test;
 
-import static com.greenjon902.greenJam.parser.syntaxMatcher.ParserTestResources.alphaNumericCharacterList;
+import static com.greenjon902.greenJam.parser.ParserTestResources.alphaNumericCharacterList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RepeatingSyntaxRuleTest {

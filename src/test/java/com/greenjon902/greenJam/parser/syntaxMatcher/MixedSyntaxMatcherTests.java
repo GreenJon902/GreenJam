@@ -3,7 +3,7 @@ package com.greenjon902.greenJam.parser.syntaxMatcher;
 import com.greenjon902.greenJam.common.*;
 import org.junit.jupiter.api.Test;
 
-import static com.greenjon902.greenJam.parser.syntaxMatcher.ParserTestResources.*;
+import static com.greenjon902.greenJam.parser.ParserTestResources.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MixedSyntaxMatcherTests {

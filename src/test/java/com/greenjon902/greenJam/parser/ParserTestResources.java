@@ -1,7 +1,11 @@
-package com.greenjon902.greenJam.parser.syntaxMatcher;
+package com.greenjon902.greenJam.parser;
 
 import com.greenjon902.greenJam.common.*;
 
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 public class ParserTestResources {
@@ -99,5 +103,14 @@ public class ParserTestResources {
             return new AstNode(returnValue);
         }
 
+    }
+
+    public static File getPack(String packName) {
+        URL url = ParserTestResources.class.getResource("/com/greenjon902/greenJam/syntaxPacks/" + packName);
+        try {
+            return Paths.get(url.toURI()).toFile();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

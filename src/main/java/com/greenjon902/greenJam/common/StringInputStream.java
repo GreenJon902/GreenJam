@@ -1,5 +1,9 @@
 package com.greenjon902.greenJam.common;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
 public class StringInputStream {
     public final String string;
     public final String fileName;
@@ -8,6 +12,11 @@ public class StringInputStream {
     public StringInputStream(String fileName, String string) {
         this.fileName = fileName;
         this.string = string;
+    }
+
+    public static StringInputStream from(File pack) throws IOException {
+        String string = new String(Files.readAllBytes(pack.toPath()));
+        return new StringInputStream(pack.getAbsolutePath(), string);
     }
 
     public String currentLocationString() {

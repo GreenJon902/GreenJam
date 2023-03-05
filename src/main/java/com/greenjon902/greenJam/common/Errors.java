@@ -31,7 +31,6 @@ public class Errors {
         System.err.println("File \"" + stringInputStream.fileName + "\", line " + stringInputStream.getCurrentLineNumber());
         System.err.println(stringInputStream.getCurrentLine());
         System.err.println(" ".repeat(stringInputStream.getCurrentLinePosition() - 1) + "^");
-        System.out.println(syntaxRule.format());
 
         throw new RuntimeException("Syntax Matcher Error: " + message);
     }
@@ -89,5 +88,9 @@ public class Errors {
 
     public static void parser_noRootGroup(StringInputStream stringInputStream) {
         throwParserError("No root group has been set", stringInputStream);
+    }
+
+    public static void parser_invalidCommand(StringInputStream stringInputStream) {
+        throwParserError("Could not recognise command", stringInputStream);
     }
 }

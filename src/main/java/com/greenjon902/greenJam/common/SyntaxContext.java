@@ -1,5 +1,6 @@
 package com.greenjon902.greenJam.common;
 
+import com.greenjon902.greenJam.parser.syntaxMatcher.ExpressionSyntaxRule;
 import com.greenjon902.greenJam.parser.syntaxMatcher.JoiningSyntaxRule;
 import com.greenjon902.greenJam.parser.syntaxMatcher.LinkSyntaxRule;
 import com.greenjon902.greenJam.parser.syntaxMatcher.RepeatingSyntaxRule;
@@ -37,12 +38,20 @@ public class SyntaxContext {
         remove(group, new LinkSyntaxRule(other_group));
     }
 
-    public void addRepeating(String group, String other_group) {
-        add(group, new RepeatingSyntaxRule(other_group, false));
+    public void addRepeating(String group, String other_group, boolean canBeEmpty) {
+        add(group, new RepeatingSyntaxRule(other_group, canBeEmpty));
     }
 
-    public void removeRepeating(String group, String other_group) {
-        remove(group, new RepeatingSyntaxRule(other_group, false));
+    public void removeRepeating(String group, String other_group, boolean canBeEmpty) {
+        remove(group, new RepeatingSyntaxRule(other_group, canBeEmpty));
+    }
+
+    public void addExpression(String group, String operandGroup, boolean operandAsString, String operatorGroup, boolean operatorAsString) {
+        add(group, new ExpressionSyntaxRule(operandGroup, operatorGroup, operandAsString, operatorAsString));
+    }
+
+    public void removeExpression(String group, String operandGroup, boolean operandAsString, String operatorGroup, boolean operatorAsString) {
+        remove(group, new ExpressionSyntaxRule(operandGroup, operatorGroup, operandAsString, operatorAsString));
     }
 
     public void addJoin(String group, String other_group1, String other_group2) {

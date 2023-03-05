@@ -21,7 +21,7 @@ public class InstructionToken {
     }
 
     public enum InstructionTokenType {
-        SYNTAX_RULE, IDENTIFIER, STRING, KEYWORD, __ARGUMENT__ // __ARGUMENT__ is used internally for parsing of commands
+        SYNTAX_RULE, IDENTIFIER, STRING, KEYWORD, BOOLEAN, __ARGUMENT__ // __ARGUMENT__ is used internally for parsing of commands
     }
 
     @Override

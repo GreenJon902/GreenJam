@@ -6,7 +6,7 @@ import java.util.Comparator;
 public enum InstructionKeyword {
     SYNTAX("SYNTAX"), RULE("RULE"), ADD("ADD"), REMOVE("REMOVE"), ALL("ALL"),
     IGNORED("IGNORED"), LINK("LINK"), REPEATING("REPEATING"), ROOT_NODE("ROOT_NODE"),
-    SET("SET"), JOIN("JOIN");
+    SET("SET"), JOIN("JOIN"), EXPRESSIONS("EXPRESSION");
 
     public final String string;
 

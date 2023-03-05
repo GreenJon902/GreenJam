@@ -28,7 +28,9 @@ public class InstructionTokenizer {
 
             InstructionToken.InstructionTokenType tokenType;
             Object tokenStorage;
-            if ((tokenStorage = attemptGetKeyword(instruction)) != null) {
+            if ((tokenStorage = attemptGetBoolean(instruction)) != null) {
+                tokenType = InstructionToken.InstructionTokenType.BOOLEAN;
+            } else if ((tokenStorage = attemptGetKeyword(instruction)) != null) {
                 tokenType = InstructionToken.InstructionTokenType.KEYWORD;
             } else if ((tokenStorage = attemptGetSyntaxRule(instruction)) != null) {
                 tokenType = InstructionToken.InstructionTokenType.SYNTAX_RULE;
@@ -58,6 +60,15 @@ public class InstructionTokenizer {
         }
 
         return tokens.toArray(InstructionToken[]::new);
+    }
+
+    private static Boolean attemptGetBoolean(StringInputStream instruction) {
+        if (instruction.consumeIf("true")) {
+            return true;
+        } else if (instruction.consumeIf("false")) {
+            return false;
+        }
+        return null;
     }
 
     private static InstructionKeyword attemptGetKeyword(StringInputStream instruction) {
