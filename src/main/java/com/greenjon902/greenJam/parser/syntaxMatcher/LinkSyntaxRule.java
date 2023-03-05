@@ -4,6 +4,7 @@ import com.greenjon902.greenJam.common.AstNode;
 import com.greenjon902.greenJam.common.StringInputStream;
 import com.greenjon902.greenJam.common.SyntaxContext;
 import com.greenjon902.greenJam.common.SyntaxRule;
+import com.greenjon902.greenJam.parser.ParserContext;
 
 import java.util.Objects;
 
@@ -26,10 +27,10 @@ public class LinkSyntaxRule extends SyntaxRule {
     }
 
     @Override
-    public AstNode match(StringInputStream string, SyntaxContext syntaxContext) {
+    public AstNode match(StringInputStream string, SyntaxContext syntaxContext, ParserContext parserContext) {
         while (string.consumeIfAny(syntaxContext.getIgnored()));
 
-        return match(string, otherGroup, syntaxContext);
+        return match(string, otherGroup, syntaxContext, parserContext);
     }
 
     @Override

@@ -20,7 +20,7 @@ public class Parser {
         if (!syntaxContext.hasRootGroup()) {
             Errors.parser_noRootGroup(string);
         }
-        AstNode node = SyntaxRule.match(string, syntaxContext.getRootGroup(), syntaxContext);
+        AstNode node = SyntaxRule.match(string, syntaxContext.getRootGroup(), syntaxContext, new ParserContext());
 
         while (tryParseInstruction(string)); // Repeat till no more instructions
 

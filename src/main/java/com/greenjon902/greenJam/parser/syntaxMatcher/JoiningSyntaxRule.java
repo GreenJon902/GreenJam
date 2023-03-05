@@ -4,6 +4,7 @@ import com.greenjon902.greenJam.common.AstNode;
 import com.greenjon902.greenJam.common.StringInputStream;
 import com.greenjon902.greenJam.common.SyntaxContext;
 import com.greenjon902.greenJam.common.SyntaxRule;
+import com.greenjon902.greenJam.parser.ParserContext;
 
 import java.util.Objects;
 
@@ -22,13 +23,13 @@ public class JoiningSyntaxRule extends SyntaxRule {
     }
 
     @Override
-    public AstNode match(StringInputStream string, SyntaxContext syntaxContext) {
+    public AstNode match(StringInputStream string, SyntaxContext syntaxContext, ParserContext parserContext) {
         while (string.consumeIfAny(syntaxContext.getIgnored()));
 
         int stringLocationSave = string.location;
 
-        AstNode node1 = SyntaxRule.match(string, group1, syntaxContext);
-        AstNode node2 = SyntaxRule.match(string, group2, syntaxContext);
+        AstNode node1 = SyntaxRule.match(string, group1, syntaxContext, parserContext);
+        AstNode node2 = SyntaxRule.match(string, group2, syntaxContext, parserContext);
 
         if (node1 == null || node2 == null) {
             string.location = stringLocationSave;

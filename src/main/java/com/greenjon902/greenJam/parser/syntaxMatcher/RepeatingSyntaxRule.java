@@ -4,6 +4,7 @@ import com.greenjon902.greenJam.common.AstNode;
 import com.greenjon902.greenJam.common.StringInputStream;
 import com.greenjon902.greenJam.common.SyntaxContext;
 import com.greenjon902.greenJam.common.SyntaxRule;
+import com.greenjon902.greenJam.parser.ParserContext;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -62,12 +63,12 @@ public class RepeatingSyntaxRule extends SyntaxRule {
     }
 
     @Override
-    public AstNode match(StringInputStream string, SyntaxContext syntaxContext) {
+    public AstNode match(StringInputStream string, SyntaxContext syntaxContext, ParserContext parserContext) {
         while (string.consumeIfAny(syntaxContext.getIgnored()));
 
         ArrayList<AstNode> nodes = new ArrayList<>();
         while (maxLength == -1 || nodes.size() < maxLength) {
-            AstNode node = SyntaxRule.match(string, group, syntaxContext);
+            AstNode node = SyntaxRule.match(string, group, syntaxContext, parserContext);
             if (node == null) {
                 break;
             }

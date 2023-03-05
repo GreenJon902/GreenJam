@@ -99,7 +99,7 @@ public class ParserTestResources {
         }
 
         @Override
-        public AstNode match(StringInputStream string, SyntaxContext syntaxContext) {
+        public AstNode match(StringInputStream string, SyntaxContext syntaxContext, ParserContext parserContext) {
             return new AstNode(returnValue);
         }
 

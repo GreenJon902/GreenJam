@@ -1,4 +1,5 @@
 ;; SYNTAX IGNORED ADD "\n";
+;; SYNTAX IGNORED ADD "\t";
 
 
 ;; SYNTAX RULE ADD digit `1`;
@@ -75,7 +76,7 @@
 ;; SYNTAX RULE ADD all_identifier_character `[identifier_character]`;
 ;; SYNTAX RULE ADD all_identifier_character `[digit]`;
 
-;; SYNTAX RULE ADD identifier_characters REPEATING all_identifier_character false;
+;; SYNTAX RULE ADD identifier_characters REPEATING all_identifier_character true;
 ;; SYNTAX RULE ADD identifier `<[identifier_character][identifier_characters]>`;
 
 
@@ -88,6 +89,7 @@
 ;; SYNTAX RULE ADD field_modifiers REPEATING usable_field_modifier true;
 
 
+;; SYNTAX RULE ADD LINK usable_object function_call;
 ;; SYNTAX RULE ADD LINK usable_object identifier;
 ;; SYNTAX RULE ADD LINK usable_object integer_literal;
 ;; SYNTAX RULE ADD usable_object `({expression})`;
@@ -116,4 +118,34 @@
 ;; SYNTAX RULE ADD variable_declaration `{0field_modifiers}{1identifier} {2identifier}`;
 ;; SYNTAX RULE ADD variable_setting `{1variable_declaration} <0=>0 {2expression}`;
 ;; SYNTAX RULE ADD variable_setting `{1identifier} <0=>0 {2expression}`;
+;; SYNTAX RULE ADD LINK line_contents variable_setting;
 
+
+;; SYNTAX RULE ADD line_end `;`;
+;; SYNTAX RULE ADD line JOIN line_contents line_end;
+
+
+;; SYNTAX RULE ADD code_block_contents REPEATING line true;
+;; SYNTAX RULE ADD code_block `\{{code_block_contents}\}`;
+
+
+;; SYNTAX RULE ADD function_argument `<0[identifier]>0 <1[identifier]>1, `;
+;; SYNTAX RULE ADD function_arguments REPEATING function_argument true;
+;; SYNTAX RULE ADD last_function_argument `<0[identifier]>0 <1[identifier]>1`;
+;; SYNTAX RULE ADD wrapped_last_function_argument `{last_function_argument}`;
+;; SYNTAX RULE ADD full_function_arguments JOIN function_arguments wrapped_last_function_argument;
+
+;; SYNTAX RULE ADD function_declaration `{0field_modifiers}{1identifier} {2identifier}({3full_function_arguments}) {4code_block}`;
+
+
+;; SYNTAX RULE ADD return_statement `<0return>0 {1expression}`;
+;; SYNTAX RULE ADD LINK line_contents return_statement;
+
+
+;; SYNTAX RULE ADD function_call_argument `<0[identifier]>0, `;
+;; SYNTAX RULE ADD function_call_arguments REPEATING function_call_argument true;
+;; SYNTAX RULE ADD last_function_call_argument `<0[identifier]>0`;
+;; SYNTAX RULE ADD wrapped_last_function_call_argument `{0last_function_call_argument}`;
+;; SYNTAX RULE ADD full_function_call_arguments JOIN function_call_arguments wrapped_last_function_call_argument;
+
+;; SYNTAX RULE ADD function_call `{1usable_object}<0(>0{2full_function_call_arguments})`;

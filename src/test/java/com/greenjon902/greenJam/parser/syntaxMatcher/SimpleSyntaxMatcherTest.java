@@ -14,12 +14,12 @@ class SimpleSyntaxMatcherTest {
                         new SyntaxInstruction[]{SyntaxInstruction.MATCH_LITERAL},
                         new Object[]{"foo"}
                 ).match(
-                        new StringInputStream("<string>", "foo"),
+                        "foo",
                         new SyntaxContext()));
         assertNull(new SimpleSyntaxRule(0,
                 new SyntaxInstruction[]{SyntaxInstruction.MATCH_LITERAL},
                 new Object[]{"baz"}).match(
-                new StringInputStream("<string>", "bar"),
+                "bar",
                 new SyntaxContext()));
     }
 
@@ -33,7 +33,7 @@ class SimpleSyntaxMatcherTest {
                                 SyntaxInstruction.STOP_RECORD,
                         },
                         new Object[]{0, "foo", 0}).match(
-                        new StringInputStream("<string>", "foo"),
+                        "foo",
 
                         new SyntaxContext()));
     }
@@ -53,22 +53,22 @@ class SimpleSyntaxMatcherTest {
 
         assertEquals(new AstNode(),
                 SyntaxRule.match(
-                        new StringInputStream("<string>", "foo"),
+                        "foo",
                         "bar",
                         syntaxContext));
         assertEquals(new AstNode(),
                 SyntaxRule.match(
-                        new StringInputStream("<string>", "foo"),
+                        "foo",
                         "baz",
                         syntaxContext));
         assertNull(SyntaxRule.match(
-                new StringInputStream("<string>", "bar"),
+                "bar",
                 "baz",
                 syntaxContext));
 
         assertEquals(new AstNode("foo"),
                 SyntaxRule.match(
-                        new StringInputStream("<string>", "foo"),
+                        "foo",
                         "foo",
                         syntaxContext));
     }
@@ -85,7 +85,7 @@ class SimpleSyntaxMatcherTest {
 
         assertEquals(new AstNode(new AstNode("foo")),
                 SyntaxRule.match(
-                        new StringInputStream("<string>", "foo"),
+                        "foo",
                         "baz",
                         syntaxContext));
     }
@@ -102,12 +102,12 @@ class SimpleSyntaxMatcherTest {
 
         assertEquals(new AstNode("hello world"),
                 SyntaxRule.match(
-                        new StringInputStream("<string>", "hello world"),
+                        "hello world",
                         "test_one",
                         syntaxContext));
         assertEquals(new AstNode("hello world"),
                 SyntaxRule.match(
-                        new StringInputStream("<string>", "hello world"),
+                        "hello world",
                         "test_two",
                         syntaxContext));
     }
@@ -121,7 +121,7 @@ class SimpleSyntaxMatcherTest {
                 new Object[]{"hello"}));
 
         assertNull(SyntaxRule.match(
-                new StringInputStream("<string>", " hello"),
+                " hello",
                 "test_one",
                 syntaxContext));
 
@@ -129,7 +129,7 @@ class SimpleSyntaxMatcherTest {
 
         assertEquals(new AstNode(),
                 SyntaxRule.match(
-                        new StringInputStream("<string>", " hello"),
+                        " hello",
                         "test_one",
                         syntaxContext));
 
@@ -137,7 +137,7 @@ class SimpleSyntaxMatcherTest {
 
         assertEquals(new AstNode(),
                 SyntaxRule.match(
-                        new StringInputStream("<string>", "nothello"),
+                        "nothello",
                         "test_one",
                         syntaxContext));
     }

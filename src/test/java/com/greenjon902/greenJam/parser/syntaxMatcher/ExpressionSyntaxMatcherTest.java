@@ -1,6 +1,9 @@
 package com.greenjon902.greenJam.parser.syntaxMatcher;
 
-import com.greenjon902.greenJam.common.*;
+import com.greenjon902.greenJam.common.SyntaxContext;
+import com.greenjon902.greenJam.common.SyntaxInstruction;
+import com.greenjon902.greenJam.common.SyntaxRule;
+import com.greenjon902.greenJam.common.Tuple;
 import org.junit.jupiter.api.Test;
 
 import static com.greenjon902.greenJam.common.SyntaxInstruction.*;
@@ -58,7 +61,7 @@ public class ExpressionSyntaxMatcherTest {
         assertEquals(
                 quadraticFormulaNodeVer2,
                 SyntaxRule.match(
-                        new StringInputStream("<string>", quadraticFormulaString),
+                        quadraticFormulaString,
                         "expression",
                         syntaxContext));
     }

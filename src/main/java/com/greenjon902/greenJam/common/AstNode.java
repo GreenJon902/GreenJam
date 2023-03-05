@@ -36,7 +36,11 @@ public class AstNode implements Printable {
             if (object instanceof Printable) {
                 stringBuilder.append(" ").append(((Printable) object).format().replace("\n", "\n ")).append("\n");
             } else {
-                stringBuilder.append(" ").append(object.toString().replace("\n", "\n ")).append("\n");
+                if (object == null) {
+                    stringBuilder.append(" ").append("null").append("\n");
+                } else {
+                    stringBuilder.append(" ").append(object.toString().replace("\n", "\n ")).append("\n");
+                }
             }
         }
         if (stringBuilder.length() != 0) {
