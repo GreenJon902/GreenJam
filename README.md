@@ -64,5 +64,4 @@ _Note: we are using `//` for comments as there is no current support._
 public static foo = {1, 2, 3, 4} // The actual line that we now parse
 ```
 There are many things that are going to be changed and improved, for example character ignoring doesn't work too well.  
-I also intend to add a method to make it so if I use a repeating rule followed by a different rule (like for the list) i can have them all in the same node instead of having `AstNode{AstNode{1, 2, 3}, 4}` as the result.
 There will also be many more features to make building syntax easier.
