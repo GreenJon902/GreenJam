@@ -26,13 +26,13 @@ public class ParserTest {
 						;; SYNTAX RULE ADD character `f`;
 						;; SYNTAX RULE ADD character `o`;
 						
-						;; SYNTAX RULE ADD word REPEATING character;
+						;; SYNTAX RULE ADD word REPEATING character false;
 						;; SYNTAX RULE ADD identifier `<[word]>`;
 						
 						;; SYNTAX RULE ADD keyword `<0public>0 `;
 						;; SYNTAX RULE ADD keyword `<0private>0 `;
 						;; SYNTAX RULE ADD keyword `<0static>0 `;
-						;; SYNTAX RULE ADD keywords REPEATING keyword;
+						;; SYNTAX RULE ADD keywords REPEATING keyword true;
 						
 						;; SYNTAX RULE ADD number `1`;
 						;; SYNTAX RULE ADD number `2`;
@@ -40,7 +40,7 @@ public class ParserTest {
 						;; SYNTAX RULE ADD number `4`;
  
 						;; SYNTAX RULE ADD list_item `<[number]>, `;
-						;; SYNTAX RULE ADD repeating_list_item REPEATING list_item;
+						;; SYNTAX RULE ADD repeating_list_item REPEATING list_item true;
 						;; SYNTAX RULE ADD recorded_number `<[number]>`;
 						;; SYNTAX RULE ADD last_list_item `{recorded_number}`;
 						;; SYNTAX RULE ADD list_contents JOIN repeating_list_item last_list_item;

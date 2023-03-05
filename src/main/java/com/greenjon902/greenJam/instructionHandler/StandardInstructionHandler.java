@@ -47,9 +47,9 @@ public class StandardInstructionHandler extends InstructionHandlerBase {
         addPathway(syntaxRuleAddSimple, SYNTAX, RULE, ADD, IDENTIFIER_ARG, SYNTAX_RULE_ARG);
         addPathway(syntaxRuleRemoveSimple, SYNTAX, RULE, REMOVE, IDENTIFIER_ARG, SYNTAX_RULE_ARG);
         addPathway(syntaxRuleAddLink, SYNTAX, RULE, ADD, LINK, IDENTIFIER_ARG, IDENTIFIER_ARG);
-        addPathway(syntaxRuleRemoveLink, SYNTAX, RULE, REMOVE, LINK, IDENTIFIER_ARG, IDENTIFIER_ARG, BOOLEAN_ARG);
+        addPathway(syntaxRuleRemoveLink, SYNTAX, RULE, REMOVE, LINK, IDENTIFIER_ARG, IDENTIFIER_ARG);
         addPathway(syntaxRuleAddRepeating, SYNTAX, RULE, ADD, IDENTIFIER_ARG, REPEATING, IDENTIFIER_ARG, BOOLEAN_ARG);
-        addPathway(syntaxRuleRemoveRepeating, SYNTAX, RULE, REMOVE, IDENTIFIER_ARG, REPEATING, IDENTIFIER_ARG);
+        addPathway(syntaxRuleRemoveRepeating, SYNTAX, RULE, REMOVE, IDENTIFIER_ARG, REPEATING, IDENTIFIER_ARG, BOOLEAN_ARG);
         addPathway(syntaxRuleAddExpression, SYNTAX, RULE, ADD, IDENTIFIER_ARG, EXPRESSIONS, IDENTIFIER_ARG, BOOLEAN_ARG, IDENTIFIER_ARG, BOOLEAN_ARG);
         addPathway(syntaxRuleRemoveExpression, SYNTAX, RULE, REMOVE, IDENTIFIER_ARG, EXPRESSIONS, IDENTIFIER_ARG, BOOLEAN_ARG, IDENTIFIER_ARG, BOOLEAN_ARG);
         addPathway(syntaxRuleAddJoin, SYNTAX, RULE, ADD, IDENTIFIER_ARG, JOIN, IDENTIFIER_ARG, IDENTIFIER_ARG);
