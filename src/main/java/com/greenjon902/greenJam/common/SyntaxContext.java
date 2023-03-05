@@ -1,5 +1,6 @@
 package com.greenjon902.greenJam.common;
 
+import com.greenjon902.greenJam.parser.syntaxMatcher.JoiningSyntaxRule;
 import com.greenjon902.greenJam.parser.syntaxMatcher.LinkSyntaxRule;
 import com.greenjon902.greenJam.parser.syntaxMatcher.RepeatingSyntaxRule;
 
@@ -42,6 +43,14 @@ public class SyntaxContext {
 
     public void removeRepeating(String group, String other_group) {
         remove(group, new RepeatingSyntaxRule(other_group, false));
+    }
+
+    public void addJoin(String group, String other_group1, String other_group2) {
+        add(group, new JoiningSyntaxRule(other_group1, other_group2));
+    }
+
+    public void removeJoin(String group, String other_group1, String other_group2) {
+        remove(group, new JoiningSyntaxRule(other_group1, other_group2));
     }
 
 

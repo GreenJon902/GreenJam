@@ -1,7 +1,8 @@
 package com.greenjon902.greenJam.parser.syntaxMatcher;
 
-import com.greenjon902.greenJam.common.AstNode;
-import com.greenjon902.greenJam.common.ObjectCloner;
+import com.greenjon902.greenJam.common.*;
+
+import java.util.Arrays;
 
 public class ParserTestResources {
     public static char[] alphaNumericCharacterList = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_".toCharArray();
@@ -58,6 +59,45 @@ public class ParserTestResources {
                         ),
                         new AstNode("c")
                 );
+
+    }
+
+    public static class ReturningSyntaxRule extends SyntaxRule {
+        private final Object[] returnValue;
+
+        public ReturningSyntaxRule(Object... returnValue) {
+            this.returnValue = returnValue;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ReturningSyntaxRule that = (ReturningSyntaxRule) o;
+            return Arrays.equals(returnValue, that.returnValue);
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(returnValue);
+        }
+
+        @Override
+        public String toString() {
+            return "ReturningSyntaxRule{" +
+                    "returnValue=" + Arrays.toString(returnValue) +
+                    '}';
+        }
+
+        @Override
+        public String format() {
+            return toString();
+        }
+
+        @Override
+        public AstNode match(StringInputStream string, SyntaxContext syntaxContext) {
+            return new AstNode(returnValue);
+        }
 
     }
 }

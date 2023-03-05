@@ -37,8 +37,9 @@ public class ParserTest {
                         ;; SYNTAX RULE ADD number `4`;
  
                         ;; SYNTAX RULE ADD list_item `<[number]>, `;
-                        ;; SYNTAX RULE ADD list_contents REPEATING list_item;
-                        ;; SYNTAX RULE ADD list `\\{{0list_contents}<1[number]>1\\}`;
+                        ;; SYNTAX RULE ADD repeating_list_item REPEATING list_item;
+                        ;; SYNTAX RULE ADD list_contents JOIN repeating_list_item number;
+                        ;; SYNTAX RULE ADD list `\\{{list_contents}\\}`;
                         
                         ;; SYNTAX RULE ADD variable_declaration `{1keywords}{0identifier}`;
                         ;; SYNTAX RULE ADD variable_declaration `{identifier}`;

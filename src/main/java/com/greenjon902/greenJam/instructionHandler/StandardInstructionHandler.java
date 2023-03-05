@@ -19,6 +19,8 @@ public class StandardInstructionHandler extends InstructionHandlerBase {
         final Consumer<InstructionToken[]> syntaxRuleRemoveLink = (InstructionToken[] instructions) -> syntaxContext.removeLink((String) instructions[0].storage, (String) instructions[1].storage);
         final Consumer<InstructionToken[]> syntaxRuleAddRepeating = (InstructionToken[] instructions) -> syntaxContext.addRepeating((String) instructions[0].storage, (String) instructions[1].storage);
         final Consumer<InstructionToken[]> syntaxRuleRemoveRepeating = (InstructionToken[] instructions) -> syntaxContext.removeRepeating((String) instructions[0].storage, (String) instructions[1].storage);
+        final Consumer<InstructionToken[]> syntaxRuleAddJoin = (InstructionToken[] instructions) -> syntaxContext.addJoin((String) instructions[0].storage, (String) instructions[1].storage, (String) instructions[2].storage);
+        final Consumer<InstructionToken[]> syntaxRuleRemoveJoin = (InstructionToken[] instructions) -> syntaxContext.removeJoin((String) instructions[0].storage, (String) instructions[1].storage, (String) instructions[2].storage);
         final Consumer<InstructionToken[]> syntaxIgnoredAdd = (InstructionToken[] instructions) -> syntaxContext.ignore((String) instructions[0].storage);
         final Consumer<InstructionToken[]> syntaxIgnoredRemove = (InstructionToken[] instructions) -> syntaxContext.removeIgnore((String) instructions[0].storage);
         final Consumer<InstructionToken[]> setRootNode = (InstructionToken[] instructions) -> syntaxContext.setRootGroup((String) instructions[0].storage);
@@ -31,6 +33,7 @@ public class StandardInstructionHandler extends InstructionHandlerBase {
         final InstructionToken SET = InstructionKeyword.SET.instructionToken;
         final InstructionToken LINK = InstructionKeyword.LINK.instructionToken;
         final InstructionToken REPEATING = InstructionKeyword.REPEATING.instructionToken;
+        final InstructionToken JOIN = InstructionKeyword.JOIN.instructionToken;
         final InstructionToken ROOT_NODE = InstructionKeyword.ROOT_NODE.instructionToken;
 
         final InstructionToken SYNTAX_RULE_ARG = InstructionToken.makeArgument(SYNTAX_RULE);
@@ -43,6 +46,8 @@ public class StandardInstructionHandler extends InstructionHandlerBase {
         addPathway(syntaxRuleRemoveLink, SYNTAX, RULE, REMOVE, LINK, IDENTIFIER_ARG, IDENTIFIER_ARG);
         addPathway(syntaxRuleAddRepeating, SYNTAX, RULE, ADD, IDENTIFIER_ARG, REPEATING, IDENTIFIER_ARG);
         addPathway(syntaxRuleRemoveRepeating, SYNTAX, RULE, REMOVE, IDENTIFIER_ARG, REPEATING, IDENTIFIER_ARG);
+        addPathway(syntaxRuleAddJoin, SYNTAX, RULE, ADD, IDENTIFIER_ARG, JOIN, IDENTIFIER_ARG, IDENTIFIER_ARG);
+        addPathway(syntaxRuleRemoveJoin, SYNTAX, RULE, REMOVE, IDENTIFIER_ARG, JOIN, IDENTIFIER_ARG, IDENTIFIER_ARG);
         addPathway(syntaxIgnoredAdd, SYNTAX, IGNORED, ADD, STRING_ARG);
         addPathway(syntaxIgnoredRemove, SYNTAX, IGNORED, REMOVE, STRING_ARG);
         addPathway(setRootNode, ROOT_NODE, SET, IDENTIFIER_ARG);
