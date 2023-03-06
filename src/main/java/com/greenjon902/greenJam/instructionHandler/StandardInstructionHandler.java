@@ -21,8 +21,8 @@ public class StandardInstructionHandler extends InstructionHandlerBase {
         final Consumer<InstructionToken[]> syntaxRuleRemoveRepeating = (InstructionToken[] instructions) -> syntaxContext.removeRepeating((String) instructions[0].storage, (String) instructions[1].storage, (boolean) instructions[2].storage);
         final Consumer<InstructionToken[]> syntaxRuleAddJoin = (InstructionToken[] instructions) -> syntaxContext.addJoin((String) instructions[0].storage, (String) instructions[1].storage, (String) instructions[2].storage);
         final Consumer<InstructionToken[]> syntaxRuleRemoveJoin = (InstructionToken[] instructions) -> syntaxContext.removeJoin((String) instructions[0].storage, (String) instructions[1].storage, (String) instructions[2].storage);
-        final Consumer<InstructionToken[]> syntaxRuleAddExpression = (InstructionToken[] instructions) -> syntaxContext.addExpression((String) instructions[0].storage, (String) instructions[1].storage, (boolean) instructions[2].storage, (String) instructions[3].storage, (boolean) instructions[4].storage);
-        final Consumer<InstructionToken[]> syntaxRuleRemoveExpression = (InstructionToken[] instructions) -> syntaxContext.removeExpression((String) instructions[0].storage, (String) instructions[1].storage, (boolean) instructions[2].storage, (String) instructions[3].storage, (boolean) instructions[4].storage);
+        final Consumer<InstructionToken[]> syntaxRuleAddExpression = (InstructionToken[] instructions) -> syntaxContext.addExpression((String) instructions[0].storage, (String) instructions[1].storage, (boolean) instructions[2].storage, (String) instructions[3].storage, (boolean) instructions[4].storage, (boolean) instructions[5].storage);
+        final Consumer<InstructionToken[]> syntaxRuleRemoveExpression = (InstructionToken[] instructions) -> syntaxContext.removeExpression((String) instructions[0].storage, (String) instructions[1].storage, (boolean) instructions[2].storage, (String) instructions[3].storage, (boolean) instructions[4].storage, (boolean) instructions[5].storage);
         final Consumer<InstructionToken[]> syntaxIgnoredAdd = (InstructionToken[] instructions) -> syntaxContext.ignore((String) instructions[0].storage);
         final Consumer<InstructionToken[]> syntaxIgnoredRemove = (InstructionToken[] instructions) -> syntaxContext.removeIgnore((String) instructions[0].storage);
         final Consumer<InstructionToken[]> setRootNode = (InstructionToken[] instructions) -> syntaxContext.setRootGroup((String) instructions[0].storage);
@@ -50,8 +50,8 @@ public class StandardInstructionHandler extends InstructionHandlerBase {
         addPathway(syntaxRuleRemoveLink, SYNTAX, RULE, REMOVE, LINK, IDENTIFIER_ARG, IDENTIFIER_ARG);
         addPathway(syntaxRuleAddRepeating, SYNTAX, RULE, ADD, IDENTIFIER_ARG, REPEATING, IDENTIFIER_ARG, BOOLEAN_ARG);
         addPathway(syntaxRuleRemoveRepeating, SYNTAX, RULE, REMOVE, IDENTIFIER_ARG, REPEATING, IDENTIFIER_ARG, BOOLEAN_ARG);
-        addPathway(syntaxRuleAddExpression, SYNTAX, RULE, ADD, IDENTIFIER_ARG, EXPRESSIONS, IDENTIFIER_ARG, BOOLEAN_ARG, IDENTIFIER_ARG, BOOLEAN_ARG);
-        addPathway(syntaxRuleRemoveExpression, SYNTAX, RULE, REMOVE, IDENTIFIER_ARG, EXPRESSIONS, IDENTIFIER_ARG, BOOLEAN_ARG, IDENTIFIER_ARG, BOOLEAN_ARG);
+        addPathway(syntaxRuleAddExpression, SYNTAX, RULE, ADD, IDENTIFIER_ARG, EXPRESSIONS, IDENTIFIER_ARG, BOOLEAN_ARG, IDENTIFIER_ARG, BOOLEAN_ARG, BOOLEAN_ARG);
+        addPathway(syntaxRuleRemoveExpression, SYNTAX, RULE, REMOVE, IDENTIFIER_ARG, EXPRESSIONS, IDENTIFIER_ARG, BOOLEAN_ARG, IDENTIFIER_ARG, BOOLEAN_ARG, BOOLEAN_ARG);
         addPathway(syntaxRuleAddJoin, SYNTAX, RULE, ADD, IDENTIFIER_ARG, JOIN, IDENTIFIER_ARG, IDENTIFIER_ARG);
         addPathway(syntaxRuleRemoveJoin, SYNTAX, RULE, REMOVE, IDENTIFIER_ARG, JOIN, IDENTIFIER_ARG, IDENTIFIER_ARG);
         addPathway(syntaxIgnoredAdd, SYNTAX, IGNORED, ADD, STRING_ARG);

@@ -55,7 +55,7 @@ public class ExpressionSyntaxMatcherTest {
                         new Tuple.Two<>(0, "expression"),
                         ")"
                 }));
-        syntaxContext.add("expression", new ExpressionSyntaxRule("operand", "operator", false, true));
+        syntaxContext.add("expression", new ExpressionSyntaxRule("operand", "operator", false, true, false));
 
         // Testing ---------
         assertEquals(

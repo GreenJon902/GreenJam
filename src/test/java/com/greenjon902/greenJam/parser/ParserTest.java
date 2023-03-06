@@ -94,7 +94,7 @@ public class ParserTest {
 		printParseResult(parser, "function_declaration",
 				"""
 						public String foo(Bar a, Baz b) {
-							int result = a->calculate(b);
+							int result = a->calculator->calculate(b);
 							return String(result);
 						}
 						""");

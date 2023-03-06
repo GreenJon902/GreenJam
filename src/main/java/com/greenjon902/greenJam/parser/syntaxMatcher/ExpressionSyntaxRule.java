@@ -17,16 +17,18 @@ public class ExpressionSyntaxRule extends SyntaxRule {
     private final String operatorGroup;
     private final boolean operandAsString;
     private final boolean operatorAsString;
+    private final boolean equalPrecedenceEncapsulates;
 
     public ExpressionSyntaxRule(String operandGroup, String operatorGroup) {
-        this(operandGroup, operatorGroup, false, false);
+        this(operandGroup, operatorGroup, false, false, false);
     }
 
-    public ExpressionSyntaxRule(String operandGroup, String operatorGroup, boolean operandAsString, boolean operatorAsString) {
+    public ExpressionSyntaxRule(String operandGroup, String operatorGroup, boolean operandAsString, boolean operatorAsString, boolean equalPrecedenceEncapsulates) {
         this.operandGroup = operandGroup;
         this.operatorGroup = operatorGroup;
         this.operandAsString = operandAsString;
         this.operatorAsString = operatorAsString;
+        this.equalPrecedenceEncapsulates = equalPrecedenceEncapsulates;
     }
 
 
@@ -53,7 +55,8 @@ public class ExpressionSyntaxRule extends SyntaxRule {
             Object operator = operatorAndPrecedence.A;
             int operatorPrecedence = operatorAndPrecedence.B;
 
-            if (lastPrecedence < operatorPrecedence) { // If lest one is evaluated first (also takes the -1 into account)
+            if (((lastPrecedence == operatorPrecedence) && equalPrecedenceEncapsulates) ||
+                    lastPrecedence < operatorPrecedence) { // If least one is evaluated first (also takes the -1 into account)
                 last = new AstNode(operator, last, next);
             } else {
                 ((AstNode) last).storage[2] = new AstNode(operator, ((AstNode) last).storage[2], next);
@@ -107,12 +110,12 @@ public class ExpressionSyntaxRule extends SyntaxRule {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ExpressionSyntaxRule that = (ExpressionSyntaxRule) o;
-        return operandAsString == that.operandAsString && operatorAsString == that.operatorAsString && operandGroup.equals(that.operandGroup) && operatorGroup.equals(that.operatorGroup);
+        return operandAsString == that.operandAsString && operatorAsString == that.operatorAsString && operandGroup.equals(that.operandGroup) && operatorGroup.equals(that.operatorGroup) && equalPrecedenceEncapsulates == that.equalPrecedenceEncapsulates;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(operandGroup, operatorGroup, operandAsString, operatorAsString);
+        return Objects.hash(operandGroup, operatorGroup, operandAsString, operatorAsString, equalPrecedenceEncapsulates);
     }
 
     @Override
@@ -122,6 +125,7 @@ public class ExpressionSyntaxRule extends SyntaxRule {
                 ", operatorGroup='" + operatorGroup + '\'' +
                 ", operandAsString=" + operandAsString +
                 ", operatorAsString=" + operatorAsString +
+                ", equalPrecedenceEncapsulates=" + equalPrecedenceEncapsulates +
                 '}';
     }
 

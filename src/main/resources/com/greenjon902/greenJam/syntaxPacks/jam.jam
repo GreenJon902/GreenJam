@@ -112,7 +112,7 @@
 ;; SYNTAX RULE ADD operator ` != `;
 ;; SYNTAX RULE ADD operator ` !== `;
 
-;; SYNTAX RULE ADD expression EXPRESSION usable_object false operator true;
+;; SYNTAX RULE ADD expression EXPRESSION usable_object false operator true true;
 
 
 ;; SYNTAX RULE ADD variable_declaration `{0field_modifiers}{1identifier} {2identifier}`;

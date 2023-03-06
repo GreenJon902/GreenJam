@@ -46,12 +46,12 @@ public class SyntaxContext {
         remove(group, new RepeatingSyntaxRule(other_group, canBeEmpty));
     }
 
-    public void addExpression(String group, String operandGroup, boolean operandAsString, String operatorGroup, boolean operatorAsString) {
-        add(group, new ExpressionSyntaxRule(operandGroup, operatorGroup, operandAsString, operatorAsString));
+    public void addExpression(String group, String operandGroup, boolean operandAsString, String operatorGroup, boolean operatorAsString, boolean equalPrecedenceEncapsulates) {
+        add(group, new ExpressionSyntaxRule(operandGroup, operatorGroup, operandAsString, operatorAsString, equalPrecedenceEncapsulates));
     }
 
-    public void removeExpression(String group, String operandGroup, boolean operandAsString, String operatorGroup, boolean operatorAsString) {
-        remove(group, new ExpressionSyntaxRule(operandGroup, operatorGroup, operandAsString, operatorAsString));
+    public void removeExpression(String group, String operandGroup, boolean operandAsString, String operatorGroup, boolean operatorAsString, boolean equalPrecedenceEncapsulates) {
+        remove(group, new ExpressionSyntaxRule(operandGroup, operatorGroup, operandAsString, operatorAsString, equalPrecedenceEncapsulates));
     }
 
     public void addJoin(String group, String other_group1, String other_group2) {
