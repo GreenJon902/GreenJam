@@ -91,6 +91,7 @@ public class ParserTest {
 		printParseResult(parser, "full_function_arguments", "A b, C d");
 		printParseResult(parser, "full_function_call_arguments", "a, b");
 		printParseResult(parser, "function_call", "foo(bar, baz)");
+		printParseResult(parser, "line", "bar = foo->test(bar, baz);");
 		printParseResult(parser, "function_declaration",
 				"""
 						public String foo(Bar a, Baz b) {

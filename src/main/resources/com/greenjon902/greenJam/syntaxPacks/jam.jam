@@ -89,13 +89,17 @@
 ;; SYNTAX RULE ADD field_modifiers REPEATING usable_field_modifier true;
 
 
+;; SYNTAX RULE ADD get_attr_operator `-\>`;
+;; SYNTAX RULE ADD get_attr_expression EXPRESSION identifier false get_attr_operator true true;
+;; SYNTAX RULE ADD get_attr `{1usable_object}<0-\>>0{2get_attr_expression}`;
+
 ;; SYNTAX RULE ADD LINK usable_object function_call;
+;; SYNTAX RULE ADD LINK usable_object get_attr_expression;
 ;; SYNTAX RULE ADD LINK usable_object identifier;
 ;; SYNTAX RULE ADD LINK usable_object integer_literal;
 ;; SYNTAX RULE ADD usable_object `({expression})`;
 ;; SYNTAX RULE ADD usable_object `({usable_object})`;
 
-;; SYNTAX RULE ADD operator `-\>`;
 ;; SYNTAX RULE ADD operator ` & `;
 ;; SYNTAX RULE ADD operator ` | `;
 ;; SYNTAX RULE ADD operator ` ^ `;
