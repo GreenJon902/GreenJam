@@ -45,8 +45,12 @@ public class StringInputStream {
         return false;
     }
 
+    public boolean nextIs(String other_string) {
+        return string.regionMatches(location, other_string, 0, other_string.length());
+    }
+
     public boolean consumeIf(String other_string) {
-        if (string.regionMatches(location, other_string, 0, other_string.length())) {
+        if (nextIs(other_string)) {
             location += other_string.length();
             return true;
         }

@@ -74,6 +74,11 @@ public class ParserTestResources {
         }
 
         @Override
+        public AstNode match(StringInputStream string, Contexts contexts) {
+            return new AstNode(returnValue);
+        }
+
+        @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
@@ -96,11 +101,6 @@ public class ParserTestResources {
         @Override
         public String format() {
             return toString();
-        }
-
-        @Override
-        public AstNode match(StringInputStream string, SyntaxContext syntaxContext, ParserContext parserContext) {
-            return new AstNode(returnValue);
         }
 
     }

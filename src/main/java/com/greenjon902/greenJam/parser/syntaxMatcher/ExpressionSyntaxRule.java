@@ -2,7 +2,6 @@ package com.greenjon902.greenJam.parser.syntaxMatcher;
 
 import com.greenjon902.greenJam.common.*;
 import com.greenjon902.greenJam.instructionHandler.InstructionToken;
-import com.greenjon902.greenJam.parser.ParserContext;
 
 import java.util.Objects;
 
@@ -34,10 +33,10 @@ public class ExpressionSyntaxRule extends SyntaxRule {
 
 
     @Override
-    public AstNode match(StringInputStream string, SyntaxContext syntaxContext, ParserContext parserContext) {
-        while (string.consumeIfAny(syntaxContext.getIgnored()));
+    public AstNode match(StringInputStream string, Contexts contexts) {
+        while (string.consumeIfAny(contexts.syntax.getIgnored()));
 
-        Object last = getOperand(string, syntaxContext, parserContext);
+        Object last = getOperand(string, contexts);
         if (last == null) {
             return null;
         }
@@ -45,8 +44,8 @@ public class ExpressionSyntaxRule extends SyntaxRule {
 
         while (true) {
             int stringLocationSave = string.location;
-            Tuple.Two<Object, Integer> operatorAndPrecedence = matchOperatorWithPrecedence(string, syntaxContext, parserContext);
-            Object next = getOperand(string, syntaxContext, parserContext);
+            Tuple.Two<Object, Integer> operatorAndPrecedence = matchOperatorWithPrecedence(string, contexts);
+            Object next = getOperand(string, contexts);
             if (operatorAndPrecedence == null || next == null) {
                 string.location = stringLocationSave;
                 break; // Expression end
@@ -72,9 +71,9 @@ public class ExpressionSyntaxRule extends SyntaxRule {
      * Tries to match an operand. Returns an object as can return {@link String} or {@link AstNode} depending on
      * {@link #operandAsString}.
      */
-    public Object getOperand(StringInputStream string, SyntaxContext syntaxContext, ParserContext parserContext) {
+    public Object getOperand(StringInputStream string, Contexts contexts) {
         int stringStartLocation = string.location;
-        AstNode operand = SyntaxRule.match(string, operandGroup, syntaxContext, parserContext);
+        AstNode operand = SyntaxRule.match(string, operandGroup, contexts);
         if (operand == null) {
             return null;
         } else if (operandAsString) {
@@ -89,12 +88,12 @@ public class ExpressionSyntaxRule extends SyntaxRule {
      * is before +) (lower means evaluate first (the *)). Returns null if none were found. Returns an object as can
      * return {@link String} or {@link AstNode} depending on {@link #operatorAsString}.
      */
-    public Tuple.Two<Object, Integer> matchOperatorWithPrecedence(StringInputStream string, SyntaxContext syntaxContext, ParserContext parserContext) {
+    public Tuple.Two<Object, Integer> matchOperatorWithPrecedence(StringInputStream string, Contexts contexts) {
         int precedence = 0;
-        for (SyntaxRule syntaxRule : syntaxContext.getRules(operatorGroup)) {
+        for (SyntaxRule syntaxRule : contexts.syntax.getRules(operatorGroup)) {
 
             int stringStartLocation = string.location;
-            AstNode astNode = syntaxRule.match(string, syntaxContext, parserContext);
+            AstNode astNode = syntaxRule.match(string, contexts);
             if (astNode != null) {
                 return new Tuple.Two<>((operatorAsString ?
                         string.string.substring(stringStartLocation, string.location) : astNode),

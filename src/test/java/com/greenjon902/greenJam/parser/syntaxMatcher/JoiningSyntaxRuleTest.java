@@ -1,6 +1,7 @@
 package com.greenjon902.greenJam.parser.syntaxMatcher;
 
 import com.greenjon902.greenJam.common.AstNode;
+import com.greenjon902.greenJam.common.Contexts;
 import com.greenjon902.greenJam.common.SyntaxContext;
 import com.greenjon902.greenJam.parser.ParserTestResources;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,6 @@ public class JoiningSyntaxRuleTest {
         JoiningSyntaxRule joiningSyntaxRule = new JoiningSyntaxRule("group1", "group2");
 
         assertEquals(new AstNode(1, 2, 3, 4),
-                joiningSyntaxRule.match("", syntaxContext));
+                joiningSyntaxRule.match("", new Contexts(syntaxContext)));
     }
 }

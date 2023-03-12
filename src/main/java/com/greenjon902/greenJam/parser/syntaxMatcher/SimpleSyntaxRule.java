@@ -2,7 +2,6 @@ package com.greenjon902.greenJam.parser.syntaxMatcher;
 
 
 import com.greenjon902.greenJam.common.*;
-import com.greenjon902.greenJam.parser.ParserContext;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -51,8 +50,8 @@ public class SimpleSyntaxRule extends SyntaxRule {
     }
 
     @Override
-    public AstNode match(StringInputStream string, SyntaxContext syntaxContext, ParserContext parserContext) {
-        while (string.consumeIfAny(syntaxContext.getIgnored()));
+    public AstNode match(StringInputStream string, Contexts contexts) {
+        while (string.consumeIfAny(contexts.syntax.getIgnored()));
 
         int stringLocationSave = string.location;
 
@@ -81,17 +80,17 @@ public class SimpleSyntaxRule extends SyntaxRule {
                     currentRecordings.remove((Integer) data);
                 }
                 case MATCH_GROUP -> {
-                    if (!syntaxContext.hasGroup((String) data)) Errors.syntaxMatcher_unknownGroup(string, this, (String) data);
-                    AstNode astNode = match(string, (String) data, syntaxContext, parserContext);
+                    if (!contexts.syntax.hasGroup((String) data)) Errors.syntaxMatcher_unknownGroup(string, this, (String) data);
+                    AstNode astNode = match(string, (String) data, contexts);
                     if (astNode == null) {
                         string.location = stringLocationSave;
                         return null;
                     }
                 }
                 case RECORD_GROUP -> {
-                    if (!syntaxContext.hasGroup(((Tuple.Two<Integer, String>) data).B)) Errors.syntaxMatcher_unknownGroup(string, this, ((Tuple.Two<Integer, String>) data).B);
+                    if (!contexts.syntax.hasGroup(((Tuple.Two<Integer, String>) data).B)) Errors.syntaxMatcher_unknownGroup(string, this, ((Tuple.Two<Integer, String>) data).B);
                     if (memoryLocations[((Tuple.Two<Integer, String>) data).A] != null) Errors.syntaxMatcher_triedToRerecordNode(string, this, ((Tuple.Two<Integer, String>) data).A, ((Tuple.Two<Integer, String>) data).B);
-                    AstNode astNode = match(string, ((Tuple.Two<Integer, String>) data).B, syntaxContext, parserContext);
+                    AstNode astNode = match(string, ((Tuple.Two<Integer, String>) data).B, contexts);
                     if (astNode == null) {
                         string.location = stringLocationSave;
                         return null;

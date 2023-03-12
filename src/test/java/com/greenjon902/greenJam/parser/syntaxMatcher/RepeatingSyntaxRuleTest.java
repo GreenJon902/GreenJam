@@ -1,9 +1,6 @@
 package com.greenjon902.greenJam.parser.syntaxMatcher;
 
-import com.greenjon902.greenJam.common.AstNode;
-import com.greenjon902.greenJam.common.SyntaxContext;
-import com.greenjon902.greenJam.common.SyntaxInstruction;
-import com.greenjon902.greenJam.common.SyntaxRule;
+import com.greenjon902.greenJam.common.*;
 import org.junit.jupiter.api.Test;
 
 import static com.greenjon902.greenJam.parser.ParserTestResources.alphaNumericCharacterList;
@@ -24,7 +21,7 @@ public class RepeatingSyntaxRuleTest {
                 new SyntaxInstruction[]{SyntaxInstruction.START_RECORD, SyntaxInstruction.MATCH_GROUP, SyntaxInstruction.STOP_RECORD},
                 new Object[]{0, "characters", 0});
 
-        assertEquals(new AstNode("HelloWorld"), recorder.match("HelloWorld", syntaxContext));
+        assertEquals(new AstNode("HelloWorld"), recorder.match("HelloWorld", syntaxContext, new ErrorContext()));
     }
 
     @Test
@@ -46,11 +43,11 @@ public class RepeatingSyntaxRuleTest {
         SyntaxRule rule = new RepeatingSyntaxRule("list_item", true);
         syntaxContext.add("list", rule);
 
-        assertEquals(new AstNode(), rule.match("", syntaxContext));
-        assertEquals(new AstNode(new AstNode("a")), rule.match("a, ", syntaxContext));
+        assertEquals(new AstNode(), rule.match("", new Contexts(syntaxContext)));
+        assertEquals(new AstNode(new AstNode("a")), rule.match("a, ", new Contexts(syntaxContext)));
         assertEquals(new AstNode(new AstNode("h"), new AstNode("e"),
                 new AstNode("l"), new AstNode("l"), new AstNode("o")),
-                rule.match("h, e, l, l, o, ", syntaxContext));
+                rule.match("h, e, l, l, o, ", new Contexts(syntaxContext)));
 
     }
 
@@ -68,7 +65,7 @@ public class RepeatingSyntaxRuleTest {
                 new SyntaxInstruction[]{SyntaxInstruction.START_RECORD, SyntaxInstruction.MATCH_GROUP, SyntaxInstruction.STOP_RECORD},
                 new Object[]{0, "characters", 0});
 
-        assertEquals(new AstNode("Hi"), recorder.match("Hi", syntaxContext));
-        assertEquals(new AstNode("Hello"), recorder.match("HelloWorld", syntaxContext));
+        assertEquals(new AstNode("Hi"), recorder.match("Hi", new Contexts(syntaxContext)));
+        assertEquals(new AstNode("Hello"), recorder.match("HelloWorld", new Contexts(syntaxContext)));
     }
 }

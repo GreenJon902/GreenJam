@@ -1,8 +1,6 @@
 package com.greenjon902.greenJam.parser;
 
-import com.greenjon902.greenJam.common.AstNode;
-import com.greenjon902.greenJam.common.StringInputStream;
-import com.greenjon902.greenJam.common.SyntaxContext;
+import com.greenjon902.greenJam.common.*;
 import com.greenjon902.greenJam.instructionHandler.StandardInstructionHandler;
 import org.junit.jupiter.api.Test;
 
@@ -12,8 +10,9 @@ public class ParserTest {
 	@Test
 	void testSampleScript() {
 		SyntaxContext syntaxContext = new SyntaxContext();
-		StandardInstructionHandler instructionHandler = new StandardInstructionHandler(syntaxContext);
-		Parser parser = new Parser(instructionHandler, syntaxContext);
+		ErrorContext errorContext = new ErrorContext();
+		StandardInstructionHandler instructionHandler = new StandardInstructionHandler(new Contexts(syntaxContext, errorContext));
+		Parser parser = new Parser(instructionHandler, syntaxContext, errorContext);
 
 		StringInputStream string = new StringInputStream("<TestFile.jam>",
 				"""

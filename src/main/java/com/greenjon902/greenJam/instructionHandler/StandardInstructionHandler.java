@@ -1,6 +1,9 @@
 package com.greenjon902.greenJam.instructionHandler;
 
+import com.greenjon902.greenJam.common.Contexts;
+import com.greenjon902.greenJam.common.ErrorContext;
 import com.greenjon902.greenJam.common.SyntaxContext;
+import com.greenjon902.greenJam.parser.ParserContext;
 import com.greenjon902.greenJam.parser.syntaxMatcher.SimpleSyntaxRule;
 
 import java.util.function.Consumer;
@@ -9,9 +12,13 @@ import static com.greenjon902.greenJam.instructionHandler.InstructionToken.Instr
 
 public class StandardInstructionHandler extends InstructionHandlerBase {
     private final SyntaxContext syntaxContext;
+    private final ParserContext parserContext;
+    private final ErrorContext errorContext;
 
-    public StandardInstructionHandler(SyntaxContext syntaxContext) {
-        this.syntaxContext = syntaxContext;
+    public StandardInstructionHandler(Contexts contexts) {
+        syntaxContext = contexts.syntax;
+        parserContext = contexts.parser;
+        errorContext = contexts.error;
 
         final Consumer<InstructionToken[]> syntaxRuleAddSimple = (InstructionToken[] instructions) -> syntaxContext.add((String) instructions[0].storage, (SimpleSyntaxRule) instructions[1].storage);
         final Consumer<InstructionToken[]> syntaxRuleRemoveSimple = (InstructionToken[] instructions) -> syntaxContext.remove((String) instructions[0].storage, (SimpleSyntaxRule) instructions[1].storage);
@@ -25,6 +32,13 @@ public class StandardInstructionHandler extends InstructionHandlerBase {
         final Consumer<InstructionToken[]> syntaxRuleRemoveExpression = (InstructionToken[] instructions) -> syntaxContext.removeExpression((String) instructions[0].storage, (String) instructions[1].storage, (boolean) instructions[2].storage, (String) instructions[3].storage, (boolean) instructions[4].storage, (boolean) instructions[5].storage);
         final Consumer<InstructionToken[]> syntaxIgnoredAdd = (InstructionToken[] instructions) -> syntaxContext.ignore((String) instructions[0].storage);
         final Consumer<InstructionToken[]> syntaxIgnoredRemove = (InstructionToken[] instructions) -> syntaxContext.removeIgnore((String) instructions[0].storage);
+
+        final Consumer<InstructionToken[]> assignErrorToGroup = (InstructionToken[] instructions) -> errorContext.assignError((String) instructions[0].storage, (String) instructions[1].storage, (String) instructions[2].storage);
+        final Consumer<InstructionToken[]> createReturningNullErrorCondition = (InstructionToken[] instructions) -> errorContext.createReturningNull((String) instructions[0].storage);
+        final Consumer<InstructionToken[]> createNextIsErrorCondition = (InstructionToken[] instructions) -> errorContext.createNextIs((String) instructions[0].storage, (String) instructions[1].storage);
+        final Consumer<InstructionToken[]> createNotErrorCondition = (InstructionToken[] instructions) -> errorContext.createNot((String) instructions[0].storage, (String) instructions[1].storage);
+        final Consumer<InstructionToken[]> createAndErrorCondition = (InstructionToken[] instructions) -> errorContext.createAnd((String) instructions[0].storage, (String) instructions[1].storage, (String) instructions[2].storage);
+
         final Consumer<InstructionToken[]> setRootNode = (InstructionToken[] instructions) -> syntaxContext.setRootGroup((String) instructions[0].storage);
 
         final InstructionToken SYNTAX = InstructionKeyword.SYNTAX.instructionToken;
@@ -38,6 +52,14 @@ public class StandardInstructionHandler extends InstructionHandlerBase {
         final InstructionToken EXPRESSIONS = InstructionKeyword.EXPRESSIONS.instructionToken;
         final InstructionToken JOIN = InstructionKeyword.JOIN.instructionToken;
         final InstructionToken ROOT_NODE = InstructionKeyword.ROOT_NODE.instructionToken;
+        final InstructionToken ERROR = InstructionKeyword.ERROR.instructionToken;
+        final InstructionToken ASSIGN = InstructionKeyword.ASSIGN.instructionToken;
+        final InstructionToken ERROR_CONDITION = InstructionKeyword.ERROR_CONDITION.instructionToken;
+        final InstructionToken RETURNING_NULL = InstructionKeyword.RETURNING_NULL.instructionToken;
+        final InstructionToken NEXT_IS = InstructionKeyword.NEXT_IS.instructionToken;
+        final InstructionToken NOT = InstructionKeyword.NOT.instructionToken;
+        final InstructionToken AND = InstructionKeyword.AND.instructionToken;
+        final InstructionToken CREATE = InstructionKeyword.CREATE.instructionToken;
 
         final InstructionToken SYNTAX_RULE_ARG = InstructionToken.makeArgument(SYNTAX_RULE);
         final InstructionToken IDENTIFIER_ARG = InstructionToken.makeArgument(IDENTIFIER);
@@ -56,6 +78,13 @@ public class StandardInstructionHandler extends InstructionHandlerBase {
         addPathway(syntaxRuleRemoveJoin, SYNTAX, RULE, REMOVE, IDENTIFIER_ARG, JOIN, IDENTIFIER_ARG, IDENTIFIER_ARG);
         addPathway(syntaxIgnoredAdd, SYNTAX, IGNORED, ADD, STRING_ARG);
         addPathway(syntaxIgnoredRemove, SYNTAX, IGNORED, REMOVE, STRING_ARG);
+
+        addPathway(assignErrorToGroup, ERROR, ASSIGN, IDENTIFIER_ARG, IDENTIFIER_ARG, STRING_ARG);
+        addPathway(createReturningNullErrorCondition, ERROR_CONDITION, CREATE, IDENTIFIER_ARG, RETURNING_NULL);
+        addPathway(createNextIsErrorCondition, ERROR_CONDITION, CREATE, IDENTIFIER_ARG, NEXT_IS, STRING_ARG);
+        addPathway(createNotErrorCondition, ERROR_CONDITION, CREATE, IDENTIFIER_ARG, NOT, IDENTIFIER_ARG);
+        addPathway(createAndErrorCondition, ERROR_CONDITION, CREATE, IDENTIFIER_ARG, AND, IDENTIFIER_ARG, IDENTIFIER_ARG);
+
         addPathway(setRootNode, ROOT_NODE, SET, IDENTIFIER_ARG);
     }
 }

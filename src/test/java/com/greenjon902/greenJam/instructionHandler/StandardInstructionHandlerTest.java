@@ -1,5 +1,6 @@
 package com.greenjon902.greenJam.instructionHandler;
 
+import com.greenjon902.greenJam.common.Contexts;
 import com.greenjon902.greenJam.common.SyntaxContext;
 import com.greenjon902.greenJam.common.SyntaxInstruction;
 import com.greenjon902.greenJam.common.SyntaxRule;
@@ -22,7 +23,7 @@ public class StandardInstructionHandlerTest {
         InstructionToken groupInstruction = new InstructionToken(IDENTIFIER, group);
 
         SyntaxContext syntaxContext = new SyntaxContext();
-        StandardInstructionHandler standardInstructionHandler = new StandardInstructionHandler(syntaxContext);
+        StandardInstructionHandler standardInstructionHandler = new StandardInstructionHandler(new Contexts(syntaxContext));
 
         assertEquals(0, standardInstructionHandler.handle(SYNTAX, RULE, ADD, groupInstruction, ruleInstruction));
         assertArrayEquals(new SyntaxRule[] {rule}, syntaxContext.getRules(group));
@@ -39,7 +40,7 @@ public class StandardInstructionHandlerTest {
         LinkSyntaxRule group2Rule = new LinkSyntaxRule(group2);
 
         SyntaxContext syntaxContext = new SyntaxContext();
-        StandardInstructionHandler standardInstructionHandler = new StandardInstructionHandler(syntaxContext);
+        StandardInstructionHandler standardInstructionHandler = new StandardInstructionHandler(new Contexts(syntaxContext));
 
         assertEquals(0, standardInstructionHandler.handle(SYNTAX, RULE, ADD, LINK, group1Instruction, group2Instruction));
         assertArrayEquals(new SyntaxRule[] {group2Rule}, syntaxContext.getRules(group1));
@@ -53,7 +54,7 @@ public class StandardInstructionHandlerTest {
         InstructionToken stringInstruction = new InstructionToken(STRING, string);
 
         SyntaxContext syntaxContext = new SyntaxContext();
-        StandardInstructionHandler standardInstructionHandler = new StandardInstructionHandler(syntaxContext);
+        StandardInstructionHandler standardInstructionHandler = new StandardInstructionHandler(new Contexts(syntaxContext));
 
         assertEquals(0, standardInstructionHandler.handle(SYNTAX, IGNORED, ADD, stringInstruction));
         assertArrayEquals(new String[] {"test"}, syntaxContext.getIgnored());

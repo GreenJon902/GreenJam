@@ -56,17 +56,17 @@ public class MixedSyntaxMatcherTests {
                 SyntaxRule.match(
                         "test",
                         "expression_level_one",
-                        syntaxContext));
+                        syntaxContext, new ErrorContext()));
         assertEquals(new AstNode("*", new AstNode("test"), new AstNode("test")),
                 SyntaxRule.match(
                         "test*test" ,
                         "expression_level_one",
-                        syntaxContext));
+                        syntaxContext, new ErrorContext()));
         assertEquals(new AstNode("+", new AstNode("test"), new AstNode("test")),
                 SyntaxRule.match(
                          "test+test",
                         "expression_level_one",
-                        syntaxContext));
+                        syntaxContext, new ErrorContext()));
         assertEquals(new AstNode("+",
                         new AstNode("*",
                                 new AstNode("test"),
@@ -75,7 +75,7 @@ public class MixedSyntaxMatcherTests {
                 SyntaxRule.match(
                          "test*test+test",
                         "expression_level_one",
-                        syntaxContext));
+                        syntaxContext, new ErrorContext()));
         assertEquals(new AstNode("+",
                         new AstNode("test"),
                         new AstNode("*",
@@ -84,7 +84,7 @@ public class MixedSyntaxMatcherTests {
                 SyntaxRule.match(
                          "test+test*test",
                         "expression_level_one",
-                        syntaxContext));
+                        syntaxContext, new ErrorContext()));
         assertEquals(new AstNode("+",
                         new AstNode("test"),
                         new AstNode("+",
@@ -95,7 +95,7 @@ public class MixedSyntaxMatcherTests {
                 SyntaxRule.match(
                          "test+test*test+test",
                         "expression_level_one",
-                        syntaxContext));
+                        syntaxContext, new ErrorContext()));
         assertEquals(new AstNode("+",
                         new AstNode("test"),
                         new AstNode("*",
@@ -106,7 +106,7 @@ public class MixedSyntaxMatcherTests {
                 SyntaxRule.match(
                          "test+test*test*test",
                         "expression_level_one",
-                        syntaxContext));
+                        syntaxContext, new ErrorContext()));
     }
 
     @Test
@@ -220,6 +220,6 @@ public class MixedSyntaxMatcherTests {
                 SyntaxRule.match(
                         quadraticFormulaString,
                         "expression_level_one",
-                        syntaxContext));
+                        syntaxContext, new ErrorContext()));
     }
 }

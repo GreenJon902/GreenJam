@@ -1,8 +1,6 @@
 package com.greenjon902.greenJam.parser;
 
-import com.greenjon902.greenJam.common.AstNode;
-import com.greenjon902.greenJam.common.StringInputStream;
-import com.greenjon902.greenJam.common.SyntaxContext;
+import com.greenjon902.greenJam.common.*;
 import com.greenjon902.greenJam.instructionHandler.StandardInstructionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,8 +17,9 @@ public class StandardJamTest {
 	@BeforeEach
 	void setup() throws IOException {
 		SyntaxContext syntaxContext = new SyntaxContext();
-		StandardInstructionHandler instructionHandler = new StandardInstructionHandler(syntaxContext);
-		parser = new Parser(instructionHandler, syntaxContext);
+		ErrorContext errorContext = new ErrorContext();
+		StandardInstructionHandler instructionHandler = new StandardInstructionHandler(new Contexts(syntaxContext, errorContext));
+		parser = new Parser(instructionHandler, syntaxContext, errorContext);
 
 		StringInputStream pack = StringInputStream.from(getPack("jam.jam"));
 		parser.parse(pack);
@@ -88,9 +87,9 @@ public class StandardJamTest {
 		System.out.println(string);
 		System.out.println(result);
 		if (result == null) {
-			System.out.println();
+			//System.out.println();
 		} else {
-			System.out.println(result.format());
+			//System.out.println(result.format());
 		}
 		System.out.println(stringStream.location + "/" + stringStream.string.length());
 		if (shouldBeNull) {

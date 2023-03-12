@@ -6,10 +6,12 @@ import com.greenjon902.greenJam.instructionHandler.InstructionHandlerBase;
 public class Parser {
     private InstructionHandlerBase instructionHandler;
     private SyntaxContext syntaxContext;
+    private ErrorContext errorContext;
 
-    public Parser(InstructionHandlerBase instructionHandler, SyntaxContext syntaxContext) {
+    public Parser(InstructionHandlerBase instructionHandler, SyntaxContext syntaxContext, ErrorContext errorContext) {
         this.instructionHandler = instructionHandler;
         this.syntaxContext = syntaxContext;
+        this.errorContext = errorContext;
     }
 
     public AstNode parse(StringInputStream string) {
@@ -20,7 +22,7 @@ public class Parser {
         if (!syntaxContext.hasRootGroup()) {
             Errors.parser_noRootGroup(string);
         }
-        AstNode node = SyntaxRule.match(string, syntaxContext.getRootGroup(), syntaxContext, new ParserContext());
+        AstNode node = SyntaxRule.match(string, syntaxContext.getRootGroup(), new Contexts(syntaxContext, new ParserContext(), errorContext));
 
         while (tryParseInstruction(string)); // Repeat till no more instructions
 

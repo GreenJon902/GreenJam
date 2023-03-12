@@ -86,11 +86,19 @@ public class Errors {
         throwSyntaxMatcherError("Tried to rerecord a node at the location " + memoryLocation + " from group \"" + group + "\"", stringInputStream, syntaxRule);
     }
 
+    public static void errors_conditionMet(StringInputStream stringInputStream, String message) {
+        throwSyntaxError(message, stringInputStream);
+    }
+
     public static void parser_noRootGroup(StringInputStream stringInputStream) {
         throwParserError("No root group has been set", stringInputStream);
     }
 
     public static void parser_invalidCommand(StringInputStream stringInputStream) {
         throwParserError("Could not recognise command", stringInputStream);
+    }
+
+    public static void errorConditions_conditionAlreadyExists(String group) {
+        throw new RuntimeException("Tried to add an error condition that already exists - \"" + group + "\"");
     }
 }

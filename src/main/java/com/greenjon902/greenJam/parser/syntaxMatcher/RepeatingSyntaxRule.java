@@ -1,10 +1,9 @@
 package com.greenjon902.greenJam.parser.syntaxMatcher;
 
 import com.greenjon902.greenJam.common.AstNode;
+import com.greenjon902.greenJam.common.Contexts;
 import com.greenjon902.greenJam.common.StringInputStream;
-import com.greenjon902.greenJam.common.SyntaxContext;
 import com.greenjon902.greenJam.common.SyntaxRule;
-import com.greenjon902.greenJam.parser.ParserContext;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -63,12 +62,12 @@ public class RepeatingSyntaxRule extends SyntaxRule {
     }
 
     @Override
-    public AstNode match(StringInputStream string, SyntaxContext syntaxContext, ParserContext parserContext) {
-        while (string.consumeIfAny(syntaxContext.getIgnored()));
+    public AstNode match(StringInputStream string, Contexts contexts) {
+        while (string.consumeIfAny(contexts.syntax.getIgnored()));
 
         ArrayList<AstNode> nodes = new ArrayList<>();
         while (maxLength == -1 || nodes.size() < maxLength) {
-            AstNode node = SyntaxRule.match(string, group, syntaxContext, parserContext);
+            AstNode node = SyntaxRule.match(string, group, contexts);
             if (node == null) {
                 break;
             }

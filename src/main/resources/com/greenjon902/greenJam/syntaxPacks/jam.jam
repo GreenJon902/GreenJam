@@ -109,10 +109,10 @@
 ;; SYNTAX RULE ADD operator ` - `;
 ;; SYNTAX RULE ADD operator ` == `;
 ;; SYNTAX RULE ADD operator ` === `;
-;; SYNTAX RULE ADD operator ` > `;
-;; SYNTAX RULE ADD operator ` >= `;
-;; SYNTAX RULE ADD operator ` < `;
-;; SYNTAX RULE ADD operator ` <= `;
+;; SYNTAX RULE ADD operator ` \> `;
+;; SYNTAX RULE ADD operator ` \>= `;
+;; SYNTAX RULE ADD operator ` \< `;
+;; SYNTAX RULE ADD operator ` \<= `;
 ;; SYNTAX RULE ADD operator ` != `;
 ;; SYNTAX RULE ADD operator ` !== `;
 
@@ -127,6 +127,12 @@
 
 ;; SYNTAX RULE ADD line_end `;`;
 ;; SYNTAX RULE ADD line JOIN line_contents line_end;
+
+;; ERROR ASSIGN line line_error_condition "Invalid syntax for a line";
+;; ERROR_CONDITION CREATE line_is_null_condition RETURNING_NULL;
+;; ERROR_CONDITION CREATE next_end_code_block NEXT_IS "}";
+;; ERROR_CONDITION CREATE next_not_end_code_block NOT next_end_code_block;
+;; ERROR_CONDITION CREATE line_error_condition AND line_is_null_condition next_not_end_code_block;
 
 
 ;; SYNTAX RULE ADD code_block_contents REPEATING line true;

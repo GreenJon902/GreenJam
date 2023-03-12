@@ -15,12 +15,12 @@ class SimpleSyntaxMatcherTest {
                         new Object[]{"foo"}
                 ).match(
                         "foo",
-                        new SyntaxContext()));
+                        new Contexts(new SyntaxContext())));
         assertNull(new SimpleSyntaxRule(0,
                 new SyntaxInstruction[]{SyntaxInstruction.MATCH_LITERAL},
                 new Object[]{"baz"}).match(
                 "bar",
-                new SyntaxContext()));
+                new Contexts(new SyntaxContext())));
     }
 
     @Test
@@ -35,7 +35,7 @@ class SimpleSyntaxMatcherTest {
                         new Object[]{0, "foo", 0}).match(
                         "foo",
 
-                        new SyntaxContext()));
+                        new Contexts(new SyntaxContext())));
     }
 
     @Test
@@ -55,22 +55,22 @@ class SimpleSyntaxMatcherTest {
                 SyntaxRule.match(
                         "foo",
                         "bar",
-                        syntaxContext));
+                        syntaxContext, new ErrorContext()));
         assertEquals(new AstNode(),
                 SyntaxRule.match(
                         "foo",
                         "baz",
-                        syntaxContext));
+                        syntaxContext, new ErrorContext()));
         assertNull(SyntaxRule.match(
                 "bar",
                 "baz",
-                syntaxContext));
+                syntaxContext, new ErrorContext()));
 
         assertEquals(new AstNode("foo"),
                 SyntaxRule.match(
                         "foo",
                         "foo",
-                        syntaxContext));
+                        syntaxContext, new ErrorContext()));
     }
 
     @Test
@@ -87,7 +87,7 @@ class SimpleSyntaxMatcherTest {
                 SyntaxRule.match(
                         "foo",
                         "baz",
-                        syntaxContext));
+                        syntaxContext, new ErrorContext()));
     }
 
     @Test
@@ -104,12 +104,12 @@ class SimpleSyntaxMatcherTest {
                 SyntaxRule.match(
                         "hello world",
                         "test_one",
-                        syntaxContext));
+                        syntaxContext, new ErrorContext()));
         assertEquals(new AstNode("hello world"),
                 SyntaxRule.match(
                         "hello world",
                         "test_two",
-                        syntaxContext));
+                        syntaxContext, new ErrorContext()));
     }
 
 
@@ -123,7 +123,7 @@ class SimpleSyntaxMatcherTest {
         assertNull(SyntaxRule.match(
                 " hello",
                 "test_one",
-                syntaxContext));
+                syntaxContext, new ErrorContext()));
 
         syntaxContext.ignore(" ");
 
@@ -131,7 +131,7 @@ class SimpleSyntaxMatcherTest {
                 SyntaxRule.match(
                         " hello",
                         "test_one",
-                        syntaxContext));
+                        syntaxContext, new ErrorContext()));
 
         syntaxContext.ignore("not");
 
@@ -139,7 +139,7 @@ class SimpleSyntaxMatcherTest {
                 SyntaxRule.match(
                         "nothello",
                         "test_one",
-                        syntaxContext));
+                        syntaxContext, new ErrorContext()));
     }
 
 }
