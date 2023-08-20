@@ -1,8 +1,10 @@
 package com.greenjon902.greenJam.instructionHandler;
 
+import com.greenjon902.greenJam.GreenJam;
 import com.greenjon902.greenJam.common.Contexts;
 import com.greenjon902.greenJam.common.ErrorContext;
 import com.greenjon902.greenJam.common.SyntaxContext;
+import com.greenjon902.greenJam.parser.Parser;
 import com.greenjon902.greenJam.parser.ParserContext;
 import com.greenjon902.greenJam.parser.syntaxMatcher.SimpleSyntaxRule;
 
@@ -19,6 +21,8 @@ public class StandardInstructionHandler extends InstructionHandlerBase {
         syntaxContext = contexts.syntax;
         parserContext = contexts.parser;
         errorContext = contexts.error;
+
+        final Consumer<InstructionToken[]> include = (InstructionToken[] instructions) -> new Parser(this, syntaxContext, errorContext).parse(GreenJam.load_file_contents((String) instructions[0].storage, "include"));
 
         final Consumer<InstructionToken[]> syntaxRuleAddSimple = (InstructionToken[] instructions) -> syntaxContext.add((String) instructions[0].storage, (SimpleSyntaxRule) instructions[1].storage);
         final Consumer<InstructionToken[]> syntaxRuleRemoveSimple = (InstructionToken[] instructions) -> syntaxContext.remove((String) instructions[0].storage, (SimpleSyntaxRule) instructions[1].storage);
@@ -38,9 +42,11 @@ public class StandardInstructionHandler extends InstructionHandlerBase {
         final Consumer<InstructionToken[]> createNextIsErrorCondition = (InstructionToken[] instructions) -> errorContext.createNextIs((String) instructions[0].storage, (String) instructions[1].storage);
         final Consumer<InstructionToken[]> createNotErrorCondition = (InstructionToken[] instructions) -> errorContext.createNot((String) instructions[0].storage, (String) instructions[1].storage);
         final Consumer<InstructionToken[]> createAndErrorCondition = (InstructionToken[] instructions) -> errorContext.createAnd((String) instructions[0].storage, (String) instructions[1].storage, (String) instructions[2].storage);
+        final Consumer<InstructionToken[]> createEndOfFileErrorCondition = (InstructionToken[] instructions) -> errorContext.createEndOfFile((String) instructions[0].storage);
 
         final Consumer<InstructionToken[]> setRootNode = (InstructionToken[] instructions) -> syntaxContext.setRootGroup((String) instructions[0].storage);
 
+        final InstructionToken INCLUDE = InstructionKeyword.INCLUDE.instructionToken;
         final InstructionToken SYNTAX = InstructionKeyword.SYNTAX.instructionToken;
         final InstructionToken RULE = InstructionKeyword.RULE.instructionToken;
         final InstructionToken IGNORED = InstructionKeyword.IGNORED.instructionToken;
@@ -56,6 +62,7 @@ public class StandardInstructionHandler extends InstructionHandlerBase {
         final InstructionToken ASSIGN = InstructionKeyword.ASSIGN.instructionToken;
         final InstructionToken ERROR_CONDITION = InstructionKeyword.ERROR_CONDITION.instructionToken;
         final InstructionToken RETURNING_NULL = InstructionKeyword.RETURNING_NULL.instructionToken;
+        final InstructionToken END_OF_FILE = InstructionKeyword.END_OF_FILE.instructionToken;
         final InstructionToken NEXT_IS = InstructionKeyword.NEXT_IS.instructionToken;
         final InstructionToken NOT = InstructionKeyword.NOT.instructionToken;
         final InstructionToken AND = InstructionKeyword.AND.instructionToken;
@@ -65,6 +72,8 @@ public class StandardInstructionHandler extends InstructionHandlerBase {
         final InstructionToken IDENTIFIER_ARG = InstructionToken.makeArgument(IDENTIFIER);
         final InstructionToken BOOLEAN_ARG = InstructionToken.makeArgument(BOOLEAN);
         final InstructionToken STRING_ARG = InstructionToken.makeArgument(STRING);
+
+        addPathway(include, INCLUDE, STRING_ARG);
 
         addPathway(syntaxRuleAddSimple, SYNTAX, RULE, ADD, IDENTIFIER_ARG, SYNTAX_RULE_ARG);
         addPathway(syntaxRuleRemoveSimple, SYNTAX, RULE, REMOVE, IDENTIFIER_ARG, SYNTAX_RULE_ARG);
@@ -84,6 +93,7 @@ public class StandardInstructionHandler extends InstructionHandlerBase {
         addPathway(createNextIsErrorCondition, ERROR_CONDITION, CREATE, IDENTIFIER_ARG, NEXT_IS, STRING_ARG);
         addPathway(createNotErrorCondition, ERROR_CONDITION, CREATE, IDENTIFIER_ARG, NOT, IDENTIFIER_ARG);
         addPathway(createAndErrorCondition, ERROR_CONDITION, CREATE, IDENTIFIER_ARG, AND, IDENTIFIER_ARG, IDENTIFIER_ARG);
+        addPathway(createEndOfFileErrorCondition, ERROR_CONDITION, CREATE, IDENTIFIER_ARG, END_OF_FILE);
 
         addPathway(setRootNode, ROOT_NODE, SET, IDENTIFIER_ARG);
     }

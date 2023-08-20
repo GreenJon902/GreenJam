@@ -101,4 +101,8 @@ public class Errors {
     public static void errorConditions_conditionAlreadyExists(String group) {
         throw new RuntimeException("Tried to add an error condition that already exists - \"" + group + "\"");
     }
+
+    public static void packLoading_doesntExist(String path, String type) {
+        throw new RuntimeException("Could not find " + type + " at \"" + path + "\"");
+    }
 }

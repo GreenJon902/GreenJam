@@ -56,6 +56,11 @@ class InstructionTokenizerTest {
                 new InstructionToken(InstructionToken.InstructionTokenType.STRING, "test"
                 )}, instructionTokens);
 
+        instructionTokens = InstructionTokenizer.tokenize("\"test.two\";");
+        assertArrayEquals(new InstructionToken[] {
+                new InstructionToken(InstructionToken.InstructionTokenType.STRING, "test.two"
+                )}, instructionTokens);
+
         instructionTokens = InstructionTokenizer.tokenize("\" \";");
         assertArrayEquals(new InstructionToken[] {
                 new InstructionToken(InstructionToken.InstructionTokenType.STRING, " "

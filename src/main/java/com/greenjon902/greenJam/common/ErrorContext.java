@@ -1,9 +1,6 @@
 package com.greenjon902.greenJam.common;
 
-import com.greenjon902.greenJam.errorConditions.AndErrorCondition;
-import com.greenjon902.greenJam.errorConditions.NextIsErrorCondition;
-import com.greenjon902.greenJam.errorConditions.NotErrorCondition;
-import com.greenjon902.greenJam.errorConditions.ReturningNullErrorCondition;
+import com.greenjon902.greenJam.errorConditions.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +42,11 @@ public class ErrorContext {
 	public void createAnd(String group, String group1, String group2) {
 		checkNotMade(group);
 		conditions.put(group, new AndErrorCondition(group1, group2));
+	}
+
+	public void createEndOfFile(String group) {
+		checkNotMade(group);
+		conditions.put(group, new EndOfFileErrorCondition());
 	}
 
 	public ErrorCondition getError(String other_group) {
