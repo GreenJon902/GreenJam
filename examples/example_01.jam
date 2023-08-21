@@ -1,9 +1,0 @@
-int a = 4;
-int b = 12;
-int c = 3;
-int f = 100;
-
-int e = a + c * b;
-e = e + f;
-
-:: WRITE STDOUT e;

@@ -1,7 +1,0 @@
-;; INCLUDE "jam1.jam";
-;; INCLUDE "jam2.jam";
-
-;; INCLUDE "commands.jam";
-;; SYNTAX RULE ADD LINK line_contents command;
-
-;; ROOT_NODE SET code_block_contents;

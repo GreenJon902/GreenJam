@@ -1,0 +1,93 @@
+importing and variable information: ---------------------------
+
+variables can be stored using the store command.
+basic operations can be done inside the {} code block.
+
+the require command waits to make sure the other file has been fully processed (so all the instructions have been ran) and then makes it accessable under its path.
+You can also import as to change the name, or import copy to just combind the info without overwritting anything, use copy overwrite to have things overwrite
+
+package-name/main.jam:
+	;; STORE foo {5}
+	;; PRINT {foo}
+	;; PRINT {foo * 2}
+package-name/file2.jam:
+	;; REQUIRE package-name/main.jam
+	;; PRINT {package-name.main.foo}
+package-name/file3.jam:
+	;; REQUIRE package-name/main.jam AS main
+	;; PRINT {main.foo}
+package-name/file4.jam:
+	;; REQUIRE COPY package-name/main.jam
+	;; PRINT {foo}
+package-name/file5.jam:
+	;; REQUIRE COPY OVERWRITE package-name/main.jam
+	;; PRINT {foo}
+	
+	
+
+CODE BLOCKS ------------------------------------
+code blocks are special language for more complex things during compilation.
+just sped up version of insturctions with extra features like ifs and loops.
+This means variables dont have to go in {} while inside a code block.
+
+The last expression in the code block is the return value of it.
+
+
+
+ACTIONS ------------------------------------------------------------------
+when something is checked you can assign some actions
+
+ON_CHECK - before it starts checking
+
+ON_SUCCESS - after if it successfully matched completely
+
+ON_FAIL - after if it failed to match completely
+
+you could for example throw an error on failing if its failed on a line (which generally should be impossible)
+
+other code blocks can be just put inside of {}.
+
+e.g. at the post-package doing this
+{
+	for varaible in variables:
+		if variable was not ever declared:
+			crash
+}
+
+
+
+
+PROJECT SPECIFIC INFO --------------------------------------
+You can overlay packages ontop of packages. So that means scripts can be overwritten (though package scripts can only be overwritten for whole package) (file and module overrides can be put in folders and apply to folders (use module-reccursive to overwride for submodules to also be overwritten)). 
+
+We save states after e.g. pre-package so things reset correctly without executing scripts multiple times. This will apply to any syntax and compilation rules, along with variables working correctly (for scopes).
+
+package-name/
+	project-info.json
+		-name
+		-author
+		-description
+		-any other settings 
+			-like changing paths of certain files
+			-glob / list of globs of which files to read into to the compiler
+		-requirements - other things to compile as separate objects
+		-requirement overlays - map of requirement names, to folders which will overlay the package
+		-overlay - list of package names (e.g. langage-pack-1, language-pack-2...)
+		
+	
+	
+	// OPTIONAL
+	pre-package.jam
+	pre-module-reccursive.jam  - Applied before pre-module.jam
+	pre-module.jam
+	pre-file.jam
+	
+	post-package.jam
+	pre-module-reccursive.jam  - Applied before post-module.jam
+	post-module.jam
+	post-file.jam
+
+
+
+MISC ----------------------------------
+with overlayes you can just run ;; REQUIRE SUPER and it acts the same

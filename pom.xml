@@ -6,7 +6,7 @@
 
     <groupId>com.greenjon902</groupId>
     <artifactId>GreenJam</artifactId>
-    <version>Alpha-V3</version>
+    <version>Alpha-V4</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,7 +22,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.diogonunes/JColor -->
         <dependency>
             <groupId>com.diogonunes</groupId>
             <artifactId>JColor</artifactId>
