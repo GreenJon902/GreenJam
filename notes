@@ -63,7 +63,7 @@ You can overlay packages ontop of packages. So that means scripts can be overwri
 We save states after e.g. pre-package so things reset correctly without executing scripts multiple times. This will apply to any syntax and compilation rules, along with variables working correctly (for scopes).
 
 package-name/
-	project-info.json
+	jam.json
 		-name
 		-author
 		-description
@@ -74,7 +74,8 @@ package-name/
 		-requirement overlays - map of requirement names, to folders which will overlay the package
 		-overlay - list of package names (e.g. langage-pack-1, language-pack-2...)
 		
-	
+	module-name/
+	    mod.toml - can change some settings
 	
 	// OPTIONAL
 	pre-package.jam
