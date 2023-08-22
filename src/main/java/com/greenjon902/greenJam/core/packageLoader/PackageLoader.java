@@ -52,7 +52,7 @@ public class PackageLoader {
 	 * and submodule information.
 	 *
 	 * @param folder The root folder of the module
-	 * @param lc The current loading config
+	 * @param lc     The current loading config
 	 * @return The built module
 	 * @throws IOException When an IO exception occurs
 	 */
@@ -73,9 +73,9 @@ public class PackageLoader {
 	 * This will also set the submodules' and files' parents to the correct module.
 	 *
 	 * @param moduleBuilder The builder of the current module that is being loaded
-	 * @param toml The toml of the current module being loaded
-	 * @param folder The folder of the current module being loaded
-	 * @param lc The current loading config
+	 * @param toml          The toml of the current module being loaded
+	 * @param folder        The folder of the current module being loaded
+	 * @param lc            The current loading config
 	 * @return The built module
 	 * @throws IOException When an IO exception occurs
 	 */
@@ -85,7 +85,7 @@ public class PackageLoader {
 
 		// Use these to check if something should be read into the compiler as a file or a module
 		PathMatcher file_matcher = FileSystems.getDefault().getPathMatcher("glob:" + folder.getAbsolutePath() + "/" + lc.file_glob());
-		PathMatcher module_matcher = FileSystems.getDefault().getPathMatcher("glob:" + folder.getAbsolutePath() + "/"  + lc.module_glob());
+		PathMatcher module_matcher = FileSystems.getDefault().getPathMatcher("glob:" + folder.getAbsolutePath() + "/" + lc.module_glob());
 
 		ArrayList<LoadedFile> newFiles = new ArrayList<>();
 		ArrayList<LoadedModule> newModules = new ArrayList<>();
@@ -133,7 +133,7 @@ public class PackageLoader {
 	 * Loads a files information, which is only its name at the momment.
 	 *
 	 * @param folder The path of the file
-	 * @param lc The current loading config
+	 * @param lc     The current loading config
 	 * @return The built file
 	 * @throws IOException When an IO exception occurs
 	 */
@@ -149,7 +149,7 @@ public class PackageLoader {
 	 * Note: This does not push a new level to the stack
 	 *
 	 * @param toml The toml to use
-	 * @param lc The current loading config
+	 * @param lc   The current loading config
 	 */
 	private static void apply_config(Toml toml, LoadingConfig lc) { // TODO: Load these from a file
 		set_if_not_null_string("package-config-path", lc::package_config_path, toml);  // I know this is pointless, but it's important to me
@@ -160,6 +160,7 @@ public class PackageLoader {
 
 	/**
 	 * Makes a loading config with the default values.
+	 *
 	 * @return The created loading config
 	 */
 	private static LoadingConfig default_config() {
@@ -171,29 +172,50 @@ public class PackageLoader {
 		lc.module_glob("*");
 		return lc;
 	}
-}
 
-/**
- * Holds the current settings for how the package should be loaded.
- * This inherits StackedClassBase so modifications can be reverted when switching to the next modules.
- *
- * See the documentation on package and module config for the use of each function.
- * // TODO: Make said documentation
- */
-class LoadingConfig extends StackedClassBase {
-	public LoadingConfig() {
-		super(4);
+
+	/**
+	 * Holds the current settings for how the package should be loaded.
+	 * This inherits StackedClassBase so modifications can be reverted when switching to the next modules.
+	 * <p>
+	 * See the documentation on package and module config for the use of each function.
+	 * // TODO: Make said documentation
+	 */
+	static class LoadingConfig extends StackedClassBase {
+		public LoadingConfig() {
+			super(4);
+		}
+
+		public String package_config_path() {
+			return (String) get(0);
+		}
+
+		public void package_config_path(String string) {
+			set(0, string);
+		}
+
+		public String module_config_path() {
+			return (String) get(1);
+		}
+
+		public void module_config_path(String string) {
+			set(1, string);
+		}
+
+		public String file_glob() {
+			return (String) get(2);
+		}
+
+		public void file_glob(String string) {
+			set(2, string);
+		}
+
+		public String module_glob() {
+			return (String) get(3);
+		}
+
+		public void module_glob(String string) {
+			set(3, string);
+		}
 	}
-
-	public String package_config_path() {return (String) get(0);}
-	public void package_config_path(String string) {set(0, string);}
-
-	public String module_config_path() {return (String) get(1);}
-	public void module_config_path(String string) {set(1, string);}
-
-	public String file_glob() {return (String) get(2);}
-	public void file_glob(String string) {set(2, string);}
-
-	public String module_glob() {return (String) get(3);}
-	public void module_glob(String string) {set(3, string);}
 }
