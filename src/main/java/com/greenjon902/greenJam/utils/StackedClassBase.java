@@ -1,7 +1,7 @@
 package com.greenjon902.greenJam.utils;
 
 import java.util.Stack;
-
+// TODO: Generify this
 /**
  * The base the class for a stacked class.
  * This is class with attributes that can be accessed via getters and setters, but you can call push on a class to save
@@ -59,7 +59,7 @@ public class StackedClassBase {
 	 * Reinstates the last state for each attribute. Effectively undoing any modifications to the class.
 	 * @return The state before it was overwritten
 	 */
-	protected Object[] pop() {
+	public Object[] pop() {
 		return stack.pop();
 	}
 
