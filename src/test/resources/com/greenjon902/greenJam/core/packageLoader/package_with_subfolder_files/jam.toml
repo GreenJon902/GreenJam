@@ -1,5 +1,5 @@
 display-name = "Simple Package"
 description = "A simple example of a package with files and modules"
 authors = ["GreenJon902"]
-file-regexs = ["[^/]*?\\.jam", "ext\\/[^/]*?\\.jam"]
-module-regex = "^(?!ext(?:(?:/?)|$))[^/]*"
+file-regexs = ["[^/]+?\\.jam", "ext\\/[^/]+?\\.jam"]
+module-regex = "^(?!ext(?:(?:/?)|$))[^/]+"

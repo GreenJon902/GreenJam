@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 // TODO: Test for changing glob strings
+// TODO: Better checking system, maybe based on a tree?
 
 /**
  * Resource information:
@@ -131,5 +132,34 @@ public class TestPackageLoader {
 		Assertions.assertArrayEquals(new String[] {"GreenJon902"}, p.authors());
 
 		check_package_with_subfolder_files_contents(p, p);
+	}
+
+	@Test
+	public void test_package_with_changing_regex() throws IOException {
+		Package p = PackageLoader.load_package(get_file("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex"));
+		Assertions.assertEquals("package_with_changing_regex", p.display_name());
+		Assertions.assertEquals("package_with_changing_regex`", p.name());
+		Assertions.assertEquals("", p.description());
+		Assertions.assertArrayEquals(new String[0], p.authors());
+
+		File[] files = p.files();
+		Assertions.assertEquals(2, files.length);
+		Arrays.sort(files, Comparator.comparing(PackageItem::name));  // So ordering is correct
+		Assertions.assertEquals("a.jam", files[0].name());
+		Assertions.assertEquals("b.jam", files[1].name());
+		Assertions.assertEquals(p, files[0].getPackage());
+		Assertions.assertEquals(p, files[1].getPackage());
+
+		Module[] modules = p.modules();
+		Assertions.assertEquals(1, modules.length);
+		Arrays.sort(modules, Comparator.comparing(PackageItem::name));  // So ordering is correct
+		Assertions.assertEquals("mod", modules[0].name());
+		Assertions.assertEquals(p, modules[0].getPackage());
+
+		File[] modules_files = modules[0].files();
+		Assertions.assertEquals(1, modules_files.length);
+		Arrays.sort(modules_files, Comparator.comparing(PackageItem::name));  // So ordering is correct
+		Assertions.assertEquals("c.jam", modules_files[0].name());
+		Assertions.assertEquals(p, modules_files[0].getPackage());
 	}
 }

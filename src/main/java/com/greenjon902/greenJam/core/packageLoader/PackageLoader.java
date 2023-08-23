@@ -184,8 +184,8 @@ public class PackageLoader {
 		LoadingConfig lc = new LoadingConfig();
 		lc.package_config_path("jam.toml");
 		lc.module_config_path("mod.toml");
-		lc.file_regex("[^/]*?.jam");
-		lc.module_regex("[^/]*?");
+		lc.file_regex("[^/]+?.jam");
+		lc.module_regex("[^/]+?");
 		return lc;
 	}
 
