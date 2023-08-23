@@ -18,6 +18,7 @@ import static com.greenjon902.greenJam.utils.TomlUtils.*;
 
 // TODO: Load other packages (dependencies, bases, overwrides)
 // TODO: load a reader for each file
+// TODO: Use regexes group system to pull only the desired part from the file name, maybe save other parts to a field?
 
 /**
  * See {@link #load_package(File)}
@@ -152,7 +153,7 @@ public class PackageLoader {
 	 * @throws IOException When an IO exception occurs
 	 */
 	private static LoadedFile load_file(File folder, LoadingConfig lc) throws IOException {
-		LoadedFile.LoadedFileBuilder fileBuilder = new LoadedFile.LoadedFileBuilder();
+		LoadedFile.Builder fileBuilder = new LoadedFile.Builder();
 		fileBuilder.name(folder.getName());
 
 		return fileBuilder.build();

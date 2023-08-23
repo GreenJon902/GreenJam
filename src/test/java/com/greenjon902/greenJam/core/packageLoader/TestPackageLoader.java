@@ -3,14 +3,12 @@ package com.greenjon902.greenJam.core.packageLoader;
 import com.greenjon902.greenJam.core.File;
 import com.greenjon902.greenJam.core.Module;
 import com.greenjon902.greenJam.core.Package;
-import com.greenjon902.greenJam.core.PackageItem;
 import com.moandjiezana.toml.Toml;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.ArrayList;
 
 // TODO: Better checking system, maybe based on a tree?
 
@@ -21,6 +19,8 @@ import java.util.Comparator;
  * <br>
  * Package_with_subfolder_files is a duplicate of the simple package, but we add ext/*.jam, and add the appropriate
  * sections to the package config.
+ * <br>
+ * Package_with_changing_regex is different.
  * <br><br>
  * See the tests for the names of these items.
  */
@@ -30,74 +30,62 @@ public class TestPackageLoader {
 	}
 
 	/**
-	 * See {@link #check_simple_package_contents(Module, Package, int, int, int)}, sets default values for the simple package.
+	 * Checks that the module version of the simple package was loaded correctly. You can also tell it to do
+	 * subfolder with files as that is based on it.
 	 */
-	public static void check_simple_package_contents(Module m, Package p) {
-		check_simple_package_contents(m, p, 2, 1, 1);
+	public static void check_simple_module_contents(Module module, boolean with_subfolder_files, String root_name) {
+		ArrayList<File> files1 = new ArrayList<>();
+		ArrayList<Module> modules = new ArrayList<>();
+		ArrayList<File> files2 = new ArrayList<>();
+		ArrayList<File> files3 = new ArrayList<>();
+
+		files1.add(new LoadedFile.Builder() {{
+			name("main.jam");
+		}}.build());
+		files1.add(new LoadedFile.Builder() {{
+			name("test.jam");
+		}}.build());
+		if (with_subfolder_files) {
+			files1.add(new LoadedFile.Builder() {{
+				name("x_actualSkills.jam");
+			}}.build());
+		}
+
+		files2.add(new LoadedFile.Builder() {{
+			name("bar.jam");
+		}}.build());
+		if (with_subfolder_files) {
+			files2.add(new LoadedFile.Builder() {{
+				name("lies.jam");
+			}}.build());
+		}
+
+		if (with_subfolder_files) {
+			files3.add(new LoadedFile.Builder() {{
+				name("baz.jam");
+			}}.build());
+		}
+
+		modules.add(new LoadedModule.Builder() {{
+			name("foo");
+			files(files2.toArray(File[]::new));
+		}}.build());
+		if (with_subfolder_files) {
+			modules.add(new LoadedModule.Builder() {{
+				name("xxx_module_xxx");
+				files(files3.toArray(File[]::new));
+			}}.build());
+		}
+
+		LoadedModule expected = new LoadedModule.Builder() {{
+			name(root_name);
+			files(files1.toArray(File[]::new));
+			modules(modules.toArray(Module[]::new));
+		}}.build();
+
+		Assertions.assertEquals(expected, module);
 	}
 
-	/**
-	 * Checks the files and submodules of the simple package.
-	 * We take a module as we may be taking just a submodule, but take package to check
-	 * {@link PackageItem#getPackage()}.
-	 */
-	public static void check_simple_package_contents(Module m, Package p, int files_amount, int modules_amount, int first_file_amount) {
-		Assertions.assertEquals(p, m.getPackage());
-
-		File[] files = m.files();
-		Assertions.assertEquals(files_amount, files.length);
-		Arrays.sort(files, Comparator.comparing(PackageItem::name));  // So ordering is correct
-		Assertions.assertEquals("main.jam", files[0].name());
-		Assertions.assertEquals("test.jam", files[1].name());
-		Assertions.assertEquals(p, files[0].getPackage());
-		Assertions.assertEquals(p, files[1].getPackage());
-
-		Module[] modules = m.modules();
-		Assertions.assertEquals(modules_amount, modules.length);
-		Arrays.sort(modules, Comparator.comparing(PackageItem::name));  // So ordering is correct
-		Assertions.assertEquals("foo", modules[0].name());
-		Assertions.assertEquals(p, modules[0].getPackage());
-
-		File[] modules_files = modules[0].files();
-		Assertions.assertEquals(first_file_amount, modules_files.length);
-		Arrays.sort(modules_files, Comparator.comparing(PackageItem::name));  // So ordering is correct
-		Assertions.assertEquals("bar.jam", modules_files[0].name());
-		Assertions.assertEquals(p, modules_files[0].getPackage());
-	}
-
-	/**
-	 * See {@link #check_simple_package_contents(Module, Package)}.
-	 */
-	public static void check_package_with_subfolder_files_contents(Module m, Package p) {
-		check_package_with_subfolder_files_contents(m, p, 3, 2, 2, 1);
-	}
-
-	/**
-	 * See {@link #check_simple_package_contents(Module, Package, int, int, int)}.
-	 */
-	public static void check_package_with_subfolder_files_contents(Module m, Package p, int files_amount,
-																   int modules_amount, int first_file_amount,
-																   int second_file_amount) {
-		check_simple_package_contents(m, p, files_amount, modules_amount, first_file_amount);
-
-		File[] files = m.files();
-		Assertions.assertEquals(files_amount, files.length);
-		Arrays.sort(files, Comparator.comparing(PackageItem::name));  // So ordering is correct
-		Assertions.assertEquals("x_actualSkills.jam", files[2].name());
-		Assertions.assertEquals(p, files[2].getPackage());
-
-		Module[] modules = m.modules();
-		Assertions.assertEquals(modules_amount, modules.length);
-		Arrays.sort(modules, Comparator.comparing(PackageItem::name));  // So ordering is correct
-		Assertions.assertEquals("xxx_module_xxx", modules[1].name());
-		Assertions.assertEquals(p, modules[1].getPackage());
-
-		File[] modules_files = modules[1].files();
-		Assertions.assertEquals(second_file_amount, modules_files.length);
-		Arrays.sort(modules_files, Comparator.comparing(PackageItem::name));  // So ordering is correct
-		Assertions.assertEquals("baz.jam", modules_files[0].name());
-		Assertions.assertEquals(p, modules_files[0].getPackage());
-	}
 
 	@Test
 	public void test_load_module_into() throws IOException {
@@ -108,57 +96,62 @@ public class TestPackageLoader {
 		Module module = PackageLoader.load_module_into(builder, new Toml(), simple_module, PackageLoader.default_config());
 		Assertions.assertEquals("", module.name());  // Was never supplied
 
-		check_simple_package_contents(module, null);
+		// Next check method wants the name set
+		module = PackageLoader.load_module_into(builder, new Toml(), simple_module, PackageLoader.default_config());
+		check_simple_module_contents(module, false, "");
 	}
 
 	@Test
 	public void test_simple_package() throws IOException {
-		Package p = PackageLoader.load_package(get_file("com/greenjon902/greenJam/core/packageLoader/simple_package"));
+		LoadedPackage p = (LoadedPackage) PackageLoader.load_package(get_file("com/greenjon902/greenJam/core/packageLoader/simple_package"));
+
+		// Check some things here as not checked in check_simple_module_contents
 		Assertions.assertEquals("Simple Package", p.display_name());
-		Assertions.assertEquals("simple_package", p.name());
 		Assertions.assertEquals("A simple example of a package with files and modules", p.description());
 		Assertions.assertArrayEquals(new String[] {"GreenJon902"}, p.authors());
 
-		check_simple_package_contents(p, p);
+		p.compare_only_as_module = true; // As we just did package comparisons
+		check_simple_module_contents(p, false, "simple_package");
 	}
 
 	@Test
 	public void test_package_with_subfolder_files() throws IOException {
-		Package p = PackageLoader.load_package(get_file("com/greenjon902/greenJam/core/packageLoader/package_with_subfolder_files"));
+		LoadedPackage p = (LoadedPackage) PackageLoader.load_package(get_file("com/greenjon902/greenJam/core/packageLoader/package_with_subfolder_files"));
 		Assertions.assertEquals("Simple Package", p.display_name());
-		Assertions.assertEquals("package_with_subfolder_files", p.name());
 		Assertions.assertEquals("A simple example of a package with files and modules", p.description());
 		Assertions.assertArrayEquals(new String[] {"GreenJon902"}, p.authors());
 
-		check_package_with_subfolder_files_contents(p, p);
+		p.compare_only_as_module = true; // As we just did package comparisons
+		check_simple_module_contents(p, true, "package_with_subfolder_files");
 	}
 
 	@Test
 	public void test_package_with_changing_regex() throws IOException {
 		Package p = PackageLoader.load_package(get_file("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex"));
-		Assertions.assertEquals("package_with_changing_regex", p.display_name());
-		Assertions.assertEquals("package_with_changing_regex`", p.name());
-		Assertions.assertEquals("", p.description());
-		Assertions.assertArrayEquals(new String[0], p.authors());
 
-		File[] files = p.files();
-		Assertions.assertEquals(2, files.length);
-		Arrays.sort(files, Comparator.comparing(PackageItem::name));  // So ordering is correct
-		Assertions.assertEquals("a.jam", files[0].name());
-		Assertions.assertEquals("b.jam", files[1].name());
-		Assertions.assertEquals(p, files[0].getPackage());
-		Assertions.assertEquals(p, files[1].getPackage());
+		LoadedPackage expected = new LoadedPackage.Builder() {{
+			name("package_with_changing_regex");
+			display_name("package_with_changing_regex");
+			files(new File[]{
+					new LoadedFile.Builder() {{
+						name("a.jam");
+					}}.build(),
+					new LoadedFile.Builder() {{
+						name("b.jam");
+					}}.build()
+			});
+			modules(new Module[]{
+					new LoadedModule.Builder() {{
+						name("mod");
+						files(new File[]{
+								new LoadedFile.Builder() {{
+									name("c.jam");
+								}}.build()
+						});
+					}}.build()
+			});
+		}}.build();
 
-		Module[] modules = p.modules();
-		Assertions.assertEquals(1, modules.length);
-		Arrays.sort(modules, Comparator.comparing(PackageItem::name));  // So ordering is correct
-		Assertions.assertEquals("mod", modules[0].name());
-		Assertions.assertEquals(p, modules[0].getPackage());
-
-		File[] modules_files = modules[0].files();
-		Assertions.assertEquals(1, modules_files.length);
-		Arrays.sort(modules_files, Comparator.comparing(PackageItem::name));  // So ordering is correct
-		Assertions.assertEquals("c.jam", modules_files[0].name());
-		Assertions.assertEquals(p, modules_files[0].getPackage());
+		Assertions.assertEquals(expected, p);
 	}
 }

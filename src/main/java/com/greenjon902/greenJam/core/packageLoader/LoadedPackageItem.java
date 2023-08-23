@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  * The implementation of package item for the package loader, inheritors of these only store information that is entered
@@ -51,5 +52,17 @@ public class LoadedPackageItem implements PackageItem {
 		public LoadedPackageItem build() {
 			return new LoadedPackageItem(this);
 		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof LoadedPackageItem that)) return false;
+		return Objects.equals(name, that.name);// && Objects.equals(parent, that.parent); // TODO: Fix this
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name);//, parent);// TODO: Fix this
 	}
 }

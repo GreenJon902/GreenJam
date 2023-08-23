@@ -4,6 +4,8 @@ import com.greenjon902.greenJam.core.File;
 import com.greenjon902.greenJam.core.Module;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+
 /**
  * See {@link LoadedPackageItem}
  */
@@ -38,5 +40,24 @@ public class LoadedModule extends LoadedPackageItem implements Module {
 		public LoadedModule build() {
 			return new LoadedModule(this);
 		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof LoadedModule that)) return false;
+		if (!super.equals(o)) return false;
+
+		if (o instanceof LoadedPackage loadedPackage && loadedPackage.compare_only_as_module) return true;
+
+		return Arrays.equals(modules, that.modules) && Arrays.equals(files, that.files);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+		result = 31 * result + Arrays.hashCode(modules);
+		result = 31 * result + Arrays.hashCode(files);
+		return result;
 	}
 }

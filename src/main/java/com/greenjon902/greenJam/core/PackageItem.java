@@ -3,8 +3,6 @@ package com.greenjon902.greenJam.core;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-// TODO: Default comparators for all of these and their subclasses based of just the interface functions
-
 /**
  * The base class for any item that exists inside a package (including the package itself).
  */
