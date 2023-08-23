@@ -21,7 +21,7 @@ public class TomlUtils {
 	}
 
 	/**
-	 * Runs the consumer with the value from the toml if it exists.
+	 * Runs the consumer with the value from the toml, but converted to an array, if it exists.
 	 * @param key The name of the value
 	 * @param setter The consumer to run
 	 * @param toml The toml
@@ -31,8 +31,6 @@ public class TomlUtils {
 		return set_if_not_null(key, toml::getList,
 				(Consumer<List<T>>) ts -> setter.accept(ts.toArray((T[]) Array.newInstance(clazz, 0))), toml);
 	}
-
-
 
 	/**
 	 * Runs the consumer with the value from the getter if it exists in the toml.

@@ -34,8 +34,8 @@ public class LoadedPackageItem implements PackageItem {
 
 	/**
 	 * This should only be used during loading. See usage for why we need this
-	 * {@link PackageLoader#load_module_into(LoadedModule.Builder, Toml, File, LoadingConfig)}
-	 * @param module
+	 * {@link PackageLoader#load_module_into(LoadedModule.Builder, Toml, File, PackageLoader.LoadingConfig)}
+	 * @param module The parent module
 	 */
 	protected void setParent(Module module) {
 		parent = module;

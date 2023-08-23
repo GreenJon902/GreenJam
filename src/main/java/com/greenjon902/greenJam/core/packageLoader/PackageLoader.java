@@ -7,11 +7,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static com.greenjon902.greenJam.utils.TomlUtils.*;
@@ -20,26 +20,27 @@ import static com.greenjon902.greenJam.utils.TomlUtils.*;
 // TODO: load a reader for each file
 
 /**
- * See {@link #load(File)}
+ * See {@link #load_package(File)}
  */
 public class PackageLoader {
+
 	/**
-	 * Loads the package info (with its files and modules) from the package config file. Then load it as if it was
-	 * a module (ignoring module config), see
+	 * Loads a singular package's info (with its files and modules) from the package config file. Then load it as if
+	 * it was a module (ignoring module config), see
 	 * {@link #load_module_into(LoadedModule.Builder, Toml, File, LoadingConfig)}.
 	 *
 	 * @param root The root folder of the package
 	 * @return The built package
 	 */
 	@NotNull
-	public static Package load(File root) throws IOException {
+	public static Package load_package(File root) throws IOException {
 		LoadingConfig lc = default_config();
 
 		// Load toml and read any information in, then load data as if it was a module
 		Toml toml = load_if_exists(new File(root, lc.package_config_path()));
 		LoadedPackage.Builder packageBuilder = new LoadedPackage.Builder();
 		packageBuilder.name(root.getName());
-		set_if_not_null_string("display-name", packageBuilder::display_name, toml);
+		packageBuilder.display_name(toml.getString("display-name", root.getName()));
 		set_if_not_null_array("authors", packageBuilder::authors, String.class, toml);
 		set_if_not_null_string("description", packageBuilder::description, toml);
 
@@ -79,13 +80,13 @@ public class PackageLoader {
 	 * @return The built module
 	 * @throws IOException When an IO exception occurs
 	 */
-	private static LoadedModule load_module_into(LoadedModule.Builder moduleBuilder, Toml toml, File folder, LoadingConfig lc) throws IOException {
+	protected static LoadedModule load_module_into(LoadedModule.Builder moduleBuilder, Toml toml, File folder, LoadingConfig lc) throws IOException {
 		lc.push();
 		apply_config(toml, lc);
 
 		// Use these to check if something should be read into the compiler as a file or a module
-		PathMatcher file_matcher = FileSystems.getDefault().getPathMatcher("glob:" + folder.getAbsolutePath() + "/" + lc.file_glob());
-		PathMatcher module_matcher = FileSystems.getDefault().getPathMatcher("glob:" + folder.getAbsolutePath() + "/" + lc.module_glob());
+		Pattern[] file_patterns = Arrays.stream(lc.file_regexs()).map(Pattern::compile).toArray(Pattern[]::new);
+		Pattern[] module_patterns = Arrays.stream(lc.module_regexs()).map(Pattern::compile).toArray(Pattern[]::new);
 
 		ArrayList<LoadedFile> newFiles = new ArrayList<>();
 		ArrayList<LoadedModule> newModules = new ArrayList<>();
@@ -94,22 +95,35 @@ public class PackageLoader {
 		try (Stream<Path> paths = Files.walk(folder.toPath())) {
 			paths.forEach(
 					path -> {
-						File file = path.toFile();
-						if (file.isFile() && file_matcher.matches(path)) {
-							try {
+
+						// Convert to relative path
+						String string_path = path.toString();
+						assert string_path.startsWith(folder.toString());
+						string_path = string_path.substring(folder.toString().length());
+						if (string_path.isEmpty()) {
+							return;
+						}
+						string_path = string_path.substring(1);  // Remove slash
+
+						final String final_string_path = string_path;  // For predicate to work
+
+						try {
+
+							// Now we can do our checks and load any children
+							File file = path.toFile();
+							if (file.isFile() &&
+									Arrays.stream(file_patterns).anyMatch(matcher -> matcher.matcher(final_string_path).matches())) {
 								LoadedFile newFile = load_file(file, lc);
 								newFiles.add(newFile);
-							} catch (IOException e) {
-								throw new RuntimeException(e);
-							}
 
-						} else if (file.isDirectory() && module_matcher.matches(path)) {
-							try {
+							} else if (file.isDirectory() &&
+									Arrays.stream(module_patterns).anyMatch(matcher -> matcher.matcher(final_string_path).matches())) {
 								LoadedModule newModule = load_module(file, lc);
 								newModules.add(newModule);
-							} catch (IOException e) {
-								throw new RuntimeException(e);
 							}
+
+						} catch (IOException e) {
+							throw new RuntimeException(e);
 						}
 					}
 			);
@@ -154,8 +168,10 @@ public class PackageLoader {
 	private static void apply_config(Toml toml, LoadingConfig lc) { // TODO: Load these from a file
 		set_if_not_null_string("package-config-path", lc::package_config_path, toml);  // I know this is pointless, but it's important to me
 		set_if_not_null_string("module-config-path", lc::module_config_path, toml);
-		set_if_not_null_string("file-glob", lc::file_glob, toml);
-		set_if_not_null_string("module-glob", lc::module_glob, toml);
+		set_if_not_null_string("file-regex", lc::file_regex, toml);
+		set_if_not_null_array("file-regexs", lc::file_regexs, String.class, toml);
+		set_if_not_null_string("module-regex", lc::module_regex, toml);
+		set_if_not_null_array("module-regexs", lc::module_regexs, String.class, toml);
 	}
 
 	/**
@@ -163,13 +179,13 @@ public class PackageLoader {
 	 *
 	 * @return The created loading config
 	 */
-	private static LoadingConfig default_config() {
+	protected static LoadingConfig default_config() {
 		// Make config with default values
 		LoadingConfig lc = new LoadingConfig();
 		lc.package_config_path("jam.toml");
 		lc.module_config_path("mod.toml");
-		lc.file_glob("*.jam");
-		lc.module_glob("*");
+		lc.file_regex("[^/]*?.jam");
+		lc.module_regex("[^/]*?");
 		return lc;
 	}
 
@@ -181,7 +197,7 @@ public class PackageLoader {
 	 * See the documentation on package and module config for the use of each function.
 	 * // TODO: Make said documentation
 	 */
-	static class LoadingConfig extends StackedClassBase {
+	protected static class LoadingConfig extends StackedClassBase {
 		public LoadingConfig() {
 			super(4);
 		}
@@ -189,7 +205,6 @@ public class PackageLoader {
 		public String package_config_path() {
 			return (String) get(0);
 		}
-
 		public void package_config_path(String string) {
 			set(0, string);
 		}
@@ -197,25 +212,22 @@ public class PackageLoader {
 		public String module_config_path() {
 			return (String) get(1);
 		}
-
 		public void module_config_path(String string) {
 			set(1, string);
 		}
 
-		public String file_glob() {
-			return (String) get(2);
+		public String[] file_regexs() {
+			return (String[]) get(2);
 		}
+		public void file_regexs(String[] string) {set(2, string);}
+		public void file_regex(String string) {set(2, new String[] {string});}
 
-		public void file_glob(String string) {
-			set(2, string);
+		public String[] module_regexs() {
+			return (String[]) get(3);
 		}
-
-		public String module_glob() {
-			return (String) get(3);
-		}
-
-		public void module_glob(String string) {
+		public void module_regexs(String[] string) {
 			set(3, string);
 		}
+		public void module_regex(String string) {set(3, new String[] {string});}
 	}
 }
