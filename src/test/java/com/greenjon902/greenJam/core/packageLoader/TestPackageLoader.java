@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 
-// TODO: Test for changing glob strings
 // TODO: Better checking system, maybe based on a tree?
 
 /**
