@@ -162,12 +162,12 @@ public class PackageLoader {
 	 * @param lc   The current loading config
 	 */
 	private static void apply_config(Toml toml, LoadingConfig lc) { // TODO: Load these from a file
-		set_if_not_null_string("package-config-path", lc::package_config_path, toml);  // I know this is pointless, but it's important to me
-		set_if_not_null_string("module-config-path", lc::module_config_path, toml);
-		set_if_not_null_string("file-regex", lc::file_regex, toml);
-		set_if_not_null_array("file-regexs", lc::file_regexs, String.class, toml);
-		set_if_not_null_string("module-regex", lc::module_regex, toml);
-		set_if_not_null_array("module-regexs", lc::module_regexs, String.class, toml);
+		set_if_not_null_string("Loader.package-config-path", lc::package_config_path, toml);  // I know this is pointless, but it's important to me
+		set_if_not_null_string("Loader.module-config-path", lc::module_config_path, toml);
+		set_if_not_null_string("Loader.file-regex", lc::file_regex, toml);
+		set_if_not_null_array("Loader.file-regexs", lc::file_regexs, String.class, toml);
+		set_if_not_null_string("Loader.module-regex", lc::module_regex, toml);
+		set_if_not_null_array("Loader.module-regexs", lc::module_regexs, String.class, toml);
 	}
 
 	/**
