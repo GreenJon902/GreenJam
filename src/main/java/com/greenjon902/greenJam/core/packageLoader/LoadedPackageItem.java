@@ -1,12 +1,8 @@
 package com.greenjon902.greenJam.core.packageLoader;
 
-import com.greenjon902.greenJam.core.Module;
 import com.greenjon902.greenJam.core.PackageItem;
-import com.moandjiezana.toml.Toml;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.Objects;
 
 /**
@@ -15,12 +11,10 @@ import java.util.Objects;
  */
 public class LoadedPackageItem implements PackageItem {
 	private final String name;
-	private Module parent;
 
 
 	protected LoadedPackageItem(Builder builder) {
 		this.name = builder.name;
-		this.parent = builder.parent;
 	}
 
 	@Override
@@ -28,26 +22,10 @@ public class LoadedPackageItem implements PackageItem {
 		return name;
 	}
 
-	@Override
-	public @Nullable Module parent() {
-		return parent;
-	}
-
-	/**
-	 * This should only be used during loading. See usage for why we need this
-	 * {@link PackageLoader#load_module_into(LoadedModule.Builder, Toml, File, PackageLoader.LoadingConfig)}
-	 * @param module The parent module
-	 */
-	protected void setParent(Module module) {
-		parent = module;
-	}
-
 	public static class Builder {
 		private String name = "";
-		private Module parent = null;
 
 		public Builder name(String name) {this.name = name; return this;}
-		public Builder parent(Module parent) {this.parent = parent; return this;}
 
 		public LoadedPackageItem build() {
 			return new LoadedPackageItem(this);
@@ -58,11 +36,11 @@ public class LoadedPackageItem implements PackageItem {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof LoadedPackageItem that)) return false;
-		return Objects.equals(name, that.name);// && Objects.equals(parent, that.parent); // TODO: Fix this
+		return Objects.equals(name, that.name);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name);//, parent);// TODO: Fix this
+		return Objects.hash(name);
 	}
 }

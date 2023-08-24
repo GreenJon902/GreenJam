@@ -103,7 +103,7 @@ public class TestPackageLoader {
 
 	@Test
 	public void test_simple_package() throws IOException {
-		LoadedPackage p = (LoadedPackage) PackageLoader.load_package(get_file("com/greenjon902/greenJam/core/packageLoader/simple_package"));
+		LoadedPackage p = (LoadedPackage) PackageLoader.load_single_package(get_file("com/greenjon902/greenJam/core/packageLoader/simple_package"));
 
 		// Check some things here as not checked in check_simple_module_contents
 		Assertions.assertEquals("Simple Package", p.display_name());
@@ -116,7 +116,7 @@ public class TestPackageLoader {
 
 	@Test
 	public void test_package_with_subfolder_files() throws IOException {
-		LoadedPackage p = (LoadedPackage) PackageLoader.load_package(get_file("com/greenjon902/greenJam/core/packageLoader/package_with_subfolder_files"));
+		LoadedPackage p = (LoadedPackage) PackageLoader.load_single_package(get_file("com/greenjon902/greenJam/core/packageLoader/package_with_subfolder_files"));
 		Assertions.assertEquals("Simple Package", p.display_name());
 		Assertions.assertEquals("A simple example of a package with files and modules", p.description());
 		Assertions.assertArrayEquals(new String[] {"GreenJon902"}, p.authors());
@@ -127,7 +127,7 @@ public class TestPackageLoader {
 
 	@Test
 	public void test_package_with_changing_regex() throws IOException {
-		Package p = PackageLoader.load_package(get_file("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex"));
+		Package p = PackageLoader.load_single_package(get_file("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex"));
 
 		LoadedPackage expected = new LoadedPackage.Builder() {{
 			name("package_with_changing_regex");

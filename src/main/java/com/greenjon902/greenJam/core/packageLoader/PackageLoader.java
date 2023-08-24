@@ -21,7 +21,7 @@ import static com.greenjon902.greenJam.utils.TomlUtils.*;
 // TODO: Use regexes group system to pull only the desired part from the file name, maybe save other parts to a field?
 
 /**
- * See {@link #load_package(File)}
+ * See {@link #load_single_package(File)}
  */
 public class PackageLoader {
 
@@ -34,7 +34,7 @@ public class PackageLoader {
 	 * @return The built package
 	 */
 	@NotNull
-	public static Package load_package(File root) throws IOException {
+	public static Package load_single_package(File root) throws IOException {
 		LoadingConfig lc = default_config();
 
 		// Load toml and read any information in, then load data as if it was a module
@@ -134,11 +134,6 @@ public class PackageLoader {
 		moduleBuilder.files(newFiles.toArray(LoadedFile[]::new));
 		moduleBuilder.modules(newModules.toArray(LoadedModule[]::new));
 		LoadedModule module = moduleBuilder.build();
-
-		// Set the parents of all the found items. We need to do this after building as ModuleBuilder#files takes a
-		// Module, not as ModuleBuilder.
-		newFiles.forEach(newFile -> newFile.setParent(module));
-		newModules.forEach(newModule -> newModule.setParent(module));
 
 		lc.pop();
 		return module;

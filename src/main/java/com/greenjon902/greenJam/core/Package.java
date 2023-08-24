@@ -1,7 +1,6 @@
 package com.greenjon902.greenJam.core;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A package is the largest part of a program, it encompasses all modules and files.
@@ -24,16 +23,4 @@ public interface Package extends Module {
 	 * @return The description
 	 */
 	@NotNull String description();
-
-	@Override
-	@Nullable
-	default Module parent() {  // Packages don't get parents
-		return null;
-	}
-
-	@Override
-	@Nullable
-	default Package getPackage() {  // We have found the package
-		return this;
-	}
 }
