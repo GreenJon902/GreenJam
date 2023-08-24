@@ -89,6 +89,12 @@ package-name/
 	post-file.jam
 
 
+package-naming
+    - name - used as an identifier
+    - version
+    - folder-name - name + (-version if version is not "")
+
+
 
 MISC ----------------------------------
 with overlayes you can just run ;; REQUIRE SUPER and it acts the same

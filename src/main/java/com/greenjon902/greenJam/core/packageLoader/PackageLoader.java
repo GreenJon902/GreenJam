@@ -1,9 +1,8 @@
 package com.greenjon902.greenJam.core.packageLoader;
 
-import com.greenjon902.greenJam.core.Package;
+import com.greenjon902.greenJam.core.PackageList;
 import com.greenjon902.greenJam.utils.StackedClassBase;
 import com.moandjiezana.toml.Toml;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,15 +32,14 @@ public class PackageLoader {
 	 * @param root The root folder of the package
 	 * @return The built package
 	 */
-	@NotNull
-	public static Package load_single_package(File root) throws IOException {
+	public static LoadedPackage load_single_package(File root) throws IOException {
 		LoadingConfig lc = default_config();
 
 		// Load toml and read any information in, then load data as if it was a module
 		Toml toml = load_if_exists(new File(root, lc.package_config_path()));
-		LoadedPackage.Builder packageBuilder = new LoadedPackage.Builder();
-		packageBuilder.name(root.getName());
-		packageBuilder.display_name(toml.getString("display-name", root.getName()));
+		LoadedPackage.Builder packageBuilder = new LoadedPackage.Builder(toml);
+		packageBuilder.name(PackageList.formatName(toml.getString("name", ""),
+				toml.getString("version", "")));
 		set_if_not_null_array("authors", packageBuilder::authors, String.class, toml);
 		set_if_not_null_string("description", packageBuilder::description, toml);
 
@@ -56,13 +54,12 @@ public class PackageLoader {
 	 * @param folder The root folder of the module
 	 * @param lc     The current loading config
 	 * @return The built module
-	 * @throws IOException When an IO exception occurs
 	 */
 	private static LoadedModule load_module(File folder, LoadingConfig lc) throws IOException {
 		// Load toml and read any information in, then load files and submodules
-		LoadedModule.Builder moduleBuilder = new LoadedModule.Builder();
-		moduleBuilder.name(folder.getName());
 		Toml toml = load_if_exists(new File(folder, lc.module_config_path()));
+		LoadedModule.Builder moduleBuilder = new LoadedModule.Builder(toml);
+		moduleBuilder.name(folder.getName());
 
 		return load_module_into(moduleBuilder, toml, folder, lc);
 	}
@@ -79,7 +76,6 @@ public class PackageLoader {
 	 * @param folder        The folder of the current module being loaded
 	 * @param lc            The current loading config
 	 * @return The built module
-	 * @throws IOException When an IO exception occurs
 	 */
 	protected static LoadedModule load_module_into(LoadedModule.Builder moduleBuilder, Toml toml, File folder, LoadingConfig lc) throws IOException {
 		lc.push();
@@ -145,7 +141,6 @@ public class PackageLoader {
 	 * @param folder The path of the file
 	 * @param lc     The current loading config
 	 * @return The built file
-	 * @throws IOException When an IO exception occurs
 	 */
 	private static LoadedFile load_file(File folder, LoadingConfig lc) throws IOException {
 		LoadedFile.Builder fileBuilder = new LoadedFile.Builder();

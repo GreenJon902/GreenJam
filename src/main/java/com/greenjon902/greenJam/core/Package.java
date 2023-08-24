@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Package extends Module {
 	/**
-	 * Gets the display name of this package. This is used for logging, and requirements.
-	 * @return The name
+	 * This name is not used for anything, apart from logging. It should be this format "name-version"
 	 */
-	@NotNull String display_name();
+	@Override
+	@NotNull String name();
 
 	/**
 	 * Gets the authors of this package.

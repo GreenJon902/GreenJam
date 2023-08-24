@@ -7,7 +7,9 @@ import com.moandjiezana.toml.Toml;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 // TODO: Better checking system, maybe based on a tree?
@@ -25,8 +27,10 @@ import java.util.ArrayList;
  * See the tests for the names of these items.
  */
 public class TestPackageLoader {
-	private static java.io.File get_file(String path) {
-		return new java.io.File(TestPackageLoader.class.getClassLoader().getResource(path).getFile());
+	private static java.io.File get_file(String path) throws FileNotFoundException {
+		URL resource = TestPackageLoader.class.getClassLoader().getResource(path);
+		if (resource == null) throw new FileNotFoundException("Could not find " + path);
+		return new java.io.File(resource.getFile());
 	}
 
 	/**
@@ -106,7 +110,6 @@ public class TestPackageLoader {
 		LoadedPackage p = (LoadedPackage) PackageLoader.load_single_package(get_file("com/greenjon902/greenJam/core/packageLoader/simple_package"));
 
 		// Check some things here as not checked in check_simple_module_contents
-		Assertions.assertEquals("Simple Package", p.display_name());
 		Assertions.assertEquals("A simple example of a package with files and modules", p.description());
 		Assertions.assertArrayEquals(new String[] {"GreenJon902"}, p.authors());
 
@@ -117,7 +120,6 @@ public class TestPackageLoader {
 	@Test
 	public void test_package_with_subfolder_files() throws IOException {
 		LoadedPackage p = (LoadedPackage) PackageLoader.load_single_package(get_file("com/greenjon902/greenJam/core/packageLoader/package_with_subfolder_files"));
-		Assertions.assertEquals("Simple Package", p.display_name());
 		Assertions.assertEquals("A simple example of a package with files and modules", p.description());
 		Assertions.assertArrayEquals(new String[] {"GreenJon902"}, p.authors());
 
@@ -127,11 +129,11 @@ public class TestPackageLoader {
 
 	@Test
 	public void test_package_with_changing_regex() throws IOException {
-		Package p = PackageLoader.load_single_package(get_file("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex"));
+		java.io.File file = get_file("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex");
+		Package p = PackageLoader.load_single_package(file);
 
-		LoadedPackage expected = new LoadedPackage.Builder() {{
+		LoadedPackage expected = new LoadedPackage.Builder(new Toml().read(new java.io.File(file, "jam.toml"))) {{
 			name("package_with_changing_regex");
-			display_name("package_with_changing_regex");
 			files(new File[]{
 					new LoadedFile.Builder() {{
 						name("a.jam");
@@ -141,7 +143,7 @@ public class TestPackageLoader {
 					}}.build()
 			});
 			modules(new Module[]{
-					new LoadedModule.Builder() {{
+					new LoadedModule.Builder(new Toml().read(new java.io.File(file, "mod/mod.toml"))) {{
 						name("mod");
 						files(new File[]{
 								new LoadedFile.Builder() {{

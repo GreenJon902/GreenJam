@@ -1,4 +1,4 @@
-display-name = "Simple Package"
+name = "package_with_subfolder_files"
 description = "A simple example of a package with files and modules"
 authors = ["GreenJon902"]
 
