@@ -8,44 +8,44 @@ import static com.greenjon902.greenJam.utils.TomlUtils.*;
 
 public class TestTomlUtils {
 	@Test
-	public void test_set_if_not_null() {
+	public void testSetIfNotNull() {
 		Toml toml = new Toml();
 		TestFunc<String> testFunc = new TestFunc<>();
 
-		set_if_not_null("a", toml::getString, testFunc::set, toml);
+		setIfNotNull("a", toml::getString, testFunc::set, toml);
 		Assertions.assertNull(testFunc.testing);
 
 		toml = new Toml().read("a=\"I changed!\"");
 
-		set_if_not_null("a", toml::getString, testFunc::set, toml);
+		setIfNotNull("a", toml::getString, testFunc::set, toml);
 		Assertions.assertEquals("I changed!", testFunc.testing);
 	}
 
 	@Test
-	public void test_set_if_not_null_string() {
+	public void testSetIfNotNullString() {
 		Toml toml = new Toml();
 		TestFunc<String> testFunc = new TestFunc<>();
 
-		set_if_not_null_string("a", testFunc::set, toml);
+		setIfNotNullString("a", testFunc::set, toml);
 		Assertions.assertNull(testFunc.testing);
 
 		toml = new Toml().read("a=\"I changed!\"");
 		
-		set_if_not_null_string("a", testFunc::set, toml);
+		setIfNotNullString("a", testFunc::set, toml);
 		Assertions.assertEquals("I changed!", testFunc.testing);
 	}
 
 	@Test
-	public void test_set_if_not_null_array() {
+	public void testSetIfNotNullArray() {
 		Toml toml = new Toml();
 		TestFunc<String[]> testFunc = new TestFunc<>();
 
-		set_if_not_null_array("a", testFunc::set, String.class, toml);
+		setIfNotNullArray("a", testFunc::set, String.class, toml);
 		Assertions.assertNull(testFunc.testing);
 
 		toml = new Toml().read("a=[\"I \", \"changed!\"]");
 
-		set_if_not_null_array("a", testFunc::set, String.class, toml);
+		setIfNotNullArray("a", testFunc::set, String.class, toml);
 		Assertions.assertArrayEquals(new String[] {"I ", "changed!"}, testFunc.testing);
 	}
 }

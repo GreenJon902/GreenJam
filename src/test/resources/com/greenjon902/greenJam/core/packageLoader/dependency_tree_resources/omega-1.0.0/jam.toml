@@ -1,0 +1,7 @@
+name = "omega"
+version = "1.0.0"
+description = "Big nose"
+
+[Dependencies]
+aj = { verson = "1.0.0" }
+jon = { version = "1.2.3" }

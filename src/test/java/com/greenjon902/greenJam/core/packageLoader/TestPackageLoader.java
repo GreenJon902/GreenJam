@@ -10,7 +10,8 @@ import org.junit.jupiter.api.Test;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 // TODO: Better checking system, maybe based on a tree?
 
@@ -27,7 +28,7 @@ import java.util.ArrayList;
  * See the tests for the names of these items.
  */
 public class TestPackageLoader {
-	private static java.io.File get_file(String path) throws FileNotFoundException {
+	private static java.io.File getFile(String path) throws FileNotFoundException {
 		URL resource = TestPackageLoader.class.getClassLoader().getResource(path);
 		if (resource == null) throw new FileNotFoundException("Could not find " + path);
 		return new java.io.File(resource.getFile());
@@ -37,11 +38,11 @@ public class TestPackageLoader {
 	 * Checks that the module version of the simple package was loaded correctly. You can also tell it to do
 	 * subfolder with files as that is based on it.
 	 */
-	public static void check_simple_module_contents(Module module, boolean with_subfolder_files, String root_name) {
-		ArrayList<File> files1 = new ArrayList<>();
-		ArrayList<Module> modules = new ArrayList<>();
-		ArrayList<File> files2 = new ArrayList<>();
-		ArrayList<File> files3 = new ArrayList<>();
+	public static void checkSimpleModuleContents(Module module, boolean withSubfolderFiles, String rootName) {
+		Set<File> files1 = new HashSet<>();
+		Set<Module> modules = new HashSet<>();
+		Set<File> files2 = new HashSet<>();
+		Set<File> files3 = new HashSet<>();
 
 		files1.add(new LoadedFile.Builder() {{
 			name("main.jam");
@@ -49,7 +50,7 @@ public class TestPackageLoader {
 		files1.add(new LoadedFile.Builder() {{
 			name("test.jam");
 		}}.build());
-		if (with_subfolder_files) {
+		if (withSubfolderFiles) {
 			files1.add(new LoadedFile.Builder() {{
 				name("x_actualSkills.jam");
 			}}.build());
@@ -58,13 +59,13 @@ public class TestPackageLoader {
 		files2.add(new LoadedFile.Builder() {{
 			name("bar.jam");
 		}}.build());
-		if (with_subfolder_files) {
+		if (withSubfolderFiles) {
 			files2.add(new LoadedFile.Builder() {{
 				name("lies.jam");
 			}}.build());
 		}
 
-		if (with_subfolder_files) {
+		if (withSubfolderFiles) {
 			files3.add(new LoadedFile.Builder() {{
 				name("baz.jam");
 			}}.build());
@@ -72,19 +73,19 @@ public class TestPackageLoader {
 
 		modules.add(new LoadedModule.Builder() {{
 			name("foo");
-			files(files2.toArray(File[]::new));
+			files(files2);
 		}}.build());
-		if (with_subfolder_files) {
+		if (withSubfolderFiles) {
 			modules.add(new LoadedModule.Builder() {{
 				name("xxx_module_xxx");
-				files(files3.toArray(File[]::new));
+				files(files3);
 			}}.build());
 		}
 
 		LoadedModule expected = new LoadedModule.Builder() {{
-			name(root_name);
-			files(files1.toArray(File[]::new));
-			modules(modules.toArray(Module[]::new));
+			name(rootName);
+			files(files1);
+			modules(modules);
 		}}.build();
 
 		Assertions.assertEquals(expected, module);
@@ -92,68 +93,104 @@ public class TestPackageLoader {
 
 
 	@Test
-	public void test_load_module_into() throws IOException {
-		java.io.File simple_module = get_file("com/greenjon902/greenJam/core/packageLoader/simple_package");
+	public void testLoadModuleInto() throws IOException {
+		java.io.File simpleModule = getFile("com/greenjon902/greenJam/core/packageLoader/simple_package");
 		// Use that as it can pretend to be a module
 
 		LoadedModule.Builder builder = new LoadedModule.Builder();
-		Module module = PackageLoader.load_module_into(builder, new Toml(), simple_module, PackageLoader.default_config());
+		Module module = PackageLoader.loadModuleInto(builder, new Toml(), simpleModule, PackageLoader.defaultConfig());
 		Assertions.assertEquals("", module.name());  // Was never supplied
 
 		// Next check method wants the name set
-		module = PackageLoader.load_module_into(builder, new Toml(), simple_module, PackageLoader.default_config());
-		check_simple_module_contents(module, false, "");
+		module = PackageLoader.loadModuleInto(builder, new Toml(), simpleModule, PackageLoader.defaultConfig());
+		checkSimpleModuleContents(module, false, "");
 	}
 
 	@Test
-	public void test_simple_package() throws IOException {
-		LoadedPackage p = (LoadedPackage) PackageLoader.load_single_package(get_file("com/greenjon902/greenJam/core/packageLoader/simple_package"));
+	public void testSimplePackage() throws IOException {
+		LoadedPackage p = PackageLoader.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/simple_package"));
 
 		// Check some things here as not checked in check_simple_module_contents
 		Assertions.assertEquals("A simple example of a package with files and modules", p.description());
-		Assertions.assertArrayEquals(new String[] {"GreenJon902"}, p.authors());
+		Assertions.assertEquals(Set.of("GreenJon902"), p.authors());
 
-		p.compare_only_as_module = true; // As we just did package comparisons
-		check_simple_module_contents(p, false, "simple_package");
+		p.compareOnlyAsModule = true; // As we just did package comparisons
+		checkSimpleModuleContents(p, false, "simple_package");
 	}
 
 	@Test
-	public void test_package_with_subfolder_files() throws IOException {
-		LoadedPackage p = (LoadedPackage) PackageLoader.load_single_package(get_file("com/greenjon902/greenJam/core/packageLoader/package_with_subfolder_files"));
+	public void testPackageWithSubfolderFiles() throws IOException {
+		LoadedPackage p = PackageLoader.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/package_with_subfolder_files"));
 		Assertions.assertEquals("A simple example of a package with files and modules", p.description());
-		Assertions.assertArrayEquals(new String[] {"GreenJon902"}, p.authors());
+		Assertions.assertEquals(Set.of("GreenJon902"), p.authors());
 
-		p.compare_only_as_module = true; // As we just did package comparisons
-		check_simple_module_contents(p, true, "package_with_subfolder_files");
+		p.compareOnlyAsModule = true; // As we just did package comparisons
+		checkSimpleModuleContents(p, true, "package_with_subfolder_files");
 	}
 
 	@Test
-	public void test_package_with_changing_regex() throws IOException {
-		java.io.File file = get_file("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex");
-		Package p = PackageLoader.load_single_package(file);
+	public void testPackageWithChangingRegex() throws IOException {
+		Package p = PackageLoader.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex"));
 
-		LoadedPackage expected = new LoadedPackage.Builder(new Toml().read(new java.io.File(file, "jam.toml"))) {{
+		LoadedPackage expected = new LoadedPackage.Builder() {{
 			name("package_with_changing_regex");
-			files(new File[]{
+			files(Set.of(
 					new LoadedFile.Builder() {{
 						name("a.jam");
 					}}.build(),
 					new LoadedFile.Builder() {{
 						name("b.jam");
 					}}.build()
-			});
-			modules(new Module[]{
-					new LoadedModule.Builder(new Toml().read(new java.io.File(file, "mod/mod.toml"))) {{
+			));
+			modules(Set.of(
+					new LoadedModule.Builder() {{
 						name("mod");
-						files(new File[]{
+						files(Set.of(
 								new LoadedFile.Builder() {{
 									name("c.jam");
 								}}.build()
-						});
+						));
 					}}.build()
-			});
+			));
 		}}.build();
 
 		Assertions.assertEquals(expected, p);
+	}
+
+	@Test
+	public void testLoadPackageWithVersion() throws IOException {
+		Package p = PackageLoader.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/package_with_version"));
+
+		Assertions.assertEquals("package_with_version-1.0.1", p.name());
+	}
+
+	@Test
+	public void testLoadPackageWithSimpleDependencies() throws IOException {
+		Package p = PackageLoader.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/dependency_tree_resources/main"));
+
+		LoadedPackage expected = new LoadedPackage.Builder() {{
+			description("The main package for this test");
+			authors(Set.of("GreenJon902"));
+			dependencies(Set.of(
+					new LoadedPackageReference("jon", "1.2.3"),
+					new LoadedPackageReference("aj", "1.0.0"),
+					new LoadedPackageReference("omega", "1.0.0"),
+					new LoadedPackageReference("cat", "1.0.0")
+			));
+		}}.build();
+
+		Assertions.assertEquals(expected, p);
+	}
+
+	/**
+	 * Tests fully loading a package that has dependencies, some with sub-dependencies which may be new or may be also
+	 * used elsewhere. Some may also be of different versions.
+	 */
+	@Test
+	public void testLoadPackageWithDependencyTree() throws IOException {
+		PackageLoader.loadedPackagesFor(getFile("com/greenjon902/greenJam/core/packageLoader/dependency_tree_resources/main"));
+		// TODO: put doc at top for this dependency.
+		//  This entails the version changes, circular dependents, reused dependents, and only once used dependents,
+		//  and duplicate dependents
 	}
 }

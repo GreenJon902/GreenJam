@@ -12,7 +12,7 @@ public class TestStackedClassBase {
 	}
 
 	@Test
-	public void test_simple() {
+	public void testSimple() {
 		StackedClassBase stackedClassBase = new StackedClassBase(4);
 		Object[] array = new Object[4];
 

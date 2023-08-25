@@ -1,0 +1,9 @@
+name = "aj"
+description = "Probably Bda"
+authors = ["Mumkins"]
+
+[Dependencies]
+jon = { version = "1.2.4" }
+ultra = { version = "1.0.0" }
+omega = { version = "1.0.0" }
+cat = { version = "1.0.0" }

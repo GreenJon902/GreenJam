@@ -93,8 +93,23 @@ package-naming
     - name - used as an identifier
     - version
     - folder-name - name + (-version if version is not "")
+Folder name is only used when a package is a dependency and needs to be found, the name and version should be identical
+to what was put inside the jam.toml file.
 
+
+Dependencies
+    - key is name or dependency
+    - it is a table containing
+        - version
+        - a name for this project to refer to it as
+
+    - or a list of tables with multiple versions, with all having a different refered name
+
+    - or a string containing just the version
 
 
 MISC ----------------------------------
 with overlayes you can just run ;; REQUIRE SUPER and it acts the same
+
+since packages may circuallarily require eachother, they store references to eachother containing the name, version
+(and at some point override info), which can be resolved using the PackageList.
