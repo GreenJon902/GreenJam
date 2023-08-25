@@ -4,9 +4,7 @@ import com.greenjon902.greenJam.core.Package;
 import com.greenjon902.greenJam.core.PackageReference;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * See {@link LoadedPackageItem}
@@ -75,4 +73,31 @@ public class LoadedPackage extends LoadedModule implements Package {
 	public int hashCode() {
 		return Objects.hash(super.hashCode(), authors, description, dependencies);
 	}
+
+	@Override
+	public void writeFields(StringBuilder sb) {
+		if (!compareOnlyAsModule) {
+			sb.append("authors=").append(Arrays.toString(authors.stream().sorted(Comparator.comparing(Object::hashCode)).toArray()));
+			sb.append(", description='").append(description).append('\'');
+			sb.append(", dependencies=").append(Arrays.toString(dependencies.stream().sorted(Comparator.comparing(Object::hashCode)).toArray()));
+			sb.append(", ");
+		}
+		super.writeFields(sb);
+	}
+
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("LoadedPackage");
+		if (compareOnlyAsModule) {
+			sb.append("(M)");
+		}
+		sb.append("{");
+		writeFields(sb);
+		sb.append('}');
+		return sb.toString();
+	}
+
+
+
 }

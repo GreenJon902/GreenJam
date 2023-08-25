@@ -1,5 +1,6 @@
 package com.greenjon902.greenJam.core.packageLoader;
 
+import com.greenjon902.greenJam.core.FieldStringWriter;
 import com.greenjon902.greenJam.core.PackageItem;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,7 +10,7 @@ import java.util.Objects;
  * The implementation of package item for the package loader, inheritors of these only store information that is entered
  * via the builders from the package loader which gets it from the disk.
  */
-public class LoadedPackageItem implements PackageItem {
+public class LoadedPackageItem implements PackageItem, FieldStringWriter {
 	private final String name;
 
 
@@ -21,6 +22,7 @@ public class LoadedPackageItem implements PackageItem {
 	public @NotNull String name() {
 		return name;
 	}
+
 
 	public static class Builder {
 		private String name = "";
@@ -43,4 +45,10 @@ public class LoadedPackageItem implements PackageItem {
 	public int hashCode() {
 		return Objects.hash(name);
 	}
+
+	@Override
+	public void writeFields(StringBuilder sb) {
+		sb.append("name='").append(name).append('\'');
+	}
+
 }

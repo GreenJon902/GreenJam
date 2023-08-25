@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * The base class for any item that exists inside a package (including the package itself).
+ *
+ * @implSpec These items should be immutable after creation.
  */
 public interface PackageItem {
 	/**

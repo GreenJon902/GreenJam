@@ -4,9 +4,7 @@ import com.greenjon902.greenJam.core.File;
 import com.greenjon902.greenJam.core.Module;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * See {@link LoadedPackageItem}
@@ -59,4 +57,24 @@ public class LoadedModule extends LoadedPackageItem implements Module {
 	public int hashCode() {
 		return Objects.hash(super.hashCode(), modules, files);
 	}
+
+	@Override
+	public void writeFields(StringBuilder sb) {
+		sb.append("modules=").append(Arrays.toString(modules.stream().sorted(Comparator.comparing(Object::hashCode)).toArray()));
+		sb.append(", files=").append(Arrays.toString(files.stream().sorted(Comparator.comparing(Object::hashCode)).toArray()));
+		sb.append(", ");
+		super.writeFields(sb);
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("LoadedModule{");
+		writeFields(sb);
+		sb.append('}');
+		return sb.toString();
+	}
+
+
+
+
 }

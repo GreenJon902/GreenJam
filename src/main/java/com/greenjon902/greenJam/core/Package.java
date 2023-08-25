@@ -17,7 +17,7 @@ public interface Package extends Module {
 	/**
 	 * Gets the authors of this package.
 	 *
-	 * @implNote The set should be immutable
+	 * @implSpec The set should be immutable
 	 * @return The list of authors
 	 */
 	@NotNull Set<String> authors();
@@ -31,7 +31,7 @@ public interface Package extends Module {
 	/**
 	 * Gets the dependencies of this package.
 	 *
-	 * @implNote The set should be immutable
+	 * @implSpec The set should be immutable
 	 * @return The dependencies as references (which are resolved using the package list)
 	 */
 	@NotNull Set<PackageReference> dependencies();

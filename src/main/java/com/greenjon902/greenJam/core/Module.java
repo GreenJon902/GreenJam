@@ -12,7 +12,7 @@ public interface Module extends PackageItem {
 	/**
 	 * Gets the children modules.
 	 *
-	 * @implNote The set should be immutable
+	 * @implSpec The set should be immutable
 	 * @return A shallow clone of the modules list
 	 */
 	@NotNull Set<Module> modules();
@@ -20,7 +20,7 @@ public interface Module extends PackageItem {
 	/**
 	 * Gets the children files.
 	 *
-	 * @implNote The set should be immutable
+	 * @implSpec The set should be immutable
 	 * @return A shallow clone of the file list
 	 */
 	@NotNull Set<File> files();
