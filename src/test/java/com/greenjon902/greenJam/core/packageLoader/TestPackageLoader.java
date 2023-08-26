@@ -25,9 +25,11 @@ import java.util.*;
  * <br>
  * Package_with_changing_regex is different.
  * <br>
- * dependency_tree_resources contains many different packages that require each other to be loaded, but
+ * Dependency_tree_resources contains many different packages that require each other to be loaded, but
  * there are circular requirements which must not cause infinite recursion. Some also require multiple versions or
  * locally rename dependants.
+ * <br>
+ * Name_overwritting_module is just a module with a toml file that changes its name to overwritten.
  * <br><br>
  * See the tests for the names of these items.
  */
@@ -179,6 +181,13 @@ public class TestPackageLoader {
 		Package p = PackageLoader.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/package_with_version"));
 
 		Assertions.assertEquals("package_with_version-1.0.1", p.name());
+	}
+
+	@Test
+	public void testLoadNameOverwrittingModule() throws IOException {
+		Module m = PackageLoader.loadModule(getFile("com/greenjon902/greenJam/core/packageLoader/name_overwritting_module"), PackageLoader.defaultConfig());
+
+		Assertions.assertEquals("overwritten", m.name());
 	}
 
 	@Test

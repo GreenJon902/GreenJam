@@ -154,11 +154,11 @@ public class PackageLoader {
 	 * @param lc     The current loading config
 	 * @return The built module
 	 */
-	private static LoadedModule loadModule(File folder, LoadingConfig lc) throws IOException {
+	protected static LoadedModule loadModule(File folder, LoadingConfig lc) throws IOException {
 		// Load toml and read any information in, then load files and submodules
 		Toml toml = loadIfExists(new File(folder, lc.moduleConfigPath()));
 		LoadedModule.Builder moduleBuilder = new LoadedModule.Builder();
-		moduleBuilder.name(folder.getName());
+		moduleBuilder.name(toml.getString("name", folder.getName()));
 
 		return loadModuleInto(moduleBuilder, toml, folder, lc);
 	}
