@@ -13,10 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Resource information:
@@ -107,7 +104,7 @@ public class TestPackageLoader {
 
 	@AfterEach
 	public void teardown() {
-		PackageList.clear();
+		PackageList.getInstance().clear();
 		System.setProperties(properties);
 	}
 
@@ -210,7 +207,7 @@ public class TestPackageLoader {
 	public void testLoadPackageWithDependencyTree() throws IOException {
 		System.setProperty("JAMPATH", getFile("com/greenjon902/greenJam/core/packageLoader/dependency_tree_resources").toString());
 
-		HashMap<String, HashMap<String, Package>> packages = new HashMap<>() {{
+		Map<String, Map<String, Package>> packages = new HashMap<>() {{
 			put("", new HashMap<>() {{
 				put("", new LoadedPackage.Builder() {{
 					description("The main package for this test");
@@ -302,6 +299,6 @@ public class TestPackageLoader {
 		Package main = PackageLoader.loadedPackagesFor(getFile("com/greenjon902/greenJam/core/packageLoader/dependency_tree_resources/main"));
 
 		Assertions.assertEquals(expected_main, main);
-		PackageList.assertEquals(packages, Assertions::assertEquals);
+		PackageList.getInstance().assertEquals(packages, Assertions::assertEquals);
 	}
 }

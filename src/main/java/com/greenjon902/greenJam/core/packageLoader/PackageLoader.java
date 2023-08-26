@@ -32,15 +32,17 @@ public class PackageLoader {
 	 * @return The package stored at root
 	 */
 	public static LoadedPackage loadedPackagesFor(File root) throws IOException {
+		PackageList packageList = PackageList.getInstance();  // So we don't need to run it a lot
+
 		// Load the package info and save it
 		LoadedPackage rootPackage = loadSinglePackage(root);
-		PackageList.add(rootPackage.toml().getString("name", ""), rootPackage.toml().getString("version", ""), rootPackage);
+		packageList.add(rootPackage.toml().getString("name", ""), rootPackage.toml().getString("version", ""), rootPackage);
 		// Add this to package list before to prevent circular dependents looping
 
 		// Now we can check if any new dependencies need to be loaded
 		Set<PackageReference> dependencies = rootPackage.dependencies();
 		for (PackageReference dependency : dependencies) {
-			if (!PackageList.hasPackage(dependency)) {
+			if (!packageList.hasPackage(dependency)) {
 				if (dependency instanceof LoadedPackageReference loadedDependency) {
 					File source = locatePackageFromReference(loadedDependency);
 
