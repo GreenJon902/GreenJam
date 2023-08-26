@@ -1,9 +1,9 @@
 package com.greenjon902.greenJam.core.packageLoader;
 
-import com.greenjon902.greenJam.core.File;
-import com.greenjon902.greenJam.core.Module;
-import com.greenjon902.greenJam.core.Package;
-import com.greenjon902.greenJam.core.PackageList;
+import com.greenjon902.greenJam.api.PackageList;
+import com.greenjon902.greenJam.api.packageLoader.File;
+import com.greenjon902.greenJam.api.packageLoader.Module;
+import com.greenjon902.greenJam.api.packageLoader.Package;
 import com.moandjiezana.toml.Toml;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -33,12 +33,14 @@ import java.util.*;
  * <br><br>
  * See the tests for the names of these items.
  */
-public class TestPackageLoader {
+public class TestPackageLoaderImpl {
 	private static java.io.File getFile(String path) throws FileNotFoundException {
-		URL resource = TestPackageLoader.class.getClassLoader().getResource(path);
+		URL resource = TestPackageLoaderImpl.class.getClassLoader().getResource(path);
 		if (resource == null) throw new FileNotFoundException("Could not find " + path);
 		return new java.io.File(resource.getFile());
 	}
+
+	private final PackageLoaderImpl pl = new PackageLoaderImpl();
 
 	/**
 	 * Checks that the module version of the simple package was loaded correctly. You can also tell it to do
@@ -117,17 +119,17 @@ public class TestPackageLoader {
 		// Use that as it can pretend to be a module
 
 		LoadedModule.Builder builder = new LoadedModule.Builder();
-		Module module = PackageLoader.loadModuleInto(builder, new Toml(), simpleModule, PackageLoader.defaultConfig());
+		Module module = pl.loadModuleInto(builder, new Toml(), simpleModule);
 		Assertions.assertEquals("", module.name());  // Was never supplied
 
 		// Next check method wants the name set
-		module = PackageLoader.loadModuleInto(builder, new Toml(), simpleModule, PackageLoader.defaultConfig());
+		module = pl.loadModuleInto(builder, new Toml(), simpleModule);
 		checkSimpleModuleContents(module, false, "");
 	}
 
 	@Test
 	public void testSimplePackage() throws IOException {
-		LoadedPackage p = PackageLoader.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/simple_package"));
+		LoadedPackage p = pl.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/simple_package"));
 
 		// Check some things here as not checked in check_simple_module_contents
 		Assertions.assertEquals("A simple example of a package with files and modules", p.description());
@@ -139,7 +141,7 @@ public class TestPackageLoader {
 
 	@Test
 	public void testPackageWithSubfolderFiles() throws IOException {
-		LoadedPackage p = PackageLoader.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/package_with_subfolder_files"));
+		LoadedPackage p = pl.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/package_with_subfolder_files"));
 		Assertions.assertEquals("A simple example of a package with files and modules", p.description());
 		Assertions.assertEquals(Set.of("GreenJon902"), p.authors());
 
@@ -149,7 +151,7 @@ public class TestPackageLoader {
 
 	@Test
 	public void testPackageWithChangingRegex() throws IOException {
-		Package p = PackageLoader.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex"));
+		Package p = pl.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex"));
 
 		LoadedPackage expected = new LoadedPackage.Builder() {{
 			name("package_with_changing_regex");
@@ -178,21 +180,21 @@ public class TestPackageLoader {
 
 	@Test
 	public void testLoadPackageWithVersion() throws IOException {
-		Package p = PackageLoader.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/package_with_version"));
+		Package p = pl.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/package_with_version"));
 
 		Assertions.assertEquals("package_with_version-1.0.1", p.name());
 	}
 
 	@Test
 	public void testLoadNameOverwrittingModule() throws IOException {
-		Module m = PackageLoader.loadModule(getFile("com/greenjon902/greenJam/core/packageLoader/name_overwritting_module"), PackageLoader.defaultConfig());
+		Module m = pl.loadModule(getFile("com/greenjon902/greenJam/core/packageLoader/name_overwritting_module"));
 
 		Assertions.assertEquals("overwritten", m.name());
 	}
 
 	@Test
 	public void testLoadPackageWithSimpleDependencies() throws IOException {
-		Package p = PackageLoader.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/dependency_tree_resources/main"));
+		Package p = pl.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/dependency_tree_resources/main"));
 
 		LoadedPackage expected = new LoadedPackage.Builder() {{
 			description("The main package for this test");
@@ -305,9 +307,9 @@ public class TestPackageLoader {
 		}};
 		Package expected_main = packages.get("").get("");
 
-		Package main = PackageLoader.loadedPackagesFor(getFile("com/greenjon902/greenJam/core/packageLoader/dependency_tree_resources/main"));
+		Package main = pl.loadPackagesFor(getFile("com/greenjon902/greenJam/core/packageLoader/dependency_tree_resources/main"));
 
 		Assertions.assertEquals(expected_main, main);
-		PackageList.getInstance().assertEquals(packages, Assertions::assertEquals);
+		Assertions.assertEquals(packages, PackageList.getInstance().getPackages());
 	}
 }

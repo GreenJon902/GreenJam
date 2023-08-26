@@ -1,6 +1,6 @@
 package com.greenjon902.greenJam.core.packageLoader;
 
-import com.greenjon902.greenJam.core.PackageReference;
+import com.greenjon902.greenJam.api.packageLoader.PackageReference;
 import org.jetbrains.annotations.NotNull;
 
 /**

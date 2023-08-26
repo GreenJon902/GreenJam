@@ -1,7 +1,7 @@
 package com.greenjon902.greenJam.core.packageLoader;
 
-import com.greenjon902.greenJam.core.FieldStringWriter;
-import com.greenjon902.greenJam.core.PackageItem;
+import com.greenjon902.greenJam.api.FieldStringWriter;
+import com.greenjon902.greenJam.api.packageLoader.PackageItem;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;

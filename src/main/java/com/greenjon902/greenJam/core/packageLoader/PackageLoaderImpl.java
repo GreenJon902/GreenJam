@@ -1,8 +1,9 @@
 package com.greenjon902.greenJam.core.packageLoader;
 
-import com.greenjon902.greenJam.core.Module;
-import com.greenjon902.greenJam.core.PackageList;
-import com.greenjon902.greenJam.core.PackageReference;
+import com.greenjon902.greenJam.api.PackageList;
+import com.greenjon902.greenJam.api.packageLoader.Module;
+import com.greenjon902.greenJam.api.packageLoader.PackageLoader;
+import com.greenjon902.greenJam.api.packageLoader.PackageReference;
 import com.greenjon902.greenJam.utils.StackedClassBase;
 import com.moandjiezana.toml.Toml;
 
@@ -23,15 +24,15 @@ import static com.greenjon902.greenJam.utils.TomlUtils.*;
 /**
  * See {@link #loadSinglePackage(File)}
  */
-public class PackageLoader {
-	/**
-	 * Loads the package stored at root, and then recursively loads their requirements (until all packages are found) into
-	 * the package list.
-	 *
-	 * @param root The root of the first package to load
-	 * @return The package stored at root
-	 */
-	public static LoadedPackage loadedPackagesFor(File root) throws IOException {
+public class PackageLoaderImpl implements PackageLoader {
+	private final LoadingConfig lc;
+
+	public PackageLoaderImpl() {
+		lc = LoadingConfig.getDefault();
+	}
+
+	@Override
+	public LoadedPackage loadPackagesFor(File root) throws IOException {
 		PackageList packageList = PackageList.getInstance();  // So we don't need to run it a lot
 
 		// Load the package info and save it
@@ -52,7 +53,7 @@ public class PackageLoader {
 					}
 
 					// Not loaded yet, but checks have passed, so now we need to load it
-					loadedPackagesFor(source);  // But we don't care about this one's return value
+					loadPackagesFor(source);  // But we don't care about this one's return value
 
 				} else {
 					throw new RuntimeException("Expected dependency to be of type LoadedPackageReference, not " +
@@ -67,16 +68,14 @@ public class PackageLoader {
 	/**
 	 * Loads a singular package's info (with its files and modules) from the package config file. Then load it as if
 	 * it was a module (ignoring module config), see
-	 * {@link #loadModuleInto(LoadedModule.Builder, Toml, File, LoadingConfig)}.
+	 * {@link #loadModuleInto(LoadedModule.Builder, Toml, File)}.
 	 * <br><br>
 	 * Note: This does not add it to the {@link PackageList}!
 	 *
 	 * @param root The root folder of the package
 	 * @return The built package
 	 */
-	public static LoadedPackage loadSinglePackage(File root) throws IOException {
-		LoadingConfig lc = defaultConfig();
-
+	public LoadedPackage loadSinglePackage(File root) throws IOException {
 		// Load toml and read any information in, then load data as if it was a module
 		Toml toml = loadIfExists(new File(root, lc.packageConfigPath()));
 		LoadedPackage.Builder packageBuilder = new LoadedPackage.Builder();
@@ -91,18 +90,18 @@ public class PackageLoader {
 			packageBuilder.dependencies((Set<PackageReference>) (Set<?>) makeDependencyReferences(dependencyToml));
 		}
 
-		return (LoadedPackage) loadModuleInto(packageBuilder, toml, root, lc);
+		return (LoadedPackage) loadModuleInto(packageBuilder, toml, root);
 	}
 
 	/**
-	 * Makes the {@link com.greenjon902.greenJam.core.PackageReference} array from the given dependencies.
+	 * Makes the {@link PackageReference} array from the given dependencies.
 	 * See the documentation for how the toml should be structured.
 	 * // TODO: MAKE SAID DOCUMENTATION
 	 *
 	 * @param dependencies The dependency table from the toml file
 	 * @return The package references
 	 */
-	private static Set<LoadedPackageReference> makeDependencyReferences(Toml dependencies) {
+	private Set<LoadedPackageReference> makeDependencyReferences(Toml dependencies) {
 		Set<LoadedPackageReference> references = new HashSet<>();
 
 		// Loop through dependencies
@@ -139,7 +138,7 @@ public class PackageLoader {
 	 * @param dependency The dependency information
 	 * @return The created reference
 	 */
-	private static LoadedPackageReference makeDependencyReference(Map<String, Object> dependency, String realName) {
+	private LoadedPackageReference makeDependencyReference(Map<String, Object> dependency, String realName) {
 		String version = (String) dependency.getOrDefault("version", "");
 		String referName = (String) dependency.getOrDefault("name", realName);
 		return new LoadedPackageReference(realName, referName, version);
@@ -147,20 +146,19 @@ public class PackageLoader {
 
 	/**
 	 * Loads a module from a folder, this function loads things from the module.toml file, see
-	 * {@link #loadModuleInto(LoadedModule.Builder, Toml, File, LoadingConfig)} for loading the file
+	 * {@link #loadModuleInto(LoadedModule.Builder, Toml, File)} for loading the file
 	 * and submodule information.
 	 *
 	 * @param folder The root folder of the module
-	 * @param lc     The current loading config
 	 * @return The built module
 	 */
-	protected static LoadedModule loadModule(File folder, LoadingConfig lc) throws IOException {
+	protected LoadedModule loadModule(File folder) throws IOException {
 		// Load toml and read any information in, then load files and submodules
 		Toml toml = loadIfExists(new File(folder, lc.moduleConfigPath()));
 		LoadedModule.Builder moduleBuilder = new LoadedModule.Builder();
 		moduleBuilder.name(toml.getString("name", folder.getName()));
 
-		return loadModuleInto(moduleBuilder, toml, folder, lc);
+		return loadModuleInto(moduleBuilder, toml, folder);
 	}
 
 	/**
@@ -173,10 +171,9 @@ public class PackageLoader {
 	 * @param moduleBuilder The builder of the current module that is being loaded
 	 * @param toml          The toml of the current module being loaded
 	 * @param folder        The folder of the current module being loaded
-	 * @param lc            The current loading config
 	 * @return The built module
 	 */
-	protected static LoadedModule loadModuleInto(LoadedModule.Builder moduleBuilder, Toml toml, File folder, LoadingConfig lc) throws IOException {
+	protected LoadedModule loadModuleInto(LoadedModule.Builder moduleBuilder, Toml toml, File folder) throws IOException {
 		lc.push();
 		applyConfig(toml, lc);
 
@@ -216,7 +213,7 @@ public class PackageLoader {
 
 							} else if (file.isDirectory() &&
 									Arrays.stream(modulePatterns).anyMatch(matcher -> matcher.matcher(finalStringPath).matches())) {
-								LoadedModule newModule = loadModule(file, lc);
+								LoadedModule newModule = loadModule(file);
 								newModules.add(newModule);
 							}
 
@@ -228,7 +225,7 @@ public class PackageLoader {
 		}
 
 		// Put the found items in the builder and build it
-		moduleBuilder.files((Set<com.greenjon902.greenJam.core.File>) (Set<?>) newFiles);
+		moduleBuilder.files((Set<com.greenjon902.greenJam.api.packageLoader.File>) (Set<?>) newFiles);
 		moduleBuilder.modules((Set<Module>) (Set<?>) newModules);
 		LoadedModule module = moduleBuilder.build();
 
@@ -243,7 +240,7 @@ public class PackageLoader {
 	 * @param lc     The current loading config
 	 * @return The built file
 	 */
-	private static LoadedFile loadFile(File folder, LoadingConfig lc) throws IOException {
+	private LoadedFile loadFile(File folder, LoadingConfig lc) throws IOException {
 		LoadedFile.Builder fileBuilder = new LoadedFile.Builder();
 		fileBuilder.name(folder.getName());
 
@@ -257,28 +254,13 @@ public class PackageLoader {
 	 * @param toml The toml to use
 	 * @param lc   The current loading config
 	 */
-	private static void applyConfig(Toml toml, LoadingConfig lc) { // TODO: Load these from a file
+	private void applyConfig(Toml toml, LoadingConfig lc) { // TODO: Load these from a file
 		setIfNotNullString("Loader.package-config-path", lc::packageConfigPath, toml);  // I know this is pointless, but it's important to me
 		setIfNotNullString("Loader.module-config-path", lc::moduleConfigPath, toml);
 		setIfNotNullString("Loader.file-regex", lc::fileRegex, toml);
 		setIfNotNullArray("Loader.file-regexs", lc::fileRegexs, String.class, toml);
 		setIfNotNullString("Loader.module-regex", lc::moduleRegex, toml);
 		setIfNotNullArray("Loader.module-regexs", lc::moduleRegexs, String.class, toml);
-	}
-
-	/**
-	 * Makes a loading config with the default values.
-	 *
-	 * @return The created loading config
-	 */
-	protected static LoadingConfig defaultConfig() {
-		// Make config with default values
-		LoadingConfig lc = new LoadingConfig();
-		lc.packageConfigPath("jam.toml");
-		lc.moduleConfigPath("mod.toml");
-		lc.fileRegex("[^/]+?.jam");
-		lc.moduleRegex("[^/]+?");
-		return lc;
 	}
 
 
@@ -290,6 +272,21 @@ public class PackageLoader {
 	 * // TODO: Make said documentation
 	 */
 	protected static class LoadingConfig extends StackedClassBase {
+		/**
+		 * Makes a loading config with the default values.
+		 *
+		 * @return The created loading config
+		 */
+		private static LoadingConfig getDefault() {
+			// Make config with default values
+			LoadingConfig lc = new LoadingConfig();
+			lc.packageConfigPath("jam.toml");
+			lc.moduleConfigPath("mod.toml");
+			lc.fileRegex("[^/]+?.jam");
+			lc.moduleRegex("[^/]+?");
+			return lc;
+		}
+
 		public LoadingConfig() {
 			super(4);
 		}
@@ -329,7 +326,7 @@ public class PackageLoader {
 	 * @param packageReference The reference of the package to search for
 	 * @return The path to the package or null if it wasn't found
 	 */
-	public static File locatePackageFromReference(PackageReference packageReference) {
+	public File locatePackageFromReference(PackageReference packageReference) {
 		String name = packageReference.formatName();
 
 		// Gets paths of where the packages are stored

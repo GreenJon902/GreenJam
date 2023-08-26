@@ -1,6 +1,6 @@
 package com.greenjon902.greenJam.core.packageLoader;
 
-import com.greenjon902.greenJam.core.File;
+import com.greenjon902.greenJam.api.packageLoader.File;
 
 /**
  * See {@link LoadedPackageItem}
