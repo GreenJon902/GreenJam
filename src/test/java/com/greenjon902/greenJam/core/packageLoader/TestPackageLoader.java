@@ -3,17 +3,20 @@ package com.greenjon902.greenJam.core.packageLoader;
 import com.greenjon902.greenJam.core.File;
 import com.greenjon902.greenJam.core.Module;
 import com.greenjon902.greenJam.core.Package;
+import com.greenjon902.greenJam.core.PackageList;
 import com.moandjiezana.toml.Toml;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
-
-// TODO: Better checking system, maybe based on a tree?
 
 /**
  * Resource information:
@@ -24,6 +27,10 @@ import java.util.Set;
  * sections to the package config.
  * <br>
  * Package_with_changing_regex is different.
+ * <br>
+ * dependency_tree_resources contains many different packages that require each other to be loaded, but
+ * there are circular requirements which must not cause infinite recursion. Some also require multiple versions or
+ * locally rename dependants.
  * <br><br>
  * See the tests for the names of these items.
  */
@@ -89,6 +96,19 @@ public class TestPackageLoader {
 		}}.build();
 
 		Assertions.assertEquals(expected, module);
+	}
+
+	private Properties properties;  // So tests can modify them for special operations
+
+	@BeforeEach
+	public void setup() {
+		properties = System.getProperties();
+	}
+
+	@AfterEach
+	public void teardown() {
+		PackageList.clear();
+		System.setProperties(properties);
 	}
 
 
@@ -188,9 +208,100 @@ public class TestPackageLoader {
 	 */
 	@Test
 	public void testLoadPackageWithDependencyTree() throws IOException {
-		PackageLoader.loadedPackagesFor(getFile("com/greenjon902/greenJam/core/packageLoader/dependency_tree_resources/main"));
-		// TODO: put doc at top for this dependency.
-		//  This entails the version changes, circular dependents, reused dependents, and only once used dependents,
-		//  and duplicate dependents
+		System.setProperty("JAMPATH", getFile("com/greenjon902/greenJam/core/packageLoader/dependency_tree_resources").toString());
+
+		HashMap<String, HashMap<String, Package>> packages = new HashMap<>() {{
+			put("", new HashMap<>() {{
+				put("", new LoadedPackage.Builder() {{
+					description("The main package for this test");
+					authors(Set.of("GreenJon902"));
+					dependencies(Set.of(
+							new LoadedPackageReference("aj", "1.0.0"),
+							new LoadedPackageReference("omega", "1.0.0"),
+							new LoadedPackageReference("cat", "1.0.0"),
+							new LoadedPackageReference("jon", "1.2.3")
+					));
+				}}.build());
+			}});
+			put("aj", new HashMap<>() {{
+				put("1.0.0", new LoadedPackage.Builder() {{
+					name("aj-1.0.0");
+					description("Probably Bda");
+					authors(Set.of("Mumkins", "me"));
+					dependencies(Set.of(
+							new LoadedPackageReference("ultra", "1.0.0"),
+							new LoadedPackageReference("omega", "1.0.0"),
+							new LoadedPackageReference("cat", "1.0.0"),
+							new LoadedPackageReference("jon", "1.2.4")
+					));
+				}}.build());
+			}});
+			put("omega", new HashMap<>() {{
+				put("1.0.0", new LoadedPackage.Builder() {{
+					name("omega-1.0.0");
+					description("Big nose");
+					dependencies(Set.of(
+							new LoadedPackageReference("aj", "1.0.0"),
+							new LoadedPackageReference("jon", "1.2.3")
+					));
+				}}.build());
+			}});
+			put("ultra", new HashMap<>() {{
+				put("1.0.0", new LoadedPackage.Builder() {{
+					name("ultra-1.0.0");
+					dependencies(Set.of(
+							new LoadedPackageReference("dave", "")
+					));
+				}}.build());
+			}});
+			put("dave", new HashMap<>() {{
+				put("", new LoadedPackage.Builder() {{
+					name("dave");
+					authors(Set.of("Dave1", "Dave2", "Dave3", "Dave4", "Dave4's Tutor"));
+				}}.build());
+			}});
+			put("jon", new HashMap<>() {{
+				put("1.2.3", new LoadedPackage.Builder() {{
+					name("jon-1.2.3");
+					dependencies(Set.of(
+							new LoadedPackageReference("aj", "1.0.0"),
+							new LoadedPackageReference("omega", "1.0.0"),
+							new LoadedPackageReference("cat", "1.0.0"),
+							new LoadedPackageReference("dave", "")
+					));
+				}}.build());
+				put("1.2.4", new LoadedPackage.Builder() {{
+					name("jon-1.2.4");
+					dependencies(Set.of(
+							new LoadedPackageReference("aj", "1.0.0"),
+							new LoadedPackageReference("omega", "1.0.0"),
+							new LoadedPackageReference("cat", "1.0.0"),
+							new LoadedPackageReference("cat", "sussy_cat", "1.0.0-sus")
+					));
+				}}.build());
+			}});
+			put("cat", new HashMap<>() {{
+				put("1.0.0", new LoadedPackage.Builder() {{
+					name("cat-1.0.0");
+					dependencies(Set.of(
+							new LoadedPackageReference("aj", "1.0.0"),
+							new LoadedPackageReference("jon", "1.2.3")
+					));
+				}}.build());
+				put("1.0.0-sus", new LoadedPackage.Builder() {{
+					name("cat-1.0.0-sus");
+					description("uwu");
+					dependencies(Set.of(
+							new LoadedPackageReference("jon", "hot", "1.2.3")
+					));
+				}}.build());
+			}});
+		}};
+		Package expected_main = packages.get("").get("");
+
+		Package main = PackageLoader.loadedPackagesFor(getFile("com/greenjon902/greenJam/core/packageLoader/dependency_tree_resources/main"));
+
+		Assertions.assertEquals(expected_main, main);
+		PackageList.assertEquals(packages, Assertions::assertEquals);
 	}
 }

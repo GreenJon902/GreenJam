@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 import static com.greenjon902.greenJam.utils.TomlUtils.*;
 
-// TODO: Load other packages (dependencies, bases, overwrides)
+// TODO: Load other packages (bases, overwrides)
 // TODO: load a reader for each file
 // TODO: Use regexes group system to pull only the desired part from the file name, maybe save other parts to a field?
 
@@ -32,14 +32,34 @@ public class PackageLoader {
 	 * @return The package stored at root
 	 */
 	public static LoadedPackage loadedPackagesFor(File root) throws IOException {
-		//Toml toml = loadIfExists(new File(root.getParent(), "jon-1.2.4/jam.toml"));
-		//System.out.println(toml.toMap());
-		//makeDependencyReferences(toml.getTable("Dependencies"));
+		// Load the package info and save it
+		LoadedPackage rootPackage = loadSinglePackage(root);
+		PackageList.add(rootPackage.toml().getString("name", ""), rootPackage.toml().getString("version", ""), rootPackage);
+		// Add this to package list before to prevent circular dependents looping
 
-		//LoadedPackage rootPackage = loadSinglePackage(root);
+		// Now we can check if any new dependencies need to be loaded
+		Set<PackageReference> dependencies = rootPackage.dependencies();
+		for (PackageReference dependency : dependencies) {
+			if (!PackageList.hasPackage(dependency)) {
+				if (dependency instanceof LoadedPackageReference loadedDependency) {
+					File source = locatePackageFromReference(loadedDependency);
 
+					if (source == null) {
+						throw new RuntimeException("Could not find package with formatted name \"" +
+								loadedDependency.formatName() + "\" in JAMPATH");
+					}
 
-		return null;
+					// Not loaded yet, but checks have passed, so now we need to load it
+					loadedPackagesFor(source);  // But we don't care about this one's return value
+
+				} else {
+					throw new RuntimeException("Expected dependency to be of type LoadedPackageReference, not " +
+							dependency.getClass().getSimpleName());
+				}
+			}
+		}
+
+		return rootPackage;
 	}
 
 	/**
@@ -58,7 +78,7 @@ public class PackageLoader {
 		// Load toml and read any information in, then load data as if it was a module
 		Toml toml = loadIfExists(new File(root, lc.packageConfigPath()));
 		LoadedPackage.Builder packageBuilder = new LoadedPackage.Builder();
-		packageBuilder.name(PackageList.formatName(toml.getString("name", ""),
+		packageBuilder.name(PackageReference.formatName(toml.getString("name", ""),
 				toml.getString("version", "")));
 		setIfNotNullSet("authors", packageBuilder::authors, String.class, toml);
 		setIfNotNullString("description", packageBuilder::description, toml);
@@ -146,7 +166,7 @@ public class PackageLoader {
 	 * level on the stack which is popped at the end.
 	 * This will only load files and submodules that fit the pattern in loading config, however it can find files in
 	 * subdirectories that still fit the pattern.
-	 * This will also set the submodules' and files' parents to the correct module.
+	 * This will also put the given toml into the module.
 	 *
 	 * @param moduleBuilder The builder of the current module that is being loaded
 	 * @param toml          The toml of the current module being loaded
@@ -157,6 +177,8 @@ public class PackageLoader {
 	protected static LoadedModule loadModuleInto(LoadedModule.Builder moduleBuilder, Toml toml, File folder, LoadingConfig lc) throws IOException {
 		lc.push();
 		applyConfig(toml, lc);
+
+		moduleBuilder.toml(toml);
 
 		// Use these to check if something should be read into the compiler as a file or a module
 		Pattern[] filePatterns = Arrays.stream(lc.fileRegexs()).map(Pattern::compile).toArray(Pattern[]::new);
@@ -297,5 +319,26 @@ public class PackageLoader {
 			set(3, string);
 		}
 		public void moduleRegex(String string) {set(3, new String[] {string});}
+	}
+
+	/**
+	 * Tries to locate the path of a package from a package reference and the current JAMPATH. It uses the
+	 * {@link PackageReference#formatName()} as the folder name to check it exists.
+	 * @param packageReference The reference of the package to search for
+	 * @return The path to the package or null if it wasn't found
+	 */
+	public static File locatePackageFromReference(PackageReference packageReference) {
+		String name = packageReference.formatName();
+
+		// Gets paths of where the packages are stored
+		String[] paths = System.getProperty("JAMPATH", "").split(":");
+
+		for (String path : paths) {
+			File potentialPath = new File(path, name);
+			if (potentialPath.exists()) {
+				return potentialPath;
+			}
+		}
+		return null;
 	}
 }

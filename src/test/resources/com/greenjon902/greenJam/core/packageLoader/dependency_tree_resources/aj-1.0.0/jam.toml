@@ -1,6 +1,7 @@
 name = "aj"
 description = "Probably Bda"
-authors = ["Mumkins"]
+authors = ["Mumkins", "me"]
+version = "1.0.0"
 
 [Dependencies]
 jon = { version = "1.2.4" }

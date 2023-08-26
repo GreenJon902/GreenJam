@@ -2,7 +2,7 @@ name = "jon"
 version = "1.2.3"
 
 [Dependencies]
-aj = { verson = "1.0.0" }
+aj = { version = "1.0.0" }
 omega = "1.0.0"
 cat = "1.0.0"
 

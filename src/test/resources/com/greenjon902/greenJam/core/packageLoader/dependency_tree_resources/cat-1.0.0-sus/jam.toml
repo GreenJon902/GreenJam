@@ -1,6 +1,6 @@
 name = "cat"
 description = "uwu"
-version = "sus"
+version = "1.0.0-sus"
 
 [Dependencies]
 jon = { version = "1.2.3", name = "hot" }

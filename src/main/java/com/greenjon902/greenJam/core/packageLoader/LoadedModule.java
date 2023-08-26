@@ -2,6 +2,7 @@ package com.greenjon902.greenJam.core.packageLoader;
 
 import com.greenjon902.greenJam.core.File;
 import com.greenjon902.greenJam.core.Module;
+import com.moandjiezana.toml.Toml;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -12,11 +13,13 @@ import java.util.*;
 public class LoadedModule extends LoadedPackageItem implements Module {
 	private final Set<Module> modules;
 	private final Set<File> files;
+	private final Toml toml;
 
 	protected LoadedModule(Builder builder) {
 		super(builder);
 		this.modules = Collections.unmodifiableSet(builder.modules);
-		this.files = Collections.unmodifiableSet((builder.files));
+		this.files = Collections.unmodifiableSet(builder.files);
+		this.toml = builder.toml;
 	}
 
 	@Override
@@ -29,12 +32,22 @@ public class LoadedModule extends LoadedPackageItem implements Module {
 		return files;
 	}
 
+	/**
+	 * Returns the toml object that was at the root of this module.
+	 * @return The toml
+	 */
+	public @NotNull Toml toml() {
+		return toml;
+	}
+
 	public static class Builder extends LoadedPackageItem.Builder {
 		private Set<Module> modules = Collections.emptySet();
 		private Set<File> files = Collections.emptySet();
+		private Toml toml = new Toml();
 
 		public LoadedPackageItem.Builder modules(Set<Module> modules) {this.modules = modules; return this;}
 		public LoadedPackageItem.Builder files(Set<File> files) {this.files = files; return this;}
+		public LoadedPackageItem.Builder toml(Toml toml) {this.toml = toml; return this;}
 
 		@Override
 		public LoadedModule build() {
