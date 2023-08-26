@@ -1,7 +1,7 @@
 package com.greenjon902.greenJam.core.packageLoader;
 
-import com.greenjon902.greenJam.api.packageLoader.File;
-import com.greenjon902.greenJam.api.packageLoader.Module;
+import com.greenjon902.greenJam.api.core.File;
+import com.greenjon902.greenJam.api.core.Module;
 import com.moandjiezana.toml.Toml;
 import org.jetbrains.annotations.NotNull;
 

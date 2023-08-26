@@ -1,7 +1,6 @@
-package com.greenjon902.greenJam.api;
+package com.greenjon902.greenJam.api.core;
 
-import com.greenjon902.greenJam.api.packageLoader.Package;
-import com.greenjon902.greenJam.api.packageLoader.PackageReference;
+import com.greenjon902.greenJam.api.core.packageLoader.PackageReference;
 import com.greenjon902.greenJam.core.PackageListImpl;
 
 import java.util.Map;

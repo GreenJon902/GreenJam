@@ -1,9 +1,9 @@
 package com.greenjon902.greenJam.core.packageLoader;
 
-import com.greenjon902.greenJam.api.PackageList;
-import com.greenjon902.greenJam.api.packageLoader.Module;
-import com.greenjon902.greenJam.api.packageLoader.PackageLoader;
-import com.greenjon902.greenJam.api.packageLoader.PackageReference;
+import com.greenjon902.greenJam.api.core.Module;
+import com.greenjon902.greenJam.api.core.PackageList;
+import com.greenjon902.greenJam.api.core.packageLoader.PackageLoader;
+import com.greenjon902.greenJam.api.core.packageLoader.PackageReference;
 import com.greenjon902.greenJam.utils.StackedClassBase;
 import com.moandjiezana.toml.Toml;
 
@@ -225,7 +225,7 @@ public class PackageLoaderImpl implements PackageLoader {
 		}
 
 		// Put the found items in the builder and build it
-		moduleBuilder.files((Set<com.greenjon902.greenJam.api.packageLoader.File>) (Set<?>) newFiles);
+		moduleBuilder.files((Set<com.greenjon902.greenJam.api.core.File>) (Set<?>) newFiles);
 		moduleBuilder.modules((Set<Module>) (Set<?>) newModules);
 		LoadedModule module = moduleBuilder.build();
 

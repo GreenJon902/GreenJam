@@ -1,4 +1,4 @@
-package com.greenjon902.greenJam.api;
+package com.greenjon902.greenJam.utils;
 
 /**
  * IntelliJ Templates:

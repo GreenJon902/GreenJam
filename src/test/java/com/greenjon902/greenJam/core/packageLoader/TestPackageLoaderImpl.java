@@ -1,9 +1,9 @@
 package com.greenjon902.greenJam.core.packageLoader;
 
-import com.greenjon902.greenJam.api.PackageList;
-import com.greenjon902.greenJam.api.packageLoader.File;
-import com.greenjon902.greenJam.api.packageLoader.Module;
-import com.greenjon902.greenJam.api.packageLoader.Package;
+import com.greenjon902.greenJam.api.core.File;
+import com.greenjon902.greenJam.api.core.Module;
+import com.greenjon902.greenJam.api.core.Package;
+import com.greenjon902.greenJam.api.core.PackageList;
 import com.moandjiezana.toml.Toml;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;

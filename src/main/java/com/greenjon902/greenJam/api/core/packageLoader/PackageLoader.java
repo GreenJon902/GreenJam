@@ -1,4 +1,4 @@
-package com.greenjon902.greenJam.api.packageLoader;
+package com.greenjon902.greenJam.api.core.packageLoader;
 
 import com.greenjon902.greenJam.core.packageLoader.LoadedPackage;
 
