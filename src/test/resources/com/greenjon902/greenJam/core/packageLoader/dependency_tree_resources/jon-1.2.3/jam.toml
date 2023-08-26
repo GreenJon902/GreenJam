@@ -6,4 +6,4 @@ aj = { version = "1.0.0" }
 omega = "1.0.0"
 cat = "1.0.0"
 
-[[Dependencies.dave]]
+[Dependencies.dave]

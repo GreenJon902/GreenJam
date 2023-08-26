@@ -16,4 +16,12 @@ public class LoadedFile extends LoadedPackageItem implements File {
 			return new LoadedFile(this);
 		}
 	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("LoadedFile{");
+		writeFields(sb);
+		sb.append('}');
+		return sb.toString();
+	}
 }

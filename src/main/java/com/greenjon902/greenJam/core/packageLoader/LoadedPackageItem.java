@@ -27,7 +27,7 @@ public class LoadedPackageItem implements PackageItem, FieldStringWriter {
 	public static class Builder {
 		private String name = "";
 
-		public Builder name(String name) {this.name = name; return this;}
+		public void name(String name) {this.name = name;}
 
 		public LoadedPackageItem build() {
 			return new LoadedPackageItem(this);
@@ -44,6 +44,14 @@ public class LoadedPackageItem implements PackageItem, FieldStringWriter {
 	@Override
 	public int hashCode() {
 		return Objects.hash(name);
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("LoadedPackageItem{");
+		writeFields(sb);
+		sb.append('}');
+		return sb.toString();
 	}
 
 	@Override

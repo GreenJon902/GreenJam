@@ -98,7 +98,7 @@ to what was put inside the jam.toml file.
 
 
 Dependencies
-    - key is name or dependency
+    - key is name of dependency
     - it is a table containing
         - version
         - a name for this project to refer to it as
@@ -108,8 +108,34 @@ Dependencies
     - or a string containing just the version
 
 
+
+OVERRIDES -------------------------------------------
+default local
+in package/test/mod.toml
+    - [Override]
+        name = "test"
+        version = "1.4"
+would just mean that test.foo is still correct, but package.test.foo may be overwritten.
+
+however if you then add
+      [Override.Install]
+Then it will override it for all dependencies, however you can specify a name or version for it to install under. e.g.
+        version = "1.4-better"
+
+Then it just acts like a package with a base
+
+
+BASES --------------------------------------------------
+bases and overrides are mutually exclusive!!  (but the overridden package may have a base)
+
+
+
+
+
 MISC ----------------------------------
 with overlayes you can just run ;; REQUIRE SUPER and it acts the same
 
 since packages may circuallarily require eachother, they store references to eachother containing the name, version
 (and at some point override info), which can be resolved using the PackageList.
+
+only allow double brace initialization when using builders due to it changing classes and breaking equals functions.

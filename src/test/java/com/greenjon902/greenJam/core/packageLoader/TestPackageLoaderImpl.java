@@ -4,7 +4,6 @@ import com.greenjon902.greenJam.api.core.File;
 import com.greenjon902.greenJam.api.core.Module;
 import com.greenjon902.greenJam.api.core.Package;
 import com.greenjon902.greenJam.api.core.PackageList;
-import com.moandjiezana.toml.Toml;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -119,11 +118,11 @@ public class TestPackageLoaderImpl {
 		// Use that as it can pretend to be a module
 
 		LoadedModule.Builder builder = new LoadedModule.Builder();
-		Module module = pl.loadModuleInto(builder, new Toml(), simpleModule);
+		Module module = pl.loadModuleInto(builder, new LoadedModule.RawConfig(), simpleModule);
 		Assertions.assertEquals("", module.name());  // Was never supplied
 
 		// Next check method wants the name set
-		module = pl.loadModuleInto(builder, new Toml(), simpleModule);
+		module = pl.loadModuleInto(builder, new LoadedModule.RawConfig(), simpleModule);
 		checkSimpleModuleContents(module, false, "");
 	}
 
