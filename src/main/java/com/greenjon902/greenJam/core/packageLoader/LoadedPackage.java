@@ -1,5 +1,6 @@
 package com.greenjon902.greenJam.core.packageLoader;
 
+import com.greenjon902.greenJam.api.core.Module;
 import com.greenjon902.greenJam.api.core.Package;
 import com.greenjon902.greenJam.api.core.packageLoader.PackageReference;
 import com.greenjon902.greenJam.core.packageLoader.rawConfig.PackageRawConfig;
@@ -66,7 +67,8 @@ public class LoadedPackage extends LoadedModule implements Package {
 		if (this == o) return true;
 		if (!super.equals(o)) return false;
 
-		if (compareOnlyAsModule) return true;  // Module comparison done so must be correct
+		// Module comparison done so must be correct if compareOnlyAsModule
+		if (compareOnlyAsModule && o instanceof Module && !(o instanceof Package)) return true;
 
 		if (getClass() != o.getClass()) return false;
 

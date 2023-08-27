@@ -53,29 +53,29 @@ public class TestPackageLoaderImpl {
 		Set<File> files3 = new HashSet<>();
 
 		files1.add(new LoadedFile.Builder() {{
-			name("main.jam");
+			name("main");
 		}}.build());
 		files1.add(new LoadedFile.Builder() {{
-			name("test.jam");
+			name("test");
 		}}.build());
 		if (withSubfolderFiles) {
 			files1.add(new LoadedFile.Builder() {{
-				name("x_actualSkills.jam");
+				name("x_actualSkills");
 			}}.build());
 		}
 
 		files2.add(new LoadedFile.Builder() {{
-			name("bar.jam");
+			name("bar");
 		}}.build());
 		if (withSubfolderFiles) {
 			files2.add(new LoadedFile.Builder() {{
-				name("lies.jam");
+				name("lies");
 			}}.build());
 		}
 
 		if (withSubfolderFiles) {
 			files3.add(new LoadedFile.Builder() {{
-				name("baz.jam");
+				name("baz");
 			}}.build());
 		}
 
@@ -171,7 +171,7 @@ public class TestPackageLoaderImpl {
 									name("c.jam");
 								}}.build(),
 								new LoadedFile.Builder() {{
-									name("e.jam");
+									name("e");
 								}}.build()
 						));
 					}}.build(),
@@ -179,10 +179,10 @@ public class TestPackageLoaderImpl {
 						name("mod2");
 						files(Set.of(
 								new LoadedFile.Builder() {{
-									name("c");
+									name("f.jam");
 								}}.build(),
 								new LoadedFile.Builder() {{
-									name("d");
+									name("g");
 								}}.build()
 						));
 					}}.build()

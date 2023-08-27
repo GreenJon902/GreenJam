@@ -4,19 +4,22 @@ import com.greenjon902.greenJam.api.core.Module;
 import com.greenjon902.greenJam.api.core.PackageList;
 import com.greenjon902.greenJam.api.core.packageLoader.PackageLoader;
 import com.greenjon902.greenJam.api.core.packageLoader.PackageReference;
-import com.greenjon902.greenJam.core.packageLoader.rawConfig.DependencyRawConfig;
-import com.greenjon902.greenJam.core.packageLoader.rawConfig.ModuleRawConfig;
-import com.greenjon902.greenJam.core.packageLoader.rawConfig.PackageRawConfig;
+import com.greenjon902.greenJam.core.packageLoader.rawConfig.*;
 import com.greenjon902.greenJam.utils.StackedClassBase;
 import com.moandjiezana.toml.Toml;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.IntFunction;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -24,7 +27,6 @@ import static com.greenjon902.greenJam.utils.TomlUtils.loadIfExists;
 
 // TODO: Load other packages (bases, overwrides)
 // TODO: load a reader for each file
-// TODO: Use regexes group system to pull only the desired part from the file name, maybe save other parts to a field?
 
 /**
  * See {@link #loadSinglePackage(File)}
@@ -151,6 +153,23 @@ public class PackageLoaderImpl implements PackageLoader {
 	}
 
 	/**
+	 * Checks whether a regex in the list matches to the given relative path. If it does, it does the substitution and
+	 * returns it.
+	 * @param regexs The {@link RegexRawConfig}s
+	 * @param path The relative path
+	 * @return The new path or null
+	 */
+	private static @Nullable String tryMatch(RegexRawConfig[] regexs, String path) {
+		for (RegexRawConfig regex : regexs) {
+			Matcher matcher = Pattern.compile(regex.regex).matcher(path);
+			if (matcher.matches()) {
+				return matcher.replaceFirst(regex.substitution);
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Loads the file and submodule information from the disk, it also applies any items in the supplied toml to a new
 	 * level on the stack which is popped at the end.
 	 * This will only load files and submodules that fit the pattern in loading config, however it can find files in
@@ -168,15 +187,13 @@ public class PackageLoaderImpl implements PackageLoader {
 
 		moduleBuilder.rawConfig(rawConfig);
 
-		// Use these to check if something should be read into the compiler as a file or a module
-		Pattern[] filePatterns = Arrays.stream(lc.fileRegexs()).map(Pattern::compile).toArray(Pattern[]::new);
-		Pattern[] modulePatterns = Arrays.stream(lc.moduleRegexs()).map(Pattern::compile).toArray(Pattern[]::new);
-
 		Set<LoadedFile> newFiles = new HashSet<>();
 		Set<LoadedModule> newModules = new HashSet<>();
 
+		Path folderPath = folder.toPath();
+
 		// For each path check if it is valid and then load them
-		try (Stream<Path> paths = Files.walk(folder.toPath())) {
+		try (Stream<Path> paths = Files.walk(folderPath)) {
 			paths.forEach(
 					path -> {
 
@@ -191,19 +208,24 @@ public class PackageLoaderImpl implements PackageLoader {
 
 						final String finalStringPath = pathString;  // For predicate to work
 
-						try {
+						String relativePath = folderPath.relativize(path).toString();
 
+						try {
 							// Now we can do our checks and load any children
 							File file = path.toFile();
-							if (file.isFile() &&
-									Arrays.stream(filePatterns).anyMatch(matcher -> matcher.matcher(finalStringPath).matches())) {
-								LoadedFile newFile = loadFile(file);
-								newFiles.add(newFile);
+							if (file.isFile()) {
+								String name = tryMatch(lc.fileRegex(), relativePath);
+								if (name != null) {
+									LoadedFile newFile = loadFile(file, name);
+									newFiles.add(newFile);
+								}
 
-							} else if (file.isDirectory() &&
-									Arrays.stream(modulePatterns).anyMatch(matcher -> matcher.matcher(finalStringPath).matches())) {
-								LoadedModule newModule = loadModule(file);
-								newModules.add(newModule);
+							} else if (file.isDirectory()) {
+								String name = tryMatch(lc.moduleRegex(), relativePath);
+								if (name != null) {
+									LoadedModule newModule = loadModule(file);
+									newModules.add(newModule);
+								}
 							}
 
 						} catch (IOException e) {
@@ -226,11 +248,12 @@ public class PackageLoaderImpl implements PackageLoader {
 	 * Loads a files information, which is only its name at the momment.
 	 *
 	 * @param folder The path of the file
+	 * @param name
 	 * @return The built file
 	 */
-	private LoadedFile loadFile(File folder) throws IOException {
+	private LoadedFile loadFile(File folder, String name) throws IOException {
 		LoadedFile.Builder fileBuilder = new LoadedFile.Builder();
-		fileBuilder.name(folder.getName());
+		fileBuilder.name(name);
 
 		return fileBuilder.build();
 	}
@@ -255,9 +278,9 @@ public class PackageLoaderImpl implements PackageLoader {
 	 * @param consumer The consumer to run
 	 * @param value The list to check
 	 */
-	private void applyHelper(Consumer<String[]> consumer, @NotNull List<String> value) {
+	private <T> void applyHelper(Consumer<T[]> consumer, @NotNull AdaptableSetBase<T> value, IntFunction<T[]> generator) {
 		if (!value.isEmpty()) {
-			consumer.accept(value.toArray(String[]::new));
+			consumer.accept(value.toArray(generator));
 		}
 	}
 
@@ -271,8 +294,8 @@ public class PackageLoaderImpl implements PackageLoader {
 	private void applyConfig(ModuleRawConfig rawConfig, LoadingConfig lc) {
 		applyHelper(lc::packageConfigPath, rawConfig.loader.packageConfigPath);  // I know this one is pointless, but it's important to me
 		applyHelper(lc::moduleConfigPath, rawConfig.loader.moduleConfigPath);
-		applyHelper(lc::fileRegex, rawConfig.loader.fileRegex);
-		applyHelper(lc::moduleRegex, rawConfig.loader.moduleRegex);
+		applyHelper(lc::fileRegex, rawConfig.loader.fileRegex, RegexRawConfig[]::new);
+		applyHelper(lc::moduleRegex, rawConfig.loader.moduleRegex, RegexRawConfig[]::new);
 	}
 
 
@@ -294,8 +317,8 @@ public class PackageLoaderImpl implements PackageLoader {
 			LoadingConfig lc = new LoadingConfig();
 			lc.packageConfigPath("jam.toml");
 			lc.moduleConfigPath("mod.toml");
-			lc.fileRegex("[^/]+?.jam");
-			lc.moduleRegex("[^/]+?");
+			lc.fileRegex(new RegexRawConfig[]{new RegexRawConfig("([^/]+?)\\.jam")});
+			lc.moduleRegex(new RegexRawConfig[]{new RegexRawConfig("([^/]+?)")});
 			return lc;
 		}
 
@@ -317,19 +340,17 @@ public class PackageLoaderImpl implements PackageLoader {
 			set(1, string);
 		}
 
-		public String[] fileRegexs() {
-			return (String[]) get(2);
+		public RegexRawConfig[] fileRegex() {
+			return (RegexRawConfig[]) get(2);
 		}
-		public void fileRegexs(String[] string) {set(2, string);}
-		public void fileRegex(String string) {set(2, new String[] {string});}
+		public void fileRegex(RegexRawConfig[] regex) {set(2, regex);}
 
-		public String[] moduleRegexs() {
-			return (String[]) get(3);
+		public RegexRawConfig[] moduleRegex() {
+			return (RegexRawConfig[]) get(3);
 		}
-		public void moduleRegexs(String[] string) {
-			set(3, string);
+		public void moduleRegex(RegexRawConfig[] regex) {
+			set(3, regex);
 		}
-		public void moduleRegex(String string) {set(3, new String[] {string});}
 	}
 
 	/**

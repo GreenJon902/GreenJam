@@ -1,4 +1,4 @@
 name = "package_with_changing_regex"
 
 [Loader]
-file-regex = "[^/]+\\.jam"
+file-regex = "([^/]+\\.jam)"

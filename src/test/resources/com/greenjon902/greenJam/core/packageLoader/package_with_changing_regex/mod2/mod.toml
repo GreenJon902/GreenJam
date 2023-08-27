@@ -1,0 +1,2 @@
+[Loader]
+file-regex = { "(f)\.jam" = "$0", "(g)\.jam" = "$1" }

@@ -68,7 +68,7 @@ public class PackageRawConfig extends ModuleRawConfig {
 	}
 
 	@JsonAdapter(DependencyList.DependencyListAdapter.class)
-	public static class DependencyList extends AdaptableListBase<DependencyRawConfig> {
+	public static class DependencyList extends AdaptableSetBase<DependencyRawConfig> {
 		public DependencyList(DependencyRawConfig... dependencies) {
 			super(dependencies);
 		}

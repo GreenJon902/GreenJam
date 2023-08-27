@@ -3,5 +3,5 @@ description = "A simple example of a package with files and modules"
 authors = ["GreenJon902"]
 
 [Loader]
-file-regexs = ["[^/]+?\\.jam", "ext\\/[^/]+?\\.jam"]
-module-regex = "^(?!ext(?:(?:/?)|$))[^/]+"
+file-regex = ["([^/]+?)\\.jam", "ext\\/([^/]+?)\\.jam"]
+module-regex = "^((?!ext(?:(?:/?)|$))[^/]+)"

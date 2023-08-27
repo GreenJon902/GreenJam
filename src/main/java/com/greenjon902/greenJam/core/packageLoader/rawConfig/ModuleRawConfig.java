@@ -24,6 +24,7 @@ public class ModuleRawConfig implements FieldStringWriter {  // Default values
 	@Override
 	public void writeFields(StringBuilder sb) {
 		sb.append("name='").append(name).append('\'');
+		sb.append(", loader=").append(loader);
 	}
 
 	@Override
@@ -39,7 +40,7 @@ public class ModuleRawConfig implements FieldStringWriter {  // Default values
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		ModuleRawConfig rawConfig = (ModuleRawConfig) o;
-		return Objects.equals(name, rawConfig.name);
+		return Objects.equals(name, rawConfig.name) && loader.equals(rawConfig.loader);
 	}
 
 	@Override

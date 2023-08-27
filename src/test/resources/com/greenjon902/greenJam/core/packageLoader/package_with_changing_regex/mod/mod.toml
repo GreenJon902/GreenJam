@@ -1,2 +1,2 @@
 [Loader]
-file-regex = "c\\.jam"
+file-regex = ["(c\\.jam)", "(e)\\.jam"]
