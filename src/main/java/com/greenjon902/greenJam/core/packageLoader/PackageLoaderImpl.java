@@ -4,6 +4,10 @@ import com.greenjon902.greenJam.api.core.Module;
 import com.greenjon902.greenJam.api.core.PackageList;
 import com.greenjon902.greenJam.api.core.packageLoader.PackageLoader;
 import com.greenjon902.greenJam.api.core.packageLoader.PackageReference;
+import com.greenjon902.greenJam.core.packageLoader.rawConfig.DependencyList;
+import com.greenjon902.greenJam.core.packageLoader.rawConfig.DependencyRawConfig;
+import com.greenjon902.greenJam.core.packageLoader.rawConfig.ModuleRawConfig;
+import com.greenjon902.greenJam.core.packageLoader.rawConfig.PackageRawConfig;
 import com.greenjon902.greenJam.utils.StackedClassBase;
 import com.moandjiezana.toml.Toml;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +74,7 @@ public class PackageLoaderImpl implements PackageLoader {
 	/**
 	 * Loads a singular package's info (with its files and modules) from the package config file. Then load it as if
 	 * it was a module (ignoring module config), see
-	 * {@link #loadModuleInto(LoadedModule.Builder, LoadedModule.RawConfig, File)}.
+	 * {@link #loadModuleInto(LoadedModule.Builder, ModuleRawConfig, File)}.
 	 * <br><br>
 	 * Note: This does not add it to the {@link PackageList}!
 	 *
@@ -80,7 +84,7 @@ public class PackageLoaderImpl implements PackageLoader {
 	public LoadedPackage loadSinglePackage(File root) throws IOException {
 		// Load toml and read any information in, then load data as if it was a module
 		Toml toml = loadIfExists(new File(root, lc.packageConfigPath()));
-		LoadedPackage.RawConfig rawConfig = toml.to(LoadedPackage.RawConfig.class);
+		PackageRawConfig rawConfig = toml.to(PackageRawConfig.class);
 
 		LoadedPackage.Builder packageBuilder = new LoadedPackage.Builder();
 		packageBuilder.name(PackageReference.formatName(rawConfig.name, rawConfig.version));
@@ -101,24 +105,15 @@ public class PackageLoaderImpl implements PackageLoader {
 	 * @param dependencies The dependency table from the toml file
 	 * @return The package references
 	 */
-	private Set<LoadedPackageReference> makeDependencyReferences(Map<String, LoadedPackage.RawConfig.DependencyInfo> dependencies) {
+	private Set<LoadedPackageReference> makeDependencyReferences(Map<String, DependencyList> dependencies) {
 		Set<LoadedPackageReference> references = new HashSet<>();
 
 		// Loop through dependencies
 		for (String key : dependencies.keySet()) {
-			LoadedPackage.RawConfig.DependencyInfo dependencyInfo = dependencies.get(key);
+			DependencyList versions = dependencies.get(key);
 
-			// Get dependency type
-			if (dependencyInfo instanceof LoadedPackage.RawConfig.Dependency dependency) {  // Dependency, so just one with some information
-				references.add(makeDependencyReference(dependency, key));
-
-			} else if (dependencyInfo instanceof List<?> versions) {  // List, so multiple versions of dependency
-				for (Object version : versions) {
-					references.add(makeDependencyReference((LoadedPackage.RawConfig.Dependency) version, key));
-				}
-
-			} else {
-				throw new IllegalArgumentException("Unknown type for dependency " + key + ", " + dependencyInfo.getClass());
+			for (DependencyRawConfig version : versions) {
+				references.add(makeDependencyReference(version, key));
 			}
 		}
 		return references;
@@ -131,7 +126,7 @@ public class PackageLoaderImpl implements PackageLoader {
 	 * @param dependency The dependency information
 	 * @return The created reference
 	 */
-	private LoadedPackageReference makeDependencyReference(LoadedPackage.RawConfig.Dependency dependency, String realName) {
+	private LoadedPackageReference makeDependencyReference(DependencyRawConfig dependency, String realName) {
 		String version = dependency.version;
 		String referName = dependency.name.isEmpty() ? realName : dependency.name;
 		return new LoadedPackageReference(realName, referName, version);
@@ -139,7 +134,7 @@ public class PackageLoaderImpl implements PackageLoader {
 
 	/**
 	 * Loads a module from a folder, this function loads things from the module.toml file, see
-	 * {@link #loadModuleInto(LoadedModule.Builder, LoadedModule.RawConfig, File)} for loading the file
+	 * {@link #loadModuleInto(LoadedModule.Builder, ModuleRawConfig, File)} for loading the file
 	 * and submodule information.
 	 *
 	 * @param folder The root folder of the module
@@ -148,7 +143,7 @@ public class PackageLoaderImpl implements PackageLoader {
 	protected LoadedModule loadModule(File folder) throws IOException {
 		// Load toml and read any information in, then load files and submodules
 		Toml toml = loadIfExists(new File(folder, lc.moduleConfigPath()));
-		LoadedPackage.RawConfig rawConfig = toml.to(LoadedPackage.RawConfig.class);
+		PackageRawConfig rawConfig = toml.to(PackageRawConfig.class);
 
 		LoadedModule.Builder moduleBuilder = new LoadedModule.Builder();
 		moduleBuilder.name(rawConfig.name.isEmpty() ? folder.getName() : rawConfig.name);
@@ -164,11 +159,11 @@ public class PackageLoaderImpl implements PackageLoader {
 	 * This will also put the given toml into the module.
 	 *
 	 * @param moduleBuilder The builder of the current module that is being loaded
-	 * @param rawConfig          The {@link LoadedModule.RawConfig} of the current module being loaded
+	 * @param rawConfig          The {@link ModuleRawConfig} of the current module being loaded
 	 * @param folder        The folder of the current module being loaded
 	 * @return The built module
 	 */
-	protected LoadedModule loadModuleInto(LoadedModule.Builder moduleBuilder, LoadedModule.RawConfig rawConfig, File folder) throws IOException {
+	protected LoadedModule loadModuleInto(LoadedModule.Builder moduleBuilder, ModuleRawConfig rawConfig, File folder) throws IOException {
 		lc.push();
 		applyConfig(rawConfig, lc);
 
@@ -243,7 +238,7 @@ public class PackageLoaderImpl implements PackageLoader {
 	}
 
 	/**
-	 * Helper for {@link #applyConfig(LoadedModule.RawConfig, LoadingConfig)}.
+	 * Helper for {@link #applyConfig(ModuleRawConfig, LoadingConfig)}.
 	 * This checks whether the string is empty, if it is not it gives it to the consumer.
 	 *
 	 * @param consumer The consumer to run
@@ -256,7 +251,7 @@ public class PackageLoaderImpl implements PackageLoader {
 	}
 
 	/**
-	 * Helper for {@link #applyConfig(LoadedModule.RawConfig, LoadingConfig)}.
+	 * Helper for {@link #applyConfig(ModuleRawConfig, LoadingConfig)}.
 	 * This checks whether the list is empty, if it is not it gives it to the consumer.
 	 *
 	 * @param consumer The consumer to run
@@ -272,10 +267,10 @@ public class PackageLoaderImpl implements PackageLoader {
 	 * Updates the config with any relevant items set in the toml.
 	 * Note: This does not push a new level to the stack
 	 *
-	 * @param rawConfig The {@link LoadedModule.RawConfig} to use
+	 * @param rawConfig The {@link ModuleRawConfig} to use
 	 * @param lc   The current loading config
 	 */
-	private void applyConfig(LoadedModule.RawConfig rawConfig, LoadingConfig lc) { // TODO: Load these from a file
+	private void applyConfig(ModuleRawConfig rawConfig, LoadingConfig lc) {
 		applyHelper(lc::packageConfigPath, rawConfig.loader.packageConfigPath);  // I know this one is pointless, but it's important to me
 		applyHelper(lc::moduleConfigPath, rawConfig.loader.moduleConfigPath);
 		applyHelper(lc::fileRegex, rawConfig.loader.fileRegex);
