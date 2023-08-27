@@ -4,7 +4,6 @@ import com.greenjon902.greenJam.api.core.Module;
 import com.greenjon902.greenJam.api.core.PackageList;
 import com.greenjon902.greenJam.api.core.packageLoader.PackageLoader;
 import com.greenjon902.greenJam.api.core.packageLoader.PackageReference;
-import com.greenjon902.greenJam.core.packageLoader.rawConfig.DependencyList;
 import com.greenjon902.greenJam.core.packageLoader.rawConfig.DependencyRawConfig;
 import com.greenjon902.greenJam.core.packageLoader.rawConfig.ModuleRawConfig;
 import com.greenjon902.greenJam.core.packageLoader.rawConfig.PackageRawConfig;
@@ -105,12 +104,12 @@ public class PackageLoaderImpl implements PackageLoader {
 	 * @param dependencies The dependency table from the toml file
 	 * @return The package references
 	 */
-	private Set<LoadedPackageReference> makeDependencyReferences(Map<String, DependencyList> dependencies) {
+	private Set<LoadedPackageReference> makeDependencyReferences(Map<String, PackageRawConfig.DependencyList> dependencies) {
 		Set<LoadedPackageReference> references = new HashSet<>();
 
 		// Loop through dependencies
 		for (String key : dependencies.keySet()) {
-			DependencyList versions = dependencies.get(key);
+			PackageRawConfig.DependencyList versions = dependencies.get(key);
 
 			for (DependencyRawConfig version : versions) {
 				references.add(makeDependencyReference(version, key));
@@ -198,7 +197,7 @@ public class PackageLoaderImpl implements PackageLoader {
 							File file = path.toFile();
 							if (file.isFile() &&
 									Arrays.stream(filePatterns).anyMatch(matcher -> matcher.matcher(finalStringPath).matches())) {
-								LoadedFile newFile = loadFile(file, lc);
+								LoadedFile newFile = loadFile(file);
 								newFiles.add(newFile);
 
 							} else if (file.isDirectory() &&
@@ -227,10 +226,9 @@ public class PackageLoaderImpl implements PackageLoader {
 	 * Loads a files information, which is only its name at the momment.
 	 *
 	 * @param folder The path of the file
-	 * @param lc     The current loading config
 	 * @return The built file
 	 */
-	private LoadedFile loadFile(File folder, LoadingConfig lc) throws IOException {
+	private LoadedFile loadFile(File folder) throws IOException {
 		LoadedFile.Builder fileBuilder = new LoadedFile.Builder();
 		fileBuilder.name(folder.getName());
 
@@ -274,9 +272,7 @@ public class PackageLoaderImpl implements PackageLoader {
 		applyHelper(lc::packageConfigPath, rawConfig.loader.packageConfigPath);  // I know this one is pointless, but it's important to me
 		applyHelper(lc::moduleConfigPath, rawConfig.loader.moduleConfigPath);
 		applyHelper(lc::fileRegex, rawConfig.loader.fileRegex);
-		applyHelper(lc::fileRegexs, rawConfig.loader.fileRegexs);
 		applyHelper(lc::moduleRegex, rawConfig.loader.moduleRegex);
-		applyHelper(lc::moduleRegexs, rawConfig.loader.moduleRegexs);
 	}
 
 

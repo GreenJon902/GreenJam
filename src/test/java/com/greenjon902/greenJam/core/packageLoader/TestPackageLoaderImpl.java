@@ -169,6 +169,20 @@ public class TestPackageLoaderImpl {
 						files(Set.of(
 								new LoadedFile.Builder() {{
 									name("c.jam");
+								}}.build(),
+								new LoadedFile.Builder() {{
+									name("e.jam");
+								}}.build()
+						));
+					}}.build(),
+					new LoadedModule.Builder() {{
+						name("mod2");
+						files(Set.of(
+								new LoadedFile.Builder() {{
+									name("c");
+								}}.build(),
+								new LoadedFile.Builder() {{
+									name("d");
 								}}.build()
 						));
 					}}.build()

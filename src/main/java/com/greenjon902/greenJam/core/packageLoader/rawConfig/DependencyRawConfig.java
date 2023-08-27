@@ -16,7 +16,7 @@ public class DependencyRawConfig {
 		this.version = version;
 	}
 
-	@SuppressWarnings({"unused", "ConstantValue"})
+	@SuppressWarnings({"unused"})
 	public DependencyRawConfig() {  // Puts in default values that were missing from toml
 		this("", "");
 	}
