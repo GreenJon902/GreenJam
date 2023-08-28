@@ -57,7 +57,7 @@ public class LoadedModule extends LoadedPackageItem implements Module {
 	}
 
 	@Override
-	public boolean equals(Object o) {  // TODO: Fix these comparisons
+	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o instanceof LoadedPackage that) return that.equals(this);
 		return Module.super.equals_(o);
