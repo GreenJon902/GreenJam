@@ -4,6 +4,7 @@ import com.greenjon902.greenJam.api.core.File;
 import com.greenjon902.greenJam.api.core.Module;
 import com.greenjon902.greenJam.api.core.Package;
 import com.greenjon902.greenJam.api.core.PackageList;
+import com.greenjon902.greenJam.api.core.packageLoader.PackageLoader;
 import com.greenjon902.greenJam.core.packageLoader.rawConfig.ModuleRawConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -39,8 +40,6 @@ public class TestPackageLoaderImpl {
 		if (resource == null) throw new FileNotFoundException("Could not find " + path);
 		return new java.io.File(resource.getFile());
 	}
-
-	private final PackageLoaderImpl pl = new PackageLoaderImpl();
 
 	/**
 	 * Checks that the module version of the simple package was loaded correctly. You can also tell it to do
@@ -116,6 +115,7 @@ public class TestPackageLoaderImpl {
 	@Test
 	public void testLoadModuleInto() throws IOException {
 		java.io.File simpleModule = getFile("com/greenjon902/greenJam/core/packageLoader/simple_package");
+		PackageLoaderImpl pl = new PackageLoaderImpl(simpleModule);
 		// Use that as it can pretend to be a module
 
 		LoadedModule.Builder builder = new LoadedModule.Builder();
@@ -129,7 +129,8 @@ public class TestPackageLoaderImpl {
 
 	@Test
 	public void testSimplePackage() throws IOException {
-		LoadedPackage p = pl.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/simple_package"));
+		PackageLoaderImpl pl = new PackageLoaderImpl(getFile("com/greenjon902/greenJam/core/packageLoader/simple_package"));
+		LoadedPackage p = pl.loadSinglePackage();
 
 		// Check some things here as not checked in check_simple_module_contents
 		Assertions.assertEquals("A simple example of a package with files and modules", p.description());
@@ -141,7 +142,8 @@ public class TestPackageLoaderImpl {
 
 	@Test
 	public void testPackageWithSubfolderFiles() throws IOException {
-		LoadedPackage p = pl.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/package_with_subfolder_files"));
+		PackageLoaderImpl pl = new PackageLoaderImpl(getFile("com/greenjon902/greenJam/core/packageLoader/package_with_subfolder_files"));
+		LoadedPackage p = pl.loadSinglePackage();
 		Assertions.assertEquals("A simple example of a package with files and modules", p.description());
 		Assertions.assertEquals(Set.of("GreenJon902"), p.authors());
 
@@ -151,7 +153,8 @@ public class TestPackageLoaderImpl {
 
 	@Test
 	public void testPackageWithChangingRegex() throws IOException {
-		Package p = pl.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex"));
+		PackageLoaderImpl pl = new PackageLoaderImpl(getFile("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex"));
+		Package p = pl.loadSinglePackage();
 
 		LoadedPackage expected = new LoadedPackage.Builder() {{
 			name("package_with_changing_regex");
@@ -194,21 +197,24 @@ public class TestPackageLoaderImpl {
 
 	@Test
 	public void testLoadPackageWithVersion() throws IOException {
-		Package p = pl.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/package_with_version"));
+		PackageLoaderImpl pl = new PackageLoaderImpl(getFile("com/greenjon902/greenJam/core/packageLoader/package_with_version"));
+		Package p = pl.loadSinglePackage();
 
 		Assertions.assertEquals("package_with_version-1.0.1", p.name());
 	}
 
 	@Test
 	public void testLoadNameOverwrittingModule() throws IOException {
-		Module m = pl.loadModule(getFile("com/greenjon902/greenJam/core/packageLoader/name_overwritting_module"));
+		PackageLoaderImpl pl = new PackageLoaderImpl(getFile("com/greenjon902/greenJam/core/packageLoader/name_overwritting_module"));
+		Module m = pl.loadModule(pl.root);
 
 		Assertions.assertEquals("overwritten", m.name());
 	}
 
 	@Test
 	public void testLoadPackageWithSimpleDependencies() throws IOException {
-		Package p = pl.loadSinglePackage(getFile("com/greenjon902/greenJam/core/packageLoader/dependency_tree_resources/main"));
+		PackageLoaderImpl pl = new PackageLoaderImpl(getFile("com/greenjon902/greenJam/core/packageLoader/dependency_tree_resources/main"));
+		Package p = pl.loadSinglePackage();
 
 		LoadedPackage expected = new LoadedPackage.Builder() {{
 			description("The main package for this test");
@@ -321,7 +327,8 @@ public class TestPackageLoaderImpl {
 		}};
 		Package expected_main = packages.get("").get("");
 
-		Package main = pl.loadPackagesFor(getFile("com/greenjon902/greenJam/core/packageLoader/dependency_tree_resources/main"));
+		PackageLoader pl = new PackageLoaderImpl(getFile("com/greenjon902/greenJam/core/packageLoader/dependency_tree_resources/main"));
+		Package main = pl.loadAndDependants();
 
 		Assertions.assertEquals(expected_main, main);
 		Assertions.assertEquals(packages, PackageList.getInstance().getPackages());

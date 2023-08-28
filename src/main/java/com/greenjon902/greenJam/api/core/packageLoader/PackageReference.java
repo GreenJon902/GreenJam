@@ -1,5 +1,7 @@
 package com.greenjon902.greenJam.api.core.packageLoader;
 
+import com.greenjon902.greenJam.api.core.Package;
+import com.greenjon902.greenJam.api.core.PackageList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,6 +31,13 @@ public interface PackageReference {
 	 */
 	default @NotNull String formatName() {
 		return formatName(realName(), version());
+	}
+
+	/**
+	 * Formats a name and version in the style that is used for installed dependency storage.
+	 */
+	default @NotNull Package resolve() {
+		return PackageList.getInstance().get(realName(), version());
 	}
 
 	/**

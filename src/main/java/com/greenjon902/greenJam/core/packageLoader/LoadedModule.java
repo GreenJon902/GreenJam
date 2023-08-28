@@ -5,7 +5,8 @@ import com.greenjon902.greenJam.api.core.Module;
 import com.greenjon902.greenJam.core.packageLoader.rawConfig.ModuleRawConfig;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * See {@link LoadedPackageItem}
@@ -58,35 +59,7 @@ public class LoadedModule extends LoadedPackageItem implements Module {
 	@Override
 	public boolean equals(Object o) {  // TODO: Fix these comparisons
 		if (this == o) return true;
-		if (!(o instanceof LoadedModule that)) return false;
-		if (!super.equals(o)) return false;
-
-		if (!(this instanceof LoadedPackage)) {
-			if (o instanceof LoadedPackage loadedPackage && !loadedPackage.compareOnlyAsModule) return false;
-		}
-
-		return Objects.equals(modules, that.modules) && Objects.equals(files, that.files);
+		if (o instanceof LoadedPackage that) return that.equals(this);
+		return Module.super.equals_(o);
 	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(super.hashCode(), modules, files);
-	}
-
-	@Override
-	public void writeFields(StringBuilder sb) {
-		sb.append("modules=").append(Arrays.toString(modules.stream().sorted(Comparator.comparing(Object::hashCode)).toArray()));
-		sb.append(", files=").append(Arrays.toString(files.stream().sorted(Comparator.comparing(Object::hashCode)).toArray()));
-		sb.append(", ");
-		super.writeFields(sb);
-	}
-
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder("LoadedModule{");
-		writeFields(sb);
-		sb.append('}');
-		return sb.toString();
-	}
-
 }

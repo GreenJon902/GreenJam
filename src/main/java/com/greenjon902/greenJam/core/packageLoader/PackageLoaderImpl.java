@@ -1,9 +1,11 @@
 package com.greenjon902.greenJam.core.packageLoader;
 
 import com.greenjon902.greenJam.api.core.Module;
+import com.greenjon902.greenJam.api.core.Package;
 import com.greenjon902.greenJam.api.core.PackageList;
 import com.greenjon902.greenJam.api.core.packageLoader.PackageLoader;
 import com.greenjon902.greenJam.api.core.packageLoader.PackageReference;
+import com.greenjon902.greenJam.core.packageLoader.basedPackageHelpers.BasedPackage;
 import com.greenjon902.greenJam.core.packageLoader.rawConfig.*;
 import com.greenjon902.greenJam.utils.StackedClassBase;
 import com.moandjiezana.toml.Toml;
@@ -14,9 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.regex.Matcher;
@@ -25,49 +25,69 @@ import java.util.stream.Stream;
 
 import static com.greenjon902.greenJam.utils.TomlUtils.loadIfExists;
 
-// TODO: Load other packages (bases, overwrides)
+// TODO: Load other packages (overwrides)
 // TODO: load a reader for each file
 
 /**
- * See {@link #loadSinglePackage(File)}
+ * See {@link #loadAndDependants()}
  */
 public class PackageLoaderImpl implements PackageLoader {
 	private final LoadingConfig lc;
+	public final File root;
 
-	public PackageLoaderImpl() {
-		lc = LoadingConfig.getDefault();
+	/**
+	 * Create a package loader for a specific package.
+	 * @param root The root of the first package to load
+	 */
+	public PackageLoaderImpl(File root) {
+		this(root, LoadingConfig.getDefault());
+	}
+
+	private PackageLoaderImpl(File root, LoadingConfig lc) {
+		this.root = root;
+		this.lc = lc;
 	}
 
 	@Override
-	public LoadedPackage loadPackagesFor(File root) throws IOException {
+	public Package loadAndDependants() throws IOException {
 		PackageList packageList = PackageList.getInstance();  // So we don't need to run it a lot
 
 		// Load the package info and save it
-		LoadedPackage rootPackage = loadSinglePackage(root);
+		LoadedPackage rootPackage = loadSinglePackage();
 		packageList.add(rootPackage.rawConfig().name, rootPackage.rawConfig().version, rootPackage);
-		// Add this to package list before to prevent circular dependents looping
+		// Add this to package list before loaded dependencies to prevent circular dependents looping
 
-		// Now we can check if any new dependencies need to be loaded
-		Set<PackageReference> dependencies = rootPackage.dependencies();
-		for (PackageReference dependency : dependencies) {
-			if (!packageList.hasPackage(dependency)) {
-				if (dependency instanceof LoadedPackageReference loadedDependency) {
-					File source = locatePackageFromReference(loadedDependency);
+		// Now we can check if any new dependencies or bases need to be loaded.
+		List<LoadedPackageReference> baseReferences = makeBasesReferences(rootPackage.rawConfig().bases);
+		Set<PackageReference> references = new HashSet<>(rootPackage.dependencies());  // HashSet so its modifiable
+		references.addAll(baseReferences);
+
+		for (PackageReference reference : references) {
+			if (!packageList.hasPackage(reference)) {
+				if (reference instanceof LoadedPackageReference loadedReference) {
+					File source = locatePackageFromReference(loadedReference);
 
 					if (source == null) {
 						throw new RuntimeException("Could not find package with formatted name \"" +
-								loadedDependency.formatName() + "\" in JAMPATH");
+								loadedReference.formatName() + "\" in JAMPATH");
 					}
 
 					// Not loaded yet, but checks have passed, so now we need to load it
-					loadPackagesFor(source);  // But we don't care about this one's return value
+					new PackageLoaderImpl(source).loadAndDependants();  // But we don't care about this one's return value
 
 				} else {
-					throw new RuntimeException("Expected dependency to be of type LoadedPackageReference, not " +
-							dependency.getClass().getSimpleName());
+					throw new RuntimeException("Expected reference to be of type LoadedPackageReference, not " +
+							reference.getClass().getSimpleName());
 				}
 			}
 		}
+
+		// Now the bases are loaded, we can build the package with bases
+		if (!baseReferences.isEmpty()) { // If no bases, then don't do anything
+			Package[] bases = baseReferences.stream().map(PackageReference::resolve).toArray(Package[]::new);
+			BasedPackage basedPackage = new BasedPackage(false, rootPackage, bases);
+		}
+
 
 		return rootPackage;
 	}
@@ -78,18 +98,18 @@ public class PackageLoaderImpl implements PackageLoader {
 	 * {@link #loadModuleInto(LoadedModule.Builder, ModuleRawConfig, File)}.
 	 * <br><br>
 	 * Note: This does not add it to the {@link PackageList}!
+	 * Note: This also does not compute bases, however overrides will be processed (if loaded).
 	 *
-	 * @param root The root folder of the package
 	 * @return The built package
 	 */
-	public LoadedPackage loadSinglePackage(File root) throws IOException {
+	public LoadedPackage loadSinglePackage() throws IOException {
 		// Load toml and read any information in, then load data as if it was a module
 		Toml toml = loadIfExists(new File(root, lc.packageConfigPath()));
 		PackageRawConfig rawConfig = toml.to(PackageRawConfig.class);
 
 		LoadedPackage.Builder packageBuilder = new LoadedPackage.Builder();
 		packageBuilder.name(PackageReference.formatName(rawConfig.name, rawConfig.version));
-		packageBuilder.authors(new HashSet<>(rawConfig.authors));
+		packageBuilder.authors(rawConfig.authors);
 		packageBuilder.description(rawConfig.description);
 
 		//noinspection unchecked
@@ -99,21 +119,33 @@ public class PackageLoaderImpl implements PackageLoader {
 	}
 
 	/**
-	 * Makes the {@link PackageReference} array from the given dependencies.
-	 * See the documentation for how the toml should be structured.
-	 * // TODO: MAKE SAID DOCUMENTATION
-	 *
+	 * Makes the {@link PackageReference} list from the given bases.
+	 * @param bases The list of base information
+	 * @return The package references
+	 */
+	private List<LoadedPackageReference> makeBasesReferences(List<PackageLinkRawConfig> bases) {
+		List<LoadedPackageReference> references = new ArrayList<>();
+
+		// Loop through dependencies
+		for (PackageLinkRawConfig base : bases) {
+			references.add(new LoadedPackageReference(base.name, base.version));
+		}
+		return references;
+	}
+
+	/**
+	 * Makes the {@link PackageReference} set from the given dependencies.
 	 * @param dependencies The dependency table from the toml file
 	 * @return The package references
 	 */
-	private Set<LoadedPackageReference> makeDependencyReferences(Map<String, PackageRawConfig.DependencyList> dependencies) {
+	private Set<LoadedPackageReference> makeDependencyReferences(Map<String, PackageRawConfig.DependencySet> dependencies) {
 		Set<LoadedPackageReference> references = new HashSet<>();
 
 		// Loop through dependencies
 		for (String key : dependencies.keySet()) {
-			PackageRawConfig.DependencyList versions = dependencies.get(key);
+			PackageRawConfig.DependencySet versions = dependencies.get(key);
 
-			for (DependencyRawConfig version : versions) {
+			for (PackageLinkRawConfig version : versions) {
 				references.add(makeDependencyReference(version, key));
 			}
 		}
@@ -127,7 +159,7 @@ public class PackageLoaderImpl implements PackageLoader {
 	 * @param dependency The dependency information
 	 * @return The created reference
 	 */
-	private LoadedPackageReference makeDependencyReference(DependencyRawConfig dependency, String realName) {
+	private LoadedPackageReference makeDependencyReference(PackageLinkRawConfig dependency, String realName) {
 		String version = dependency.version;
 		String referName = dependency.name.isEmpty() ? realName : dependency.name;
 		return new LoadedPackageReference(realName, referName, version);
@@ -247,11 +279,11 @@ public class PackageLoaderImpl implements PackageLoader {
 	/**
 	 * Loads a files information, which is only its name at the momment.
 	 *
-	 * @param folder The path of the file
-	 * @param name
+	 * @param file The path of the file
+	 * @param name The name to use for the file
 	 * @return The built file
 	 */
-	private LoadedFile loadFile(File folder, String name) throws IOException {
+	private LoadedFile loadFile(File file, String name) throws IOException {
 		LoadedFile.Builder fileBuilder = new LoadedFile.Builder();
 		fileBuilder.name(name);
 
@@ -278,7 +310,7 @@ public class PackageLoaderImpl implements PackageLoader {
 	 * @param consumer The consumer to run
 	 * @param value The list to check
 	 */
-	private <T> void applyHelper(Consumer<T[]> consumer, @NotNull AdaptableSetBase<T> value, IntFunction<T[]> generator) {
+	private <T, C extends Collection<T>> void applyHelper(Consumer<T[]> consumer, @NotNull AdaptableCollectionBase<T, C> value, IntFunction<T[]> generator) {
 		if (!value.isEmpty()) {
 			consumer.accept(value.toArray(generator));
 		}

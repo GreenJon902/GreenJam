@@ -47,4 +47,15 @@ public interface FieldStringWriter {
 	 * ordered type and ordered by the hash code, this ensures that two identical items will print identically.
 	 */
 	void writeFields(StringBuilder builder);
+
+	abstract class Abstract implements FieldStringWriter{
+		@Override
+		public String toString() {
+			final StringBuilder sb = new StringBuilder(getClass().getSimpleName());
+			sb.append('{');
+			writeFields(sb);
+			sb.append('}');
+			return sb.toString();
+		}
+	}
 }

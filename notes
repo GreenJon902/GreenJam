@@ -109,7 +109,13 @@ Dependencies
 
 
 
-OVERRIDES -------------------------------------------
+BASES & OVERRIDES -------------------------------------------
+Both are effectively the same thing but with different outputs!
+
+
+
+A override can override a module, but not the package.
+
 default local
 in package/test/mod.toml
     - [Override]
@@ -123,12 +129,22 @@ Then it will override it for all dependencies, however you can specify a name or
         version = "1.4-better"
 
 Then it just acts like a package with a base
+Overwrides should be put in dependencies
+
+Overrides are stored in the Package Reference
 
 
-BASES --------------------------------------------------
-bases and overrides are mutually exclusive!!  (but the overridden package may have a base)
+
+A package can be based, but a module cannot.
+Apart from that a base is like multiple overrides.
+Bases do not need to be put in dependencies.
+
+Bases of packages are just joined with that package and stored together as the package.
 
 
+
+Note, since when loading files may get duplicated, but some require other functionality. We can store a list of parents,
+and on a require that may cause a branch, we make the branch there by cloning current state!
 
 
 

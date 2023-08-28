@@ -10,14 +10,13 @@ import java.util.function.IntFunction;
 
 /**
  * A less-functional list of {@link T}, but this is able to be adapted by the {@link AdapterBase}.
+ * @implNote We cannot implement list, as then Gson won't use our adapter
  */
-public abstract class AdaptableSetBase<T> implements Iterable<T> {
-	// Cannot implement list, as then Gson won't use our adapter
+public abstract class AdaptableCollectionBase<T, C extends Collection<T>> implements Iterable<T> {
+	private final C contents;
 
-	private final Set<T> contents;
-
-	public AdaptableSetBase(T... contents) {
-		this.contents = Set.of(contents);
+	public AdaptableCollectionBase(C contents) {
+		this.contents = contents;
 	}
 
 	@NotNull
@@ -37,7 +36,7 @@ public abstract class AdaptableSetBase<T> implements Iterable<T> {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null) return false;
-		if (o instanceof AdaptableSetBase<?> that) {
+		if (o instanceof AdaptableCollectionBase<?,?> that) {
 			return Objects.equals(contents, that.contents);
 		} else {
 			return Objects.equals(contents, o);
@@ -66,11 +65,11 @@ public abstract class AdaptableSetBase<T> implements Iterable<T> {
 	}
 
 	/**
-	 * This class helps convert between a {@link Gson} object and a {@link AdaptableSetBase} holding T.
+	 * This class helps convert between a {@link Gson} object and a {@link AdaptableCollectionBase} holding T.
 	 */
-	public abstract class AdapterBase extends TypeAdapter<AdaptableSetBase<T>> {
+	public abstract class AdapterBase extends TypeAdapter<AdaptableCollectionBase<T, C>> {
 		@Override
-		public void write(JsonWriter out, AdaptableSetBase<T> value) {
+		public void write(JsonWriter out, AdaptableCollectionBase<T, C> value) {
 			throw new RuntimeException("Write has not been implemented for DependencyItemAdapter");
 		}
 	}

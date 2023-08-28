@@ -7,32 +7,31 @@ import com.google.gson.stream.JsonReader;
 import com.greenjon902.greenJam.api.core.packageLoader.PackageReference;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class PackageRawConfig extends ModuleRawConfig {
 	public String description;
 	public String version;
-	public List<String> authors;
+	public Set<String> authors;
 	/**
-	 * Maps from the {@link PackageReference#realName()} to the {@link DependencyList}.
+	 * Maps from the {@link PackageReference#realName()} to the {@link DependencySet}.
 	 */
 	@SerializedName("Dependencies")
-	public Map<String, DependencyList> dependencies;
+	public Map<String, DependencySet> dependencies;
+	public List<PackageLinkRawConfig> bases;  // This is ordered so list
 
-	public PackageRawConfig(String name, LoaderRawConfig loader, String description, String version, List<String> authors, Map<String, DependencyList> dependencies) {
+	public PackageRawConfig(String name, LoaderRawConfig loader, String description, String version, Set<String> authors, Map<String, DependencySet> dependencies, List<PackageLinkRawConfig> bases) {
 		super(name, loader);
 		this.description = description;
 		this.version = version;
 		this.authors = authors;
 		this.dependencies = dependencies;
+		this.bases = bases;
 	}
 
 	@SuppressWarnings({"unused"})
 	public PackageRawConfig() {  // Puts in default values that were missing from toml
-		this("", new LoaderRawConfig(), "", "", Collections.emptyList(), Collections.emptyMap());
+		this("", new LoaderRawConfig(), "", "", Collections.emptySet(), Collections.emptyMap(), Collections.emptyList());
 	}
 
 	@Override
@@ -41,6 +40,7 @@ public class PackageRawConfig extends ModuleRawConfig {
 		sb.append(", version='").append(version).append('\'');
 		sb.append(", authors=").append(authors);
 		sb.append(", dependencies=").append(dependencies);
+		sb.append(", bases=").append(bases);
 		sb.append(", ");
 		super.writeFields(sb);
 	}
@@ -59,37 +59,39 @@ public class PackageRawConfig extends ModuleRawConfig {
 		if (o == null || getClass() != o.getClass()) return false;
 		if (!super.equals(o)) return false;
 		PackageRawConfig rawConfig = (PackageRawConfig) o;
-		return Objects.equals(description, rawConfig.description) && Objects.equals(version, rawConfig.version) && Objects.equals(authors, rawConfig.authors) && Objects.equals(dependencies, rawConfig.dependencies);
+		return Objects.equals(description, rawConfig.description) && Objects.equals(version, rawConfig.version) &&
+				Objects.equals(authors, rawConfig.authors) && Objects.equals(dependencies, rawConfig.dependencies) &&
+				 Objects.equals(bases, rawConfig.bases);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), description, version, authors, dependencies);
+		return Objects.hash(super.hashCode(), description, version, authors, dependencies, bases);
 	}
 
-	@JsonAdapter(DependencyList.DependencyListAdapter.class)
-	public static class DependencyList extends AdaptableSetBase<DependencyRawConfig> {
-		public DependencyList(DependencyRawConfig... dependencies) {
-			super(dependencies);
+	@JsonAdapter(DependencySet.DependencySetAdapter.class)
+	public static class DependencySet extends AdaptableCollectionBase<PackageLinkRawConfig, Set<PackageLinkRawConfig>> {
+		public DependencySet(PackageLinkRawConfig... dependencies) {
+			super(Set.of(dependencies));
 		}
 
-		public class DependencyListAdapter extends AdapterBase {
+		public class DependencySetAdapter extends AdapterBase {
 			/**
 			 * Deserializes a {@link JsonReader}
 			 * It can detect three types of dependency declarations:
 			 * <br><br>
 			 * <pre>
 			 * "&lt;package&gt;": "&lt;version&gt;"
-			 * "&lt;package&gt;": { "version": "&lt;version&gt;" }
-			 * "&lt;package&gt;": [{ "version": "&lt;version&gt;" }]
+			 * "&lt;package&gt;": { "version": "&lt;version&gt;", "name": "&lt;name&gt;" }
+			 * "&lt;package&gt;": [{ "version": "&lt;version&gt;", "name": "&lt;name&gt;" }]
 			 * </pre>
 			 */
 			@Override
-			public DependencyList read(JsonReader in) throws IOException {
+			public DependencySet read(JsonReader in) throws IOException {
 				return switch (in.peek()) {
-					case BEGIN_OBJECT -> new DependencyList(new Gson().getAdapter(DependencyRawConfig.class).read(in));
-					case BEGIN_ARRAY -> new DependencyList(new Gson().getAdapter(DependencyRawConfig[].class).read(in));
-					case STRING -> new DependencyList(new DependencyRawConfig("", in.nextString()));
+					case BEGIN_OBJECT -> new DependencySet(new Gson().getAdapter(PackageLinkRawConfig.class).read(in));
+					case BEGIN_ARRAY -> new DependencySet(new Gson().getAdapter(PackageLinkRawConfig[].class).read(in));
+					case STRING -> new DependencySet(new PackageLinkRawConfig("", in.nextString()));
 					default -> throw new RuntimeException("Unexpected token " + in.peek());
 				};
 			}

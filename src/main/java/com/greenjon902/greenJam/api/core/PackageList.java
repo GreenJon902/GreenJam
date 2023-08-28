@@ -45,4 +45,12 @@ public interface PackageList {
 	 * @return The packages
 	 */
 	Map<String, Map<String, Package>> getPackages();
+
+	/**
+	 * Gets a package by the name and version.
+	 * @param name The name of the package
+	 * @param version The version of the package
+	 * @return The package
+	 */
+	Package get(String name, String version);
 }

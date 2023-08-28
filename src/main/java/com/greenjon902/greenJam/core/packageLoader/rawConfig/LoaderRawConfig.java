@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Information that is useful to the {@link com.greenjon902.greenJam.api.core.packageLoader.PackageLoader}.
@@ -20,11 +21,11 @@ public class LoaderRawConfig {
 	@SerializedName("module-config-path")
 	public @NotNull String moduleConfigPath;
 	@SerializedName("file-regex")
-	public @NotNull RegexList fileRegex;
+	public @NotNull LoaderRawConfig.RegexSet fileRegex;
 	@SerializedName("module-regex")
-	public @NotNull RegexList moduleRegex;
+	public @NotNull LoaderRawConfig.RegexSet moduleRegex;
 
-	public LoaderRawConfig(@NotNull String packageConfigPath, @NotNull String moduleConfigPath, @NotNull RegexList fileRegex, @NotNull RegexList moduleRegex) {
+	public LoaderRawConfig(@NotNull String packageConfigPath, @NotNull String moduleConfigPath, @NotNull LoaderRawConfig.RegexSet fileRegex, @NotNull LoaderRawConfig.RegexSet moduleRegex) {
 		this.packageConfigPath = packageConfigPath;
 		this.moduleConfigPath = moduleConfigPath;
 		this.fileRegex = fileRegex;
@@ -32,7 +33,7 @@ public class LoaderRawConfig {
 	}
 
 	public LoaderRawConfig() {// TODO: Load defaults from a file
-		this("", "", new RegexList(), new RegexList());
+		this("", "", new RegexSet(), new RegexSet());
 	}
 
 	@Override
@@ -58,13 +59,13 @@ public class LoaderRawConfig {
 				'}';
 	}
 
-	@JsonAdapter(RegexList.RegexListAdapter.class)
-	public static class RegexList extends AdaptableSetBase<RegexRawConfig> {
-		public RegexList(RegexRawConfig... regexs) {
-			super(regexs);
+	@JsonAdapter(RegexSet.RegexSetAdapter.class)
+	public static class RegexSet extends AdaptableCollectionBase<RegexRawConfig, Set<RegexRawConfig>> {
+		public RegexSet(RegexRawConfig... regexs) {
+			super(Set.of(regexs));
 		}
 
-		public class RegexListAdapter extends AdapterBase {
+		public class RegexSetAdapter extends AdapterBase {
 			/**
 			 * Deserializes a {@link JsonReader}
 			 * It can detect three types of regex declarations:
@@ -76,16 +77,16 @@ public class LoaderRawConfig {
 			 * </pre>
 			 */
 			@Override
-			public RegexList read(JsonReader in) throws IOException {
+			public RegexSet read(JsonReader in) throws IOException {
 				return switch (in.peek()) {
 					case STRING ->
-							new RegexList(new RegexRawConfig(in.nextString()));
+							new RegexSet(new RegexRawConfig(in.nextString()));
 					case BEGIN_ARRAY ->
-							new RegexList(Arrays.stream(new Gson().getAdapter(String[].class).read(in))
+							new RegexSet(Arrays.stream(new Gson().getAdapter(String[].class).read(in))
 							.map(RegexRawConfig::new)
 							.toArray(RegexRawConfig[]::new));
 					case BEGIN_OBJECT -> //noinspection unchecked
-							new RegexList(((Map<String, String>) new Gson().getAdapter(Map.class).read(in)).entrySet().stream()
+							new RegexSet(((Map<String, String>) new Gson().getAdapter(Map.class).read(in)).entrySet().stream()
 							.map(entry -> {
 								String key = entry.getKey();
 								if (entry.getKey().startsWith("\"") && entry.getKey().endsWith("\"")) {

@@ -59,4 +59,9 @@ public class PackageListImpl implements PackageList {
 		                                               // the point.
 	}
 
+	@Override
+	public Package get(String name, String version) {
+		return packages.get(name).get(version);
+	}
+
 }

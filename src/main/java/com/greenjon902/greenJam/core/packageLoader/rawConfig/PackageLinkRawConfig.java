@@ -1,29 +1,31 @@
 package com.greenjon902.greenJam.core.packageLoader.rawConfig;
 
 import com.greenjon902.greenJam.api.core.packageLoader.PackageReference;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class DependencyRawConfig {
+public class PackageLinkRawConfig {
 	/**
-	 * The {@link PackageReference#referName()} name of this dependency.
+	 * If used as a dependency, this is the {@link PackageReference#referName()} of this dependency.<br>
+	 * If used as a base, this is the {@link PackageReference#realName()} ()} of this dependency.
 	 */
-	public String name;
-	public String version;
+	public @NotNull String name;
+	public @NotNull String version;
 
-	public DependencyRawConfig(String name, String version) {
+	public PackageLinkRawConfig(@NotNull String name, @NotNull String version) {
 		this.name = name;
 		this.version = version;
 	}
 
 	@SuppressWarnings({"unused"})
-	public DependencyRawConfig() {  // Puts in default values that were missing from toml
+	public PackageLinkRawConfig() {  // Puts in default values that were missing from toml
 		this("", "");
 	}
 
 	@Override
 	public String toString() {
-		return "Dependency{" +
+		return "PackageLinkRawConfig{" +
 				"name='" + name + '\'' +
 				", version='" + version + '\'' +
 				'}';
@@ -33,7 +35,7 @@ public class DependencyRawConfig {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		DependencyRawConfig that = (DependencyRawConfig) o;
+		PackageLinkRawConfig that = (PackageLinkRawConfig) o;
 		return Objects.equals(name, that.name) && Objects.equals(version, that.version);
 	}
 

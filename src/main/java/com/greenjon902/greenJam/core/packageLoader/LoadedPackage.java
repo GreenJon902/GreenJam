@@ -6,7 +6,10 @@ import com.greenjon902.greenJam.api.core.packageLoader.PackageReference;
 import com.greenjon902.greenJam.core.packageLoader.rawConfig.PackageRawConfig;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Set;
 
 /**
  * See {@link LoadedPackageItem}
@@ -16,7 +19,7 @@ public class LoadedPackage extends LoadedModule implements Package {
 	private final String description;
 	private final Set<PackageReference> dependencies;
 
-	protected boolean compareOnlyAsModule = false;
+	protected boolean compareOnlyAsModule = false;  // For testing purposes only
 
 	protected LoadedPackage(Builder builder) {
 		super(builder);
@@ -65,28 +68,16 @@ public class LoadedPackage extends LoadedModule implements Package {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!super.equals(o)) return false;
-
-		// Module comparison done so must be correct if compareOnlyAsModule
-		if (compareOnlyAsModule && o instanceof Module && !(o instanceof Package)) return true;
-
-		if (getClass() != o.getClass()) return false;
-
-		LoadedPackage that = (LoadedPackage) o;
-		return Objects.equals(authors, that.authors) && Objects.equals(description, that.description) && Objects.equals(dependencies, that.dependencies);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(super.hashCode(), authors, description, dependencies);
+		if (compareOnlyAsModule && o instanceof Module && !(o instanceof Package)) return super.equals_(o);
+		return Package.super.equals_(o);
 	}
 
 	@Override
 	public void writeFields(StringBuilder sb) {
 		if (!compareOnlyAsModule) {
-			sb.append("authors=").append(Arrays.toString(authors.stream().sorted(Comparator.comparing(Object::hashCode)).toArray()));
-			sb.append(", description='").append(description).append('\'');
-			sb.append(", dependencies=").append(Arrays.toString(dependencies.stream().sorted(Comparator.comparing(Object::hashCode)).toArray()));
+			sb.append("authors=").append(Arrays.toString(authors().stream().sorted(Comparator.comparing(Object::hashCode)).toArray()));
+			sb.append(", description='").append(description()).append('\'');
+			sb.append(", dependencies=").append(Arrays.toString(dependencies().stream().sorted(Comparator.comparing(Object::hashCode)).toArray()));
 			sb.append(", ");
 		}
 		super.writeFields(sb);
