@@ -68,7 +68,7 @@ public class LoadedPackage extends LoadedModule implements Package {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (compareOnlyAsModule && o instanceof Module && !(o instanceof Package)) return super.equals_(o);
+		if (compareOnlyAsModule && o instanceof Module && !(o instanceof Package)) return o.equals(this);
 		return Package.super.equals_(o);
 	}
 
