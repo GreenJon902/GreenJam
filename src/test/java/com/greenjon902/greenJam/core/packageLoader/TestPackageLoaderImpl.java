@@ -333,4 +333,22 @@ public class TestPackageLoaderImpl {
 		Assertions.assertEquals(expected_main, main);
 		Assertions.assertEquals(packages, PackageList.getInstance().getPackages());
 	}
+
+	@Test
+	public void testDependencyOverride() throws IOException {
+		System.setProperty("JAMPATH", getFile("com/greenjon902/greenJam/core/packageLoader/dependency_override_resources").toString());
+
+		Set<File> expected = Set.of(
+				new LoadedFile.Builder() {{
+					name("a");
+				}}.build()
+		);
+
+		PackageLoader pl = new PackageLoaderImpl(getFile("com/greenjon902/greenJam/core/packageLoader/dependency_override_resources/main"));
+		Package main = pl.loadAndDependants();
+		Assertions.assertEquals(expected, main.files());
+
+		Package base = PackageList.getInstance().get("base", "1.0.0");
+		Assertions.assertEquals(expected, base.files());
+	}
 }

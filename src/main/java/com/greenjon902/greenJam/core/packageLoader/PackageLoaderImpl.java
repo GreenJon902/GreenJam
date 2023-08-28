@@ -54,8 +54,10 @@ public class PackageLoaderImpl implements PackageLoader {
 
 		// Load the package info and save it
 		LoadedPackage rootPackage = loadSinglePackage();
-		packageList.add(rootPackage.rawConfig().name, rootPackage.rawConfig().version, rootPackage);
-		// Add this to package list before loaded dependencies to prevent circular dependents looping
+
+		// Set to a crash package to stop this package getting loaded in the case of a circular dependant,
+		// we will add properly later
+		packageList.add(rootPackage.rawConfig().name, rootPackage.rawConfig().version, new CrashPackage());
 
 		// Now we can check if any new dependencies or bases need to be loaded.
 		List<LoadedPackageReference> baseReferences = makeBasesReferences(rootPackage.rawConfig().bases);
@@ -71,7 +73,6 @@ public class PackageLoaderImpl implements PackageLoader {
 						throw new RuntimeException("Could not find package with formatted name \"" +
 								loadedReference.formatName() + "\" in JAMPATH");
 					}
-
 					// Not loaded yet, but checks have passed, so now we need to load it
 					new PackageLoaderImpl(source).loadAndDependants();  // But we don't care about this one's return value
 
@@ -82,14 +83,25 @@ public class PackageLoaderImpl implements PackageLoader {
 			}
 		}
 
+
 		// Now the bases are loaded, we can build the package with bases
+		Package package_ = rootPackage;
 		if (!baseReferences.isEmpty()) { // If no bases, then don't do anything
 			Package[] bases = baseReferences.stream().map(PackageReference::resolve).toArray(Package[]::new);
-			BasedPackage basedPackage = new BasedPackage(false, rootPackage, bases);
+
+			package_ = new BasedPackage(false, rootPackage, bases);
+		}
+		packageList.add(rootPackage.rawConfig().name, rootPackage.rawConfig().version, package_, true);
+
+
+		// Now the package is fully made, we can check for and do an override
+		PackageLinkRawConfig override;
+		if ((override = rootPackage.rawConfig().override) != null) {
+			packageList.add(override.name, override.version, package_, true);
 		}
 
 
-		return rootPackage;
+		return package_;
 	}
 
 	/**
@@ -98,7 +110,7 @@ public class PackageLoaderImpl implements PackageLoader {
 	 * {@link #loadModuleInto(LoadedModule.Builder, ModuleRawConfig, File)}.
 	 * <br><br>
 	 * Note: This does not add it to the {@link PackageList}!
-	 * Note: This also does not compute bases, however overrides will be processed (if loaded).
+	 * Note: This also does not compute bases or overrides.
 	 *
 	 * @return The built package
 	 */

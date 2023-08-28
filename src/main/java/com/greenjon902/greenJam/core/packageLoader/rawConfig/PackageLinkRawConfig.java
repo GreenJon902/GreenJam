@@ -8,7 +8,8 @@ import java.util.Objects;
 public class PackageLinkRawConfig {
 	/**
 	 * If used as a dependency, this is the {@link PackageReference#referName()} of this dependency.<br>
-	 * If used as a base, this is the {@link PackageReference#realName()} ()} of this dependency.
+	 * If used as a base, this is the {@link PackageReference#realName()} of this dependency.
+	 * If used as an override, this is the {@link PackageReference#realName()} of the package.
 	 */
 	public @NotNull String name;
 	public @NotNull String version;

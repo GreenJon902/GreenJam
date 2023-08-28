@@ -9,7 +9,7 @@ import java.util.Objects;
  */
 public interface File extends PackageItem {
 	/**
-	 * If this {@link Package} is either an override or has a base, and this file overrides a file, this method
+	 * If this {@link Package} is a base, and this file overrides a file, this method
 	 * will return the overwritten file.
 	 * @return The file or null if it doesn't exist
 	 */

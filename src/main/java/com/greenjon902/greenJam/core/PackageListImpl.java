@@ -32,10 +32,10 @@ public class PackageListImpl implements PackageList {
 	}
 
 	@Override
-	public void add(String name, String version, Package package_) throws IllegalStateException {
+	public void add(String name, String version, Package package_, boolean force) throws IllegalStateException {
 		// Check if exists
 		if (!packages.containsKey(name)) packages.put(name, new ConcurrentHashMap<>());
-		if (packages.get(name).containsKey(version)) throw new IllegalStateException("Package \"" +
+		if (!force && packages.get(name).containsKey(version)) throw new IllegalStateException("Package \"" +
 				PackageReference.formatName(name, version) + "\" already exists");
 		// Doesn't exist so we can add it
 		packages.get(name).put(version, package_);
@@ -61,7 +61,10 @@ public class PackageListImpl implements PackageList {
 
 	@Override
 	public Package get(String name, String version) {
-		return packages.get(name).get(version);
+		if (!packages.containsKey(name)) throw new IllegalArgumentException("No package loaded called " + name);
+		Map<String, Package> versions = packages.get(name);
+		if (!versions.containsKey(version)) throw new IllegalArgumentException("Package called " + name +
+				" has not loaded version " + version);
+		return versions.get(version);
 	}
-
 }

@@ -112,34 +112,14 @@ Dependencies
 BASES & OVERRIDES -------------------------------------------
 Both are effectively the same thing but with different outputs!
 
-
-
-A override can override a module, but not the package.
-
-default local
-in package/test/mod.toml
-    - [Override]
-        name = "test"
-        version = "1.4"
-would just mean that test.foo is still correct, but package.test.foo may be overwritten.
-
-however if you then add
-      [Override.Install]
-Then it will override it for all dependencies, however you can specify a name or version for it to install under. e.g.
-        version = "1.4-better"
-
-Then it just acts like a package with a base
-Overwrides should be put in dependencies
-
-Overrides are stored in the Package Reference
-
-
-
 A package can be based, but a module cannot.
-Apart from that a base is like multiple overrides.
 Bases do not need to be put in dependencies.
 
 Bases of packages are just joined with that package and stored together as the package.
+
+
+A override installs itself as the package information you supply. The intended use is taht you base of a package and
+then overwride it like a sortove mixin system. Without the Override, nothing is externally is changed
 
 
 
@@ -149,7 +129,7 @@ and on a require that may cause a branch, we make the branch there by cloning cu
 
 
 MISC ----------------------------------
-with overlayes you can just run ;; REQUIRE SUPER and it acts the same
+with overwritten files you can just run ;; REQUIRE SUPER and it acts the same
 
 since packages may circuallarily require eachother, they store references to eachother containing the name, version
 (and at some point override info), which can be resolved using the PackageList.

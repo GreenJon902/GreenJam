@@ -9,7 +9,7 @@ import java.util.Objects;
  * The base class for any item that exists inside a package (including the package itself).
  *
  * @implSpec These items should be immutable after creation. But these items should support being duplicated and used
- * as children multiple times. (So overrides and bases don't need to compile things multiple times)
+ * as children multiple times. (So bases don't need to compile things multiple times)
  */
 public interface PackageItem extends FieldStringWriter {
 	/**

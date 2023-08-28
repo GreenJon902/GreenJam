@@ -5,6 +5,7 @@ import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.greenjon902.greenJam.api.core.packageLoader.PackageReference;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.*;
@@ -19,19 +20,25 @@ public class PackageRawConfig extends ModuleRawConfig {
 	@SerializedName("Dependencies")
 	public Map<String, DependencySet> dependencies;
 	public List<PackageLinkRawConfig> bases;  // This is ordered so list
+	@SerializedName("Override")
+	public @Nullable PackageLinkRawConfig override;
 
-	public PackageRawConfig(String name, LoaderRawConfig loader, String description, String version, Set<String> authors, Map<String, DependencySet> dependencies, List<PackageLinkRawConfig> bases) {
+	public PackageRawConfig(String name, LoaderRawConfig loader, String description, String version, Set<String> authors,
+							Map<String, DependencySet> dependencies, List<PackageLinkRawConfig> bases,
+							@Nullable PackageLinkRawConfig override) {
 		super(name, loader);
 		this.description = description;
 		this.version = version;
 		this.authors = authors;
 		this.dependencies = dependencies;
 		this.bases = bases;
+		this.override = override;
 	}
 
 	@SuppressWarnings({"unused"})
 	public PackageRawConfig() {  // Puts in default values that were missing from toml
-		this("", new LoaderRawConfig(), "", "", Collections.emptySet(), Collections.emptyMap(), Collections.emptyList());
+		this("", new LoaderRawConfig(), "", "", Collections.emptySet(), Collections.emptyMap(), Collections.emptyList(),
+				null);
 	}
 
 	@Override

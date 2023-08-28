@@ -26,6 +26,13 @@ public interface PackageList {
 	boolean hasPackage(PackageReference reference);
 
 	/**
+	 * See {@link #add(String, String, Package, boolean)}
+	 */
+	default void add(String name, String version, Package package_) throws IllegalStateException {
+		add(name, version, package_, false);
+	}
+
+	/**
 	 * Adds a new package under the name and version if it doesn't already exist.
 	 *
 	 * @param name     The name of the package
@@ -33,7 +40,7 @@ public interface PackageList {
 	 * @param package_ The package being added
 	 * @throws IllegalStateException If a package with that name and version has already been added
 	 */
-	void add(String name, String version, Package package_) throws IllegalStateException;
+	void add(String name, String version, Package package_, boolean force) throws IllegalStateException;
 
 	/**
 	 * Clears all the loaded packages.

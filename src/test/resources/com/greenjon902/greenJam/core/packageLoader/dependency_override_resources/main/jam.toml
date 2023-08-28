@@ -1,0 +1,8 @@
+name = "main"
+version = "1.0.0"
+
+bases = [{ name = "base", version = "1.0.0" }]
+
+[Override]
+name = "base"
+version = "1.0.0"
