@@ -1,4 +1,4 @@
-package com.greenjon902.greenJam.utils;
+package com.greenjon902.greenJam.testUtils;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

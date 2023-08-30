@@ -1,5 +1,7 @@
 package com.greenjon902.greenJam.utils;
 
+import com.greenjon902.greenJam.api.core.exceptions.CannotPopStackedClassException;
+
 import java.util.Stack;
 // TODO: Generify this
 /**
@@ -21,7 +23,7 @@ public class StackedClassBase {
 	 * Create a new instance with each field filled with null.
 	 * @param fields The number of fields to use
 	 */
-	protected StackedClassBase(int fields) {
+	protected StackedClassBase(int fields) {  // Protected so has to be subclassed
 		this(new Object[fields]);
 	}
 
@@ -29,7 +31,7 @@ public class StackedClassBase {
 	 * Create a new instance with as many fields as supplied in objects, with those being the default values.
 	 * @param objects The objects to use as default values
 	 */
-	protected StackedClassBase(Object... objects) {
+	protected StackedClassBase(Object... objects) {  // Protected so has to be subclassed
 		stack = new Stack<>();
 		stack.push(objects);
 	}
@@ -58,8 +60,10 @@ public class StackedClassBase {
 	/**
 	 * Reinstates the last state for each attribute. Effectively undoing any modifications to the class.
 	 * @return The state before it was overwritten
+	 * @throws CannotPopStackedClassException if the defaults are the next values in the stack
 	 */
 	public Object[] pop() {
+		if (stack.size() == 1) throw new CannotPopStackedClassException(this);
 		return stack.pop();
 	}
 

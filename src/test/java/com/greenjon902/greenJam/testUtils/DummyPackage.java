@@ -1,4 +1,4 @@
-package com.greenjon902.greenJam.utils;
+package com.greenjon902.greenJam.testUtils;
 
 import com.greenjon902.greenJam.api.core.File;
 import com.greenjon902.greenJam.api.core.Module;

@@ -1,5 +1,6 @@
 package com.greenjon902.greenJam.utils;
 
+import com.greenjon902.greenJam.api.core.exceptions.CannotPopStackedClassException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,7 @@ public class TestStackedClassBase {
 	}
 
 	@Test
-	public void testSimple() {
+	public void Should_ActAsExpected_When_UsedAsExpected() {
 		StackedClassBase stackedClassBase = new StackedClassBase(4);
 		Object[] array = new Object[4];
 
@@ -52,5 +53,15 @@ public class TestStackedClassBase {
 
 		stackedClassBase.pop();
 		test(array, stackedClassBase);
+	}
+
+	@Test
+	public void Should_Crash_When_PoppedToBelowDefaults() {
+		StackedClassBase stackedClassBase = new StackedClassBase(4);
+		Assertions.assertThrows(
+				CannotPopStackedClassException.class,
+				stackedClassBase::pop
+		);
+
 	}
 }

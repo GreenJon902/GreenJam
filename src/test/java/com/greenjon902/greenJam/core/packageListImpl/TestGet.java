@@ -3,7 +3,7 @@ package com.greenjon902.greenJam.core.packageListImpl;
 import com.greenjon902.greenJam.api.core.Package;
 import com.greenjon902.greenJam.api.core.exceptions.NoSuchPackageException;
 import com.greenjon902.greenJam.core.PackageListImpl;
-import com.greenjon902.greenJam.utils.DummyPackage;
+import com.greenjon902.greenJam.testUtils.DummyPackage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
