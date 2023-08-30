@@ -1,6 +1,7 @@
 package com.greenjon902.greenJam.testUtils;
 
 import com.greenjon902.greenJam.api.core.PackageItem;
+import com.greenjon902.greenJam.testUtils.ArrayValuePackageItem.ArrayValuePackageItem2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -23,15 +24,15 @@ public class TestTestUtils {
 
 	@Test
 	public void RecordPackageItem__Should_ClassEqual_WhenBothSameClass() {
-		PackageItem a = new RecordPackageItem("test");
-		PackageItem b = new RecordPackageItem("test");
+		PackageItem a = new ArrayValuePackageItem("test");
+		PackageItem b = new ArrayValuePackageItem("test");
 		Assertions.assertEquals(a.getClass(), b.getClass());
 	}
 
 	@Test
-	public void RecordPackageItem__Should_ClassNotEqual_WhenOneIsAnonymousClass() {
-		PackageItem a = new RecordPackageItem("test");
-		PackageItem b = new RecordPackageItem("test") {};
+	public void RecordPackageItem__Should_ClassNotEqual_WhenIsOtherClass() {
+		PackageItem a = new ArrayValuePackageItem("test");
+		PackageItem b = new ArrayValuePackageItem2("test");
 		Assertions.assertNotEquals(a.getClass(), b.getClass());
 	}
 }
