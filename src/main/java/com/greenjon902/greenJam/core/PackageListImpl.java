@@ -9,20 +9,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PackageListImpl implements PackageList {
-
-	private static volatile PackageList INSTANCE;
-	public static PackageList getInstance() {
-		// Double locking for speed as this will get called a lot by other threads
-		if (PackageListImpl.INSTANCE == null) {
-			synchronized (PackageList.class) {
-				if (PackageListImpl.INSTANCE == null) {
-					PackageListImpl.INSTANCE = new PackageListImpl();
-				}
-			}
-		}
-		return PackageListImpl.INSTANCE;
-	}
-
 	private final Map<String, Map<String, Package>> packages = new ConcurrentHashMap<>();
 
 	@Override
@@ -46,11 +32,6 @@ public class PackageListImpl implements PackageList {
 	 */
 	public String toString() {
 		return "PackageList{" + packages + "}";
-	}
-
-	@Override
-	public void clear() {
-		packages.clear();
 	}
 
 	@Override

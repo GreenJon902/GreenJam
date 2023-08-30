@@ -1,21 +1,10 @@
 package com.greenjon902.greenJam.api.core;
 
 import com.greenjon902.greenJam.api.core.packageLoader.PackageReference;
-import com.greenjon902.greenJam.core.PackageListImpl;
 
 import java.util.Map;
 
 public interface PackageList {
-	/**
-	 * Gets the instance of {@link PackageList}, or thread-safely creates one if it doesn't exist.
-	 *
-	 * @implSpec This should be thread safe
-	 * @return The instance
-	 */
-	static PackageList getInstance() {
-		return PackageListImpl.getInstance();
-	}
-
 	/**
 	 * Returns true if the given reference refers to a know package that has been {@link #add(String, String, Package)
 	 * added}.
@@ -42,14 +31,11 @@ public interface PackageList {
 	 */
 	void add(String name, String version, Package package_, boolean force) throws IllegalStateException;
 
-	/**
-	 * Clears all the loaded packages.
-	 */
-	void clear();
 
 	/**
 	 * Gets all the loaded packages and returns them in a map structure or name.version = package.
 	 * @return The packages
+	 * @implSpec The returned maps should be unmodifiable
 	 */
 	Map<String, Map<String, Package>> getPackages();
 
@@ -60,4 +46,13 @@ public interface PackageList {
 	 * @return The package
 	 */
 	Package get(String name, String version);
+
+	/**
+	 * Gets a package by the reference.
+	 * @param reference The package reference to use
+	 * @return The package
+	 */
+	default Package get(PackageReference reference) {
+		return get(reference.realName(), reference.version());
+	}
 }

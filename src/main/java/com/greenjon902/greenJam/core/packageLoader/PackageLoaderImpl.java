@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 
 import static com.greenjon902.greenJam.utils.TomlUtils.loadIfExists;
 
-// TODO: Load other packages (overwrides)
 // TODO: load a reader for each file
 
 /**
@@ -34,24 +33,29 @@ import static com.greenjon902.greenJam.utils.TomlUtils.loadIfExists;
 public class PackageLoaderImpl implements PackageLoader {
 	private final LoadingConfig lc;
 	public final File root;
+	public final PackageList packageList;
+
+	/**
+	 * See {@link #PackageLoaderImpl(File, LoadingConfig, PackageList)}
+	 */
+	public PackageLoaderImpl(File root, PackageList packageList) {
+		this(root, LoadingConfig.getDefault(), packageList);
+	}
 
 	/**
 	 * Create a package loader for a specific package.
 	 * @param root The root of the first package to load
+	 * @param lc The loading config to use
+	 * @param packageList The package list to load into
 	 */
-	public PackageLoaderImpl(File root) {
-		this(root, LoadingConfig.getDefault());
-	}
-
-	private PackageLoaderImpl(File root, LoadingConfig lc) {
+	private PackageLoaderImpl(File root, LoadingConfig lc, PackageList packageList) {
 		this.root = root;
 		this.lc = lc;
+		this.packageList = packageList;
 	}
 
 	@Override
 	public Package loadAndDependants() throws IOException {
-		PackageList packageList = PackageList.getInstance();  // So we don't need to run it a lot
-
 		// Load the package info and save it
 		LoadedPackage rootPackage = loadSinglePackage();
 
@@ -74,7 +78,7 @@ public class PackageLoaderImpl implements PackageLoader {
 								loadedReference.formatName() + "\" in JAMPATH");
 					}
 					// Not loaded yet, but checks have passed, so now we need to load it
-					new PackageLoaderImpl(source).loadAndDependants();  // But we don't care about this one's return value
+					new PackageLoaderImpl(source, packageList).loadAndDependants();  // But we don't care about this one's return value
 
 				} else {
 					throw new RuntimeException("Expected reference to be of type LoadedPackageReference, not " +
@@ -87,7 +91,7 @@ public class PackageLoaderImpl implements PackageLoader {
 		// Now the bases are loaded, we can build the package with bases
 		Package package_ = rootPackage;
 		if (!baseReferences.isEmpty()) { // If no bases, then don't do anything
-			Package[] bases = baseReferences.stream().map(PackageReference::resolve).toArray(Package[]::new);
+			Package[] bases = baseReferences.stream().map(packageList::get).toArray(Package[]::new);
 
 			package_ = new BasedPackage(false, rootPackage, bases);
 		}
