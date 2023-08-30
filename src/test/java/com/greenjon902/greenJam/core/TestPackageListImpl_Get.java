@@ -1,14 +1,13 @@
-package com.greenjon902.greenJam.core.packageListImpl;
+package com.greenjon902.greenJam.core;
 
 import com.greenjon902.greenJam.api.core.Package;
 import com.greenjon902.greenJam.api.core.exceptions.NoSuchPackageException;
-import com.greenjon902.greenJam.core.PackageListImpl;
 import com.greenjon902.greenJam.testUtils.DummyPackage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class TestGet {
+public class TestPackageListImpl_Get {
 	public static String NAME = "testName";
 	public static String VERSION = "testVersion";
 	public static Package[] PACKAGES = {new DummyPackage(), new DummyPackage()};
