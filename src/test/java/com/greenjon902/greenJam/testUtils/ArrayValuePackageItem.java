@@ -1,12 +1,13 @@
 package com.greenjon902.greenJam.testUtils;
 
 import com.greenjon902.greenJam.api.core.PackageItem;
+import com.greenjon902.greenJam.utils.FieldStringWriter;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * A {@link PackageItem} that acts like a record, but uses the correct equals and hashCode functions.
  */
-public class ArrayValuePackageItem implements PackageItem {
+public class ArrayValuePackageItem extends FieldStringWriter.Abstract implements PackageItem {
 	protected final Object[] values;
 
 	public ArrayValuePackageItem(Object... values) {

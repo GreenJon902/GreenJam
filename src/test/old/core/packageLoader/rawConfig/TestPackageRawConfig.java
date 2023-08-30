@@ -1,5 +1,9 @@
-package com.greenjon902.greenJam.core.packageLoader.rawConfig;
+package com.greenjon902.greenJam.old.core.packageLoader.rawConfig;
 
+import com.greenjon902.greenJam.core.packageLoader.rawConfig.LoaderRawConfig;
+import com.greenjon902.greenJam.core.packageLoader.rawConfig.PackageLinkRawConfig;
+import com.greenjon902.greenJam.core.packageLoader.rawConfig.PackageRawConfig;
+import com.greenjon902.greenJam.core.packageLoader.rawConfig.RegexRawConfig;
 import com.moandjiezana.toml.Toml;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
