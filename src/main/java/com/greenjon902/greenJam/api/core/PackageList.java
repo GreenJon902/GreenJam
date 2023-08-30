@@ -1,5 +1,7 @@
 package com.greenjon902.greenJam.api.core;
 
+import com.greenjon902.greenJam.api.core.exceptions.NoSuchPackageException;
+import com.greenjon902.greenJam.api.core.exceptions.PackageAlreadyAddedException;
 import com.greenjon902.greenJam.api.core.packageLoader.PackageReference;
 
 import java.util.Map;
@@ -9,10 +11,18 @@ public interface PackageList {
 	 * Returns true if the given reference refers to a know package that has been {@link #add(String, String, Package)
 	 * added}.
 	 *
-	 * @param reference The reference to look for
+	 * @param name The real name of the package
+	 * @param version The version of the package
 	 * @return If the package has been added
 	 */
-	boolean hasPackage(PackageReference reference);
+	boolean hasPackage(String name, String version);
+
+	/**
+	 * {@link #hasPackage(String, String)} but by the reference.
+	 */
+	default boolean hasPackage(PackageReference reference) {
+		return hasPackage(reference.realName(), reference.version());
+	}
 
 	/**
 	 * See {@link #add(String, String, Package, boolean)}
@@ -24,10 +34,10 @@ public interface PackageList {
 	/**
 	 * Adds a new package under the name and version if it doesn't already exist.
 	 *
-	 * @param name     The name of the package
+	 * @param name     The real name of the package
 	 * @param version  The version of the package
 	 * @param package_ The package being added
-	 * @throws IllegalStateException If a package with that name and version has already been added
+	 * @throws PackageAlreadyAddedException If a package with that name and version has already been added
 	 */
 	void add(String name, String version, Package package_, boolean force) throws IllegalStateException;
 
@@ -41,16 +51,15 @@ public interface PackageList {
 
 	/**
 	 * Gets a package by the name and version.
-	 * @param name The name of the package
+	 * @param name The real name of the package
 	 * @param version The version of the package
 	 * @return The package
+	 * @throws NoSuchPackageException If no package with that name and version has been loaded
 	 */
 	Package get(String name, String version);
 
 	/**
-	 * Gets a package by the reference.
-	 * @param reference The package reference to use
-	 * @return The package
+	 * {@link #get(String, String)} but by the reference.
 	 */
 	default Package get(PackageReference reference) {
 		return get(reference.realName(), reference.version());
