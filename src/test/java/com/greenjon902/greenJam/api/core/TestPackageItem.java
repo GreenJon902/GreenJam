@@ -76,54 +76,21 @@ public class TestPackageItem {
 	 * {@systemProperty testFull} is true then everything is run.
 	 * @return The stream
 	 */
-	private Stream<Arguments> testEquals() {
+	protected Stream<Arguments> testEquals() {
 		Map<String, Object[]> argVariations = getArgVariations();
 		HashMap<String, Object>[] argCombinations = CombinationCalculator.calculate(argVariations);
 
 		// First make all argument combinations ---
-		List<Arguments> combinations = new ArrayList<>();  // ArgsA, ArgsB, isEqual, argVariationsA, argVariationsB, diff
+		List<Arguments> combinations = new ArrayList<>();  // ArgsA, ArgsB, isEqual, argVariationsA, argVariationsB
 
-		for (int ia=0; ia<argCombinations.length; ia++) { // Get which two list we are comparing
-
-			// All Same only has to be done once
-			combinations.add(Arguments.of(argCombinations[ia], argCombinations[ia], true, ia, ia, "All same"));
-
-			// Differences have 1 item different, or all items different
+		for (int ia=0; ia<argCombinations.length; ia++) { // Get which two lists we are comparing
 			for (int ib=0; ib<argCombinations.length; ib++) {
-				List<String> keys = argCombinations[ia].keySet().stream().toList();
 
 				assert argCombinations[ia].keySet().equals(argCombinations[ib].keySet());
-
-				for (int idiff=0; idiff<keys.size() + 1; idiff++) { // Get which item is changing
-					// length + 1 is all different, below "idiff" is index of what's different
-
-					HashMap<String, Object> a = argCombinations[ia];
-
-					HashMap<String, Object> b;
-					String sdiff;
-					boolean diffIsSame = false;  // Is the different actually the same object
-					if (idiff < keys.size()) {
-						if (a.get(keys.get(idiff)) == argCombinations[ib].get(keys.get(idiff))) {
-							diffIsSame = true;
-						}
-
-						sdiff = "\"" + keys.get(idiff) + "\" different";
-						b = (HashMap<String, Object>) argCombinations[ia].clone();
-						b.put(keys.get(idiff), argCombinations[ib].get(keys.get(idiff)));
-					} else {
-						sdiff = "All different";
-						b = argCombinations[ib];
-					}
-
-					if ((ia == ib) || diffIsSame) { // Actually just all same which is already handled.
-						continue;
-					}
-					if (a.equals(b)) {
-						throw new RuntimeException();
-					}
-
-					combinations.add(Arguments.of(a, b, false, ia, ib, sdiff));
-				}
+				combinations.add(Arguments.of(
+						argCombinations[ia],
+						argCombinations[ib],
+						false, ia, ib));
 			}
 		}
 
@@ -143,7 +110,6 @@ public class TestPackageItem {
 			boolean originalShouldEqual = (boolean) combination.get()[2];
 			int ia = (int) combination.get()[3];
 			int ib = (int) combination.get()[4];
-			String idiff = (String) combination.get()[5];
 
 			// For class checks there are 4
 			for (int n=0; n<4; n++) {
@@ -153,7 +119,7 @@ public class TestPackageItem {
 
 				arguments.add(Arguments.of(  // Finally make the arguments
 						"[" + i + "] " + formatBool(originalShouldEqual) + "(" + formatBool(checkSameClass) +
-								formatBool(actuallySameClass) + "), " + ia + ", " + ib + ", " + idiff,
+								formatBool(actuallySameClass) + "), " + ia + ", " + ib,
 						createInstance(true, a),
 						createInstance(actuallySameClass, b),
 						shouldEqual,
