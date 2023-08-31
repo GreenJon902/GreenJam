@@ -135,3 +135,8 @@ since packages may circuallarily require eachother, they store references to eac
 (and at some point override info), which can be resolved using the PackageList.
 
 only allow double brace initialization when using builders due to it changing classes and breaking equals functions.
+
+
+PROPERTIES -----------------------------------
+testFull - on parametrized tests that have many runs, run all of them
+testDebug - print test output

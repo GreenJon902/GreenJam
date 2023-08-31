@@ -3,6 +3,7 @@ package com.greenjon902.greenJam.api.core;
 import com.greenjon902.greenJam.testUtils.CombinationCalculator;
 import com.greenjon902.greenJam.testUtils.MapValuePackageItem;
 import com.greenjon902.greenJam.testUtils.MapValuePackageItem.MapValuePackageItem2;
+import com.greenjon902.greenJam.testUtils.TestPrint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -50,12 +51,12 @@ public class TestPackageItem {
 	@ParameterizedTest(name = "{0}")
 	@MethodSource
 	public <T extends PackageItem> void testEquals(String name, T a, T b, boolean shouldEqual, boolean checkClass) {
-		System.out.println("Comparing for " + name);
-		System.out.println(a);
-		System.out.println(b);
-		System.out.println("shouldEqual=" + shouldEqual);
-		System.out.println("checkClass=" + checkClass);
-		System.out.println();
+		TestPrint.print("Comparing for " + name);
+		TestPrint.print(a);
+		TestPrint.print(b);
+		TestPrint.print("shouldEqual=" + shouldEqual);
+		TestPrint.print("checkClass=" + checkClass);
+		TestPrint.print();
 
 		if (checkClass) { // Only use equals_ for when we have to, as with this one we get less information
 			Assertions.assertEquals(shouldEqual, a.equals_(b, true));
@@ -71,8 +72,8 @@ public class TestPackageItem {
 	 * Generates a stream of arguments, that will be able to check same and different classes, all the same or all
 	 * different attributes, or if an individual attribute is different. It also does the reverse of each one too.
 	 * This should work for subclasses too as it uses {@link #getArgVariations()} for data.
-	 * For optimization reasons, we can set an interval in the system properties called "<className>Interval", and it
-	 * will only use every nth test.
+	 * For optimization reasons, we can set an interval, so it will only use every nth test. However, if the property
+	 * {@systemProperty testFull} is true then everything is run.
 	 * @return The stream
 	 */
 	private Stream<Arguments> testEquals() {
@@ -128,8 +129,12 @@ public class TestPackageItem {
 
 		// Now add in class changes, convert to the correct format, and only choose items in the interval ---
 		List<Arguments> arguments = new ArrayList<>();
-		int interval = Integer.parseInt(System.getProperty(getClass().getSimpleName() + "Interval",
-				String.valueOf(defaultInterval())));
+
+		int interval = defaultInterval();
+		if (System.getProperty("testFull", "false").equals("true")) {
+			interval = 1;
+		}
+
 		for (int i=0; i<combinations.size(); i+=interval) {
 			Arguments combination = combinations.get(i);
 
