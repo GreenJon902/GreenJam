@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+
 public class TestPackageItem {
 	/**
 	 * Creates the example data for each field that could be used. The key of the map is the field name (as used in
@@ -26,6 +27,15 @@ public class TestPackageItem {
 		Map<String, Object[]> map = new HashMap<>();
 		map.put("name", new String[] {"a", "b"});
 		return map;
+	}
+
+	/**
+	 * Because we end up generating so many tests, by default we run one then skip the number of what returned by this
+	 * function.
+	 * @return Number to skip
+	 */
+	public int defaultInterval() {
+		return 1;
 	}
 
 
@@ -61,6 +71,8 @@ public class TestPackageItem {
 	 * Generates a stream of arguments, that will be able to check same and different classes, all the same or all
 	 * different attributes, or if an individual attribute is different. It also does the reverse of each one too.
 	 * This should work for subclasses too as it uses {@link #getArgVariations()} for data.
+	 * For optimization reasons, we can set an interval in the system properties called "<className>Interval", and it
+	 * will only use every nth test.
 	 * @return The stream
 	 */
 	private Stream<Arguments> testEquals() {
@@ -71,46 +83,56 @@ public class TestPackageItem {
 		List<Arguments> combinations = new ArrayList<>();  // ArgsA, ArgsB, isEqual, argVariationsA, argVariationsB, diff
 
 		for (int ia=0; ia<argCombinations.length; ia++) { // Get which two list we are comparing
+
+			// All Same only has to be done once
+			combinations.add(Arguments.of(argCombinations[ia], argCombinations[ia], true, ia, ia, "All same"));
+
+			// Differences have 1 item different, or all items different
 			for (int ib=0; ib<argCombinations.length; ib++) {
 				List<String> keys = argCombinations[ia].keySet().stream().toList();
 
 				assert argCombinations[ia].keySet().equals(argCombinations[ib].keySet());
 
-				for (int idiff=-1; idiff<keys.size() + 1; idiff++) { // Get which item is changing
-					// -1 is all same, length + 1 is all different, in between "idiff" is index of what's different
+				for (int idiff=0; idiff<keys.size() + 1; idiff++) { // Get which item is changing
+					// length + 1 is all different, below "idiff" is index of what's different
 
 					HashMap<String, Object> a = argCombinations[ia];
 
 					HashMap<String, Object> b;
-					String sidiff;
+					String sdiff;
 					boolean diffIsSame = false;  // Is the different actually the same object
-					if (idiff == -1) {
-						sidiff = "All same";
-						b = argCombinations[ia];
-						diffIsSame = true;  // No diff so just make same
-					} else if (idiff < keys.size()) {
+					if (idiff < keys.size()) {
 						if (a.get(keys.get(idiff)) == argCombinations[ib].get(keys.get(idiff))) {
 							diffIsSame = true;
 						}
 
-						sidiff = idiff + " different";
+						sdiff = "\"" + keys.get(idiff) + "\" different";
 						b = (HashMap<String, Object>) argCombinations[ia].clone();
 						b.put(keys.get(idiff), argCombinations[ib].get(keys.get(idiff)));
 					} else {
-						sidiff = "All different";
+						sdiff = "All different";
 						b = argCombinations[ib];
 					}
 
-					boolean shouldEqual = (idiff == -1) || (ia == ib) || diffIsSame;
-					combinations.add(Arguments.of(a, b, shouldEqual, ia, ib, sidiff));
+					if ((ia == ib) || diffIsSame) { // Actually just all same which is already handled.
+						continue;
+					}
+					if (a.equals(b)) {
+						throw new RuntimeException();
+					}
+
+					combinations.add(Arguments.of(a, b, false, ia, ib, sdiff));
 				}
 			}
 		}
 
-		// Now add in class changes and convert to the correct format ---
+		// Now add in class changes, convert to the correct format, and only choose items in the interval ---
 		List<Arguments> arguments = new ArrayList<>();
-		int i = 0;
-		for (Arguments combination : combinations) {
+		int interval = Integer.parseInt(System.getProperty(getClass().getSimpleName() + "Interval",
+				String.valueOf(defaultInterval())));
+		for (int i=0; i<combinations.size(); i+=interval) {
+			Arguments combination = combinations.get(i);
+
 			HashMap<String, Object> a = (HashMap<String, Object>) combination.get()[0];
 			HashMap<String, Object> b = (HashMap<String, Object>) combination.get()[1];
 			boolean originalShouldEqual = (boolean) combination.get()[2];
@@ -132,7 +154,6 @@ public class TestPackageItem {
 						shouldEqual,
 						checkSameClass
 				));
-				i++;
 			}
 		}
 

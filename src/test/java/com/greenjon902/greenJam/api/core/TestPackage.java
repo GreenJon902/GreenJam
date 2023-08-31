@@ -1,6 +1,6 @@
 package com.greenjon902.greenJam.api.core;
 
-import com.greenjon902.greenJam.testUtils.MapValueModule;
+import com.greenjon902.greenJam.testUtils.MapValuePackage;
 import com.greenjon902.greenJam.testUtils.MapValuePackageReference;
 
 import java.util.Collections;
@@ -8,6 +8,11 @@ import java.util.Map;
 import java.util.Set;
 
 public class TestPackage extends TestModule {
+	@Override
+	public int defaultInterval() {
+		return 300001;  // Around 15,000,000 full
+	}
+
 	@Override
 	public Map<String, Object[]> getArgVariations() {
 		Map<String, Object[]> map = super.getArgVariations();
@@ -28,11 +33,11 @@ public class TestPackage extends TestModule {
 	}
 
 	@Override
-	protected Module createInstance(boolean same, Map<String, Object> args) {
+	protected Package createInstance(boolean same, Map<String, Object> args) {
 		if (same) {
-			return new MapValueModule(args);
+			return new MapValuePackage(args);
 		} else {
-			return new MapValueModule.MapValueModule2(args);
+			return new MapValuePackage.MapValuePackage2(args);
 		}
 	}
 }

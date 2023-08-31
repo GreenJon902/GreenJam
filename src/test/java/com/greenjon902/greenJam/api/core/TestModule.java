@@ -11,6 +11,11 @@ import static com.greenjon902.greenJam.testUtils.Null.NULL;
 
 public class TestModule extends TestPackageItem {
 	@Override
+	public int defaultInterval() {
+		return 201;  // Around 20000 full
+	}
+
+	@Override
 	public Map<String, Object[]> getArgVariations() {
 		Map<String, Object[]> map = super.getArgVariations();
 		map.put("files", new Set[] {
