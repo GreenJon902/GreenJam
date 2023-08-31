@@ -3,21 +3,15 @@ package com.greenjon902.greenJam.api.core;
 import com.greenjon902.greenJam.testUtils.CombinationCalculator;
 import com.greenjon902.greenJam.testUtils.MapValuePackageItem;
 import com.greenjon902.greenJam.testUtils.MapValuePackageItem.MapValuePackageItem2;
-import com.greenjon902.greenJam.testUtils.TestPrint;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.function.Supplier;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-
 public class TestPackageItem {
 	/**
 	 * Creates the example data for each field that could be used. The key of the map is the field name (as used in
@@ -48,23 +42,22 @@ public class TestPackageItem {
 	 * @param shouldEqual Should they be equal
 	 * @param checkClass Should we check the class is the same
 	 */
-	@ParameterizedTest(name = "{0}")
-	@MethodSource
-	public <T extends PackageItem> void testEquals(String name, T a, T b, boolean shouldEqual, boolean checkClass) {
-		TestPrint.print("Comparing for " + name);
-		TestPrint.print(a);
-		TestPrint.print(b);
-		TestPrint.print("shouldEqual=" + shouldEqual);
-		TestPrint.print("checkClass=" + checkClass);
-		TestPrint.print();
+	public <T extends PackageItem> void check(String name, T a, T b, boolean shouldEqual, boolean checkClass) {
+		Supplier<String> message = () ->
+				"Equals failed, info:" + "\n\n" +
+				"Comparing for " + name + "\n" +
+				a + "\n" +
+				b + "\n" +
+				"shouldEqual=" + shouldEqual + "\n" +
+				"checkClass=" + checkClass + "\n\n";  // Supplier so only make string when have to
 
 		if (checkClass) { // Only use equals_ for when we have to, as with this one we get less information
-			Assertions.assertEquals(shouldEqual, a.equals_(b, true));
+			Assertions.assertEquals(shouldEqual, a.equals_(b, true), message);
 
 		} else if (shouldEqual) {
-			Assertions.assertEquals(a, b);
+			Assertions.assertEquals(a, b, message);
 		} else {
-			Assertions.assertNotEquals(a, b);
+			Assertions.assertNotEquals(a, b, message);
 		}
 	}
 
@@ -76,59 +69,39 @@ public class TestPackageItem {
 	 * {@systemProperty testFull} is true then everything is run.
 	 * @return The stream
 	 */
-	protected Stream<Arguments> testEquals() {
+	@Test
+	protected void testEquals() {
 		Map<String, Object[]> argVariations = getArgVariations();
 		HashMap<String, Object>[] argCombinations = CombinationCalculator.calculate(argVariations);
 
-		// First make all argument combinations ---
-		List<Arguments> combinations = new ArrayList<>();  // ArgsA, ArgsB, isEqual, argVariationsA, argVariationsB
+		// Make all argument combinations ---
+		System.out.println("Making " + Math.pow(argCombinations.length, 2) * 4 + " combinations");
+		int n = 0;
+		for (int i=0; i<Math.pow(argCombinations.length, 2); i++) {
+			int ia = i % argCombinations.length;
+			int ib = i / argCombinations.length;
 
-		for (int ia=0; ia<argCombinations.length; ia++) { // Get which two lists we are comparing
-			for (int ib=0; ib<argCombinations.length; ib++) {
+			assert argCombinations[ia].keySet().equals(argCombinations[ib].keySet());
 
-				assert argCombinations[ia].keySet().equals(argCombinations[ib].keySet());
-				combinations.add(Arguments.of(
-						argCombinations[ia],
-						argCombinations[ib],
-						false, ia, ib));
-			}
-		}
+			HashMap<String, Object> a = argCombinations[ia];
+			HashMap<String, Object> b = argCombinations[ib];
+			boolean shouldEqual = ia == ib;
 
-		// Now add in class changes, convert to the correct format, and only choose items in the interval ---
-		List<Arguments> arguments = new ArrayList<>();
+			// There are 4 class checks
+			for (int t=0; t<4; t++) {
+				boolean checkSameClass = (t & 1) != 1;
+				boolean actuallySameClass = ((t & 2)) != 2;
+				boolean shouldEqualWithClass = shouldEqual && !(checkSameClass && !actuallySameClass);
 
-		int interval = defaultInterval();
-		if (System.getProperty("testFull", "false").equals("true")) {
-			interval = 1;
-		}
-
-		for (int i=0; i<combinations.size(); i+=interval) {
-			Arguments combination = combinations.get(i);
-
-			HashMap<String, Object> a = (HashMap<String, Object>) combination.get()[0];
-			HashMap<String, Object> b = (HashMap<String, Object>) combination.get()[1];
-			boolean originalShouldEqual = (boolean) combination.get()[2];
-			int ia = (int) combination.get()[3];
-			int ib = (int) combination.get()[4];
-
-			// For class checks there are 4
-			for (int n=0; n<4; n++) {
-				boolean checkSameClass = (n & 1) != 1;
-				boolean actuallySameClass = ((n & 2)) != 2;
-				boolean shouldEqual = originalShouldEqual && !(checkSameClass && !actuallySameClass);
-
-				arguments.add(Arguments.of(  // Finally make the arguments
-						"[" + i + "] " + formatBool(originalShouldEqual) + "(" + formatBool(checkSameClass) +
+				check("[" + n + "] " + formatBool(shouldEqual) + "(" + formatBool(checkSameClass) +
 								formatBool(actuallySameClass) + "), " + ia + ", " + ib,
 						createInstance(true, a),
 						createInstance(actuallySameClass, b),
-						shouldEqual,
-						checkSameClass
-				));
+						shouldEqualWithClass,
+						checkSameClass);
+				n++;
 			}
 		}
-
-		return arguments.stream();
 	}
 
 	/**

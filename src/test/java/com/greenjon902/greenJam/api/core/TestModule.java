@@ -12,7 +12,7 @@ import static com.greenjon902.greenJam.testUtils.Null.NULL;
 public class TestModule extends TestPackageItem {
 	@Override
 	public int defaultInterval() {
-		return 201;  // Around 20000 full
+		return 6;  // Around 6400 full
 	}
 
 	@Override

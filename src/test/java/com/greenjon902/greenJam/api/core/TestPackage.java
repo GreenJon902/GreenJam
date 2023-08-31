@@ -10,7 +10,7 @@ import java.util.Set;
 public class TestPackage extends TestModule {
 	@Override
 	public int defaultInterval() {
-		return 300001;  // Around 15,000,000 full
+		return 2073;  // Around 2073600 full
 	}
 
 	@Override
