@@ -1,39 +1,59 @@
 package com.greenjon902.greenJam.api.core;
 
-import com.greenjon902.greenJam.testUtils.ArrayValueFile;
-import com.greenjon902.greenJam.testUtils.ArrayValueModule;
+import com.greenjon902.greenJam.testUtils.MapValueFile;
+import com.greenjon902.greenJam.testUtils.MapValueModule;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
+
+import static com.greenjon902.greenJam.testUtils.Null.NULL;
 
 public class TestModule extends TestPackageItem {
 	@Override
-	public Object[][] getArgVariations() {
-		return new Object[][]{
-				new Object[]{"a", Collections.emptySet(), Collections.emptySet()},
-				new Object[]{"b",
-						Set.of(new ArrayValueModule("a", Collections.emptySet(), Collections.emptySet())),
-						Set.of(new ArrayValueFile("a", null))},
-				new Object[]{"c",
-						Set.of(new ArrayValueModule("b", Collections.emptySet(), Collections.emptySet()),
-								new ArrayValueModule("c", Collections.emptySet(), Collections.emptySet())),
-						Set.of(new ArrayValueFile("a", null), new ArrayValueFile("b", null))},
-				new Object[]{"d",
-						Set.of(new ArrayValueModule("b", Set.of(new ArrayValueModule(
-								"a", Collections.emptySet(), Collections.emptySet()
-								)), Collections.emptySet()),
-								new ArrayValueModule("b", Collections.emptySet(), Collections.emptySet())),
-						Set.of(new ArrayValueFile("a", new ArrayValueFile("a", null)))},
-		};
+	public Map<String, Object[]> getArgVariations() {
+		Map<String, Object[]> map = super.getArgVariations();
+		map.put("files", new Set[] {
+				Collections.emptySet(),
+				Set.of(new MapValueFile(Map.of("name", "a", "super_", NULL))),
+				Set.of(new MapValueFile(Map.of("name", "a", "super_", NULL)),
+						new MapValueFile(Map.of("name", "b", "super_", NULL))),
+				Set.of(new MapValueFile(Map.of(
+						"name", "a",
+						"super_", new MapValueFile(Map.of(
+								"name", "a", "super_", NULL
+						)))))
+		});
+		map.put("modules", new Set[] {
+				Collections.emptySet(),
+				Set.of(new MapValueModule(Map.of(
+						"name", "a", "files", Collections.emptySet(), "modules", Collections.emptySet()
+				))),
+				Set.of(new MapValueModule(Map.of("name", "b",
+								"files", Collections.emptySet(),
+								"modules", Collections.emptySet())),
+						new MapValueModule(Map.of("name", "c",
+								"files", Collections.emptySet(),
+								"modules", Collections.emptySet()))),
+				Set.of(new MapValueModule(Map.of("name", "b",
+								"files", Set.of(new MapValueModule(Map.of(
+										"name", "a",
+										"files", Collections.emptySet(),
+										"modules", Collections.emptySet()))),
+								"modules", Collections.emptySet()))),
+				Set.of(new MapValueModule(Map.of("name", "b",
+						"files", Collections.emptySet(),
+						"modules", Collections.emptySet())))
+		});
+		return map;
 	}
 
 	@Override
-	protected Module createInstance(boolean same, Object[] args) {
-		assert args.length == 3;
+	protected Module createInstance(boolean same, Map<String, Object> args) {
 		if (same) {
-			return new ArrayValueModule(args);
+			return new MapValueModule(args);
 		} else {
-			return new ArrayValueModule.ArrayValueModule2(args);
+			return new MapValueModule.MapValueModule2(args);
 		}
 	}
 }

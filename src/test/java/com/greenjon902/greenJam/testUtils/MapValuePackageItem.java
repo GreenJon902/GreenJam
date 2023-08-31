@@ -1,17 +1,16 @@
 package com.greenjon902.greenJam.testUtils;
 
 import com.greenjon902.greenJam.api.core.PackageItem;
-import com.greenjon902.greenJam.utils.FieldStringWriter;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 /**
  * A {@link PackageItem} that acts like a record, but uses the correct equals and hashCode functions.
  */
-public class ArrayValuePackageItem extends FieldStringWriter.Abstract implements PackageItem {
-	protected final Object[] values;
-
-	public ArrayValuePackageItem(Object... values) {
-		this.values = values;
+public class MapValuePackageItem extends MapValueBase implements PackageItem {
+	public MapValuePackageItem(Map<String, Object> values) {
+		super(values);
 	}
 
 	@Override
@@ -26,14 +25,14 @@ public class ArrayValuePackageItem extends FieldStringWriter.Abstract implements
 
 	@Override
 	public @NotNull String name() {
-		return (String) values[0];
+		return (String) values.get("name");
 	}
 
 	/**
 	 * A subclass that is technically a different class, but apart from that is identical.
 	 */
-	public static class ArrayValuePackageItem2 extends ArrayValuePackageItem {
-		public ArrayValuePackageItem2(Object... values) {
+	public static class MapValuePackageItem2 extends MapValuePackageItem {
+		public MapValuePackageItem2(Map<String, Object>  values) {
 			super(values);
 		}
 	}

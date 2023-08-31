@@ -1,9 +1,12 @@
 package com.greenjon902.greenJam.api.core.packageLoader;
 
+import com.greenjon902.greenJam.utils.FieldStringWriter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface PackageReference {
+import java.util.Objects;
+
+public interface PackageReference extends FieldStringWriter {
 
 	/**
 	 * Gets the actual name of the package, this is the one that would be put as the key in a dependency.
@@ -42,5 +45,41 @@ public interface PackageReference {
 			name = name + "-" + version;
 		}
 		return name;
+	}
+
+	@Override
+	default void writeFields(StringBuilder sb) {
+		sb.append("realName='").append(realName()).append('\'');
+		sb.append("referName='").append(referName()).append('\'');
+		sb.append("version='").append(version()).append('\'');
+	}
+
+	/**
+	 * See {@link #equals_(Object, boolean)}
+	 */
+	default boolean equals_(Object o) {
+		return equals_(o, false);
+	}
+
+	/**
+	 * The default equals implementation.
+	 * @param o The other object
+	 * @param sameClass Do we require the class to be the same
+	 * @return True if it is equals
+	 */
+	default boolean equals_(Object o, boolean sameClass) {
+		if (this == o) return true;
+		if (sameClass && (this.getClass() != o.getClass())) return false;
+		if (!(o instanceof PackageReference that)) return false;
+		return Objects.equals(realName(), that.realName()) && Objects.equals(referName(), that.referName()) &&
+				Objects.equals(version(), that.version());
+	}
+
+	/**
+	 * The default hashCode implementation.
+	 * @return the hash code
+	 */
+	default int hashCode_() {
+		return Objects.hash(realName(), referName(), version());
 	}
 }

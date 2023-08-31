@@ -1,7 +1,8 @@
 package com.greenjon902.greenJam.api.core;
 
-import com.greenjon902.greenJam.testUtils.ArrayValuePackageItem;
-import com.greenjon902.greenJam.testUtils.ArrayValuePackageItem.ArrayValuePackageItem2;
+import com.greenjon902.greenJam.testUtils.CombinationCalculator;
+import com.greenjon902.greenJam.testUtils.MapValuePackageItem;
+import com.greenjon902.greenJam.testUtils.MapValuePackageItem.MapValuePackageItem2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,16 +10,22 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TestPackageItem {
-	public Object[][] getArgVariations() {
-		return new Object[][]{
-				new Object[]{"a"},
-				new Object[]{"b"}
-		};
+	/**
+	 * Creates the example data for each field that could be used. The key of the map is the field name (as used in
+	 * {@link MapValuePackageItem}), and the value is an array of possible values.
+	 * @return A mutable map
+	 */
+	public Map<String, Object[]> getArgVariations() {
+		Map<String, Object[]> map = new HashMap<>();
+		map.put("name", new String[] {"a", "b"});
+		return map;
 	}
 
 
@@ -57,35 +64,44 @@ public class TestPackageItem {
 	 * @return The stream
 	 */
 	private Stream<Arguments> testEquals() {
-		Object[][] argVariations = getArgVariations();
+		Map<String, Object[]> argVariations = getArgVariations();
+		HashMap<String, Object>[] argCombinations = CombinationCalculator.calculate(argVariations);
 
 		// First make all argument combinations ---
 		List<Arguments> combinations = new ArrayList<>();  // ArgsA, ArgsB, isEqual, argVariationsA, argVariationsB, diff
 
-		for (int ia=0; ia<argVariations.length; ia++) { // Get which two list we are comparing
-			for (int ib=0; ib<argVariations.length; ib++) {
-				assert argVariations[ia].length == argVariations[ib].length;
+		for (int ia=0; ia<argCombinations.length; ia++) { // Get which two list we are comparing
+			for (int ib=0; ib<argCombinations.length; ib++) {
+				List<String> keys = argCombinations[ia].keySet().stream().toList();
 
-				for (int idiff=-1; idiff<argVariations[ia].length + 1; idiff++) { // Get which item is changing
+				assert argCombinations[ia].keySet().equals(argCombinations[ib].keySet());
+
+				for (int idiff=-1; idiff<keys.size() + 1; idiff++) { // Get which item is changing
 					// -1 is all same, length + 1 is all different, in between "idiff" is index of what's different
 
-					Object[] a = argVariations[ia];
+					HashMap<String, Object> a = argCombinations[ia];
 
-					Object[] b;
+					HashMap<String, Object> b;
 					String sidiff;
+					boolean diffIsSame = false;  // Is the different actually the same object
 					if (idiff == -1) {
 						sidiff = "All same";
-						b = argVariations[ia];
-					} else if (idiff < argVariations[ia].length) {
+						b = argCombinations[ia];
+						diffIsSame = true;  // No diff so just make same
+					} else if (idiff < keys.size()) {
+						if (a.get(keys.get(idiff)) == argCombinations[ib].get(keys.get(idiff))) {
+							diffIsSame = true;
+						}
+
 						sidiff = idiff + " different";
-						b = argVariations[ia].clone();
-						b[idiff] = argVariations[ib][idiff];
+						b = (HashMap<String, Object>) argCombinations[ia].clone();
+						b.put(keys.get(idiff), argCombinations[ib].get(keys.get(idiff)));
 					} else {
 						sidiff = "All different";
-						b = argVariations[ib];
+						b = argCombinations[ib];
 					}
 
-					boolean shouldEqual = (idiff == -1) || (ia == ib);
+					boolean shouldEqual = (idiff == -1) || (ia == ib) || diffIsSame;
 					combinations.add(Arguments.of(a, b, shouldEqual, ia, ib, sidiff));
 				}
 			}
@@ -95,8 +111,8 @@ public class TestPackageItem {
 		List<Arguments> arguments = new ArrayList<>();
 		int i = 0;
 		for (Arguments combination : combinations) {
-			Object[] a = (Object[]) combination.get()[0];
-			Object[] b = (Object[]) combination.get()[1];
+			HashMap<String, Object> a = (HashMap<String, Object>) combination.get()[0];
+			HashMap<String, Object> b = (HashMap<String, Object>) combination.get()[1];
 			boolean originalShouldEqual = (boolean) combination.get()[2];
 			int ia = (int) combination.get()[3];
 			int ib = (int) combination.get()[4];
@@ -138,12 +154,11 @@ public class TestPackageItem {
 	 * @param args The arguments to supply the instance
 	 * @return The instance
 	 */
-	protected PackageItem createInstance(boolean same, Object[] args) {
-		assert args.length == 1;
+	protected PackageItem createInstance(boolean same, Map<String, Object> args) {
 		if (same) {
-			return new ArrayValuePackageItem(args);
+			return new MapValuePackageItem(args);
 		} else {
-			return new ArrayValuePackageItem2(args);
+			return new MapValuePackageItem2(args);
 		}
 	}
 }
