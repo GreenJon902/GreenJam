@@ -1,6 +1,6 @@
 package com.greenjon902.greenJam.testUtils;
 
-import com.greenjon902.greenJam.api.core.packageLoader.PackageReference;
+import com.greenjon902.greenJam.api.core.PackageReference;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -33,5 +33,11 @@ public class MapValuePackageReference extends MapValueBase implements PackageRef
 	@Override
 	public int hashCode() {
 		return hashCode_();
+	}
+
+	public static class MapValuePackageReference2 extends MapValuePackageReference {
+		public MapValuePackageReference2(Map<String, Object> values) {
+			super(values);
+		}
 	}
 }

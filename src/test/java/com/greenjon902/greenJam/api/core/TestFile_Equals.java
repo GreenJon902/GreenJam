@@ -6,7 +6,7 @@ import java.util.Map;
 
 import static com.greenjon902.greenJam.testUtils.Null.NULL;
 
-public class TestFile extends TestPackageItem {
+public class TestFile_Equals extends TestPackageItem_Equals {
 	@Override
 	public Map<String, Object[]> getArgVariations() {
 		Map<String, Object[]> map = super.getArgVariations();

@@ -9,12 +9,7 @@ import java.util.Set;
 
 import static com.greenjon902.greenJam.testUtils.Null.NULL;
 
-public class TestModule extends TestPackageItem {
-	@Override
-	public int defaultInterval() {
-		return 6;  // Around 6400 full
-	}
-
+public class TestModule_Equals extends TestPackageItem_Equals {
 	@Override
 	public Map<String, Object[]> getArgVariations() {
 		Map<String, Object[]> map = super.getArgVariations();

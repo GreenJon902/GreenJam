@@ -7,12 +7,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-public class TestPackage extends TestModule {
-	@Override
-	public int defaultInterval() {
-		return 2073;  // Around 2073600 full
-	}
-
+public class TestPackage_Equals extends TestModule_Equals {
 	@Override
 	public Map<String, Object[]> getArgVariations() {
 		Map<String, Object[]> map = super.getArgVariations();

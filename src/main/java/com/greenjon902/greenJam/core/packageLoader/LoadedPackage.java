@@ -2,7 +2,7 @@ package com.greenjon902.greenJam.core.packageLoader;
 
 import com.greenjon902.greenJam.api.core.Module;
 import com.greenjon902.greenJam.api.core.Package;
-import com.greenjon902.greenJam.api.core.packageLoader.PackageReference;
+import com.greenjon902.greenJam.api.core.PackageReference;
 import com.greenjon902.greenJam.core.packageLoader.rawConfig.PackageRawConfig;
 import org.jetbrains.annotations.NotNull;
 

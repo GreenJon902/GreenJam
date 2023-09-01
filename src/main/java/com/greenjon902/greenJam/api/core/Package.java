@@ -1,6 +1,5 @@
 package com.greenjon902.greenJam.api.core;
 
-import com.greenjon902.greenJam.api.core.packageLoader.PackageReference;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;

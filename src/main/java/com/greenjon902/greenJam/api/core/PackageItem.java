@@ -11,7 +11,7 @@ import java.util.Objects;
  * @implSpec These items should be immutable after creation. But these items should support being duplicated and used
  * as children multiple times. (So bases don't need to compile things multiple times)
  */
-public interface PackageItem extends FieldStringWriter {
+public interface PackageItem extends FieldStringWriter, InterfaceComparable {
 	/**
 	 * Gets the name of this item.
 	 * @return The name
@@ -23,19 +23,7 @@ public interface PackageItem extends FieldStringWriter {
 		sb.append("name='").append(name()).append('\'');
 	}
 
-	/**
-	 * See {@link #equals_(Object, boolean)}
-	 */
-	default boolean equals_(Object o) {
-		return equals_(o, false);
-	}
-
-	/**
-	 * The default equals implementation.
-	 * @param o The other object
-	 * @param sameClass Do we require the class to be the same
-	 * @return True if it is equals
-	 */
+	@Override
 	default boolean equals_(Object o, boolean sameClass) {
 		if (this == o) return true;
 		if (sameClass && (this.getClass() != o.getClass())) return false;
@@ -43,10 +31,7 @@ public interface PackageItem extends FieldStringWriter {
 		return Objects.equals(name(), that.name());
 	}
 
-	/**
-	 * The default hashCode implementation.
-	 * @return the hash code
-	 */
+	@Override
 	default int hashCode_() {
 		return Objects.hash(name());
 	}

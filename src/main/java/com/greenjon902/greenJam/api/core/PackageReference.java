@@ -1,4 +1,4 @@
-package com.greenjon902.greenJam.api.core.packageLoader;
+package com.greenjon902.greenJam.api.core;
 
 import com.greenjon902.greenJam.utils.FieldStringWriter;
 import org.jetbrains.annotations.NotNull;
@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public interface PackageReference extends FieldStringWriter {
+public interface PackageReference extends FieldStringWriter, InterfaceComparable {
 
 	/**
 	 * Gets the actual name of the package, this is the one that would be put as the key in a dependency.
@@ -54,19 +54,7 @@ public interface PackageReference extends FieldStringWriter {
 		sb.append("version='").append(version()).append('\'');
 	}
 
-	/**
-	 * See {@link #equals_(Object, boolean)}
-	 */
-	default boolean equals_(Object o) {
-		return equals_(o, false);
-	}
-
-	/**
-	 * The default equals implementation.
-	 * @param o The other object
-	 * @param sameClass Do we require the class to be the same
-	 * @return True if it is equals
-	 */
+	@Override
 	default boolean equals_(Object o, boolean sameClass) {
 		if (this == o) return true;
 		if (sameClass && (this.getClass() != o.getClass())) return false;
@@ -75,10 +63,7 @@ public interface PackageReference extends FieldStringWriter {
 				Objects.equals(version(), that.version());
 	}
 
-	/**
-	 * The default hashCode implementation.
-	 * @return the hash code
-	 */
+	@Override
 	default int hashCode_() {
 		return Objects.hash(realName(), referName(), version());
 	}
