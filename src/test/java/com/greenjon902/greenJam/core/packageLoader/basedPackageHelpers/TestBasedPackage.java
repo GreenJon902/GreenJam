@@ -1,17 +1,17 @@
-package com.greenjon902.greenJam.old.core.packageLoader.basedPackageHelpers;
+package com.greenjon902.greenJam.core.packageLoader.basedPackageHelpers;
 
 import com.greenjon902.greenJam.api.core.File;
 import com.greenjon902.greenJam.api.core.Package;
 import com.greenjon902.greenJam.core.packageLoader.LoadedFile;
 import com.greenjon902.greenJam.core.packageLoader.LoadedModule;
 import com.greenjon902.greenJam.core.packageLoader.LoadedPackage;
-import com.greenjon902.greenJam.core.packageLoader.basedPackageHelpers.BasedPackage;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
+// TODO: Find better way of making comparison data
 public class TestBasedPackage {
 	@Test
 	public void testPackageCombining() {
