@@ -1,6 +1,8 @@
 package com.greenjon902.greenJam.testUtils;
 
 import com.greenjon902.greenJam.api.core.File;
+import com.greenjon902.greenJam.api.core.InputStream;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -23,6 +25,11 @@ public class MapValueFile extends MapValuePackageItem implements File {
 		} else {
 			return (File) super_;
 		}
+	}
+
+	@Override
+	public @NotNull InputStream stream() {
+		return (InputStream) values.get("stream");
 	}
 
 	/**

@@ -2,6 +2,7 @@ package com.greenjon902.greenJam.api.core;
 
 import com.greenjon902.greenJam.testUtils.MapValueFile;
 import com.greenjon902.greenJam.testUtils.MapValueModule;
+import com.greenjon902.greenJam.utils.NullInputStream;
 
 import java.util.Collections;
 import java.util.Map;
@@ -15,14 +16,15 @@ public class TestModule_Equals extends TestPackageItem_Equals {
 		Map<String, Object[]> map = super.getArgVariations();
 		map.put("files", new Set[] {
 				Collections.emptySet(),
-				Set.of(new MapValueFile(Map.of("name", "a", "super_", NULL))),
-				Set.of(new MapValueFile(Map.of("name", "a", "super_", NULL)),
-						new MapValueFile(Map.of("name", "b", "super_", NULL))),
+				Set.of(new MapValueFile(Map.of("name", "a", "super_", NULL, "stream", new NullInputStream()))),
+				Set.of(new MapValueFile(Map.of("name", "a", "super_", NULL, "stream", new NullInputStream())),
+						new MapValueFile(Map.of("name", "b", "super_", NULL, "stream", new NullInputStream()))),
 				Set.of(new MapValueFile(Map.of(
 						"name", "a",
 						"super_", new MapValueFile(Map.of(
-								"name", "a", "super_", NULL
-						)))))
+								"name", "a", "super_", NULL, "stream", new NullInputStream()
+						)),
+						"stream", new NullInputStream())))
 		});
 		map.put("modules", new Set[] {
 				Collections.emptySet(),
@@ -36,10 +38,9 @@ public class TestModule_Equals extends TestPackageItem_Equals {
 								"files", Collections.emptySet(),
 								"modules", Collections.emptySet()))),
 				Set.of(new MapValueModule(Map.of("name", "b",
-								"files", Set.of(new MapValueModule(Map.of(
+								"files", Set.of(new MapValueFile(Map.of(
 										"name", "a",
-										"files", Collections.emptySet(),
-										"modules", Collections.emptySet()))),
+										"stream", new NullInputStream()))),
 								"modules", Collections.emptySet()))),
 				Set.of(new MapValueModule(Map.of("name", "b",
 						"files", Collections.emptySet(),

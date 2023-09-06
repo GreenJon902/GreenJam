@@ -1,6 +1,7 @@
 package com.greenjon902.greenJam.core.packageLoader.basedPackageHelpers;
 
 import com.greenjon902.greenJam.api.core.File;
+import com.greenjon902.greenJam.api.core.InputStream;
 import com.greenjon902.greenJam.utils.FieldStringWriter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +21,11 @@ public class BasedFile extends BasedPackageItem implements File, FieldStringWrit
 	@Override
 	public @Nullable File super_() {
 		return superFile;
+	}
+
+	@Override
+	public @NotNull InputStream stream() {
+		return file.stream();
 	}
 
 	@Override

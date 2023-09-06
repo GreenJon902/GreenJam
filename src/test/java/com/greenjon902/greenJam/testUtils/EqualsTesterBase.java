@@ -141,14 +141,14 @@ public abstract class EqualsTesterBase {
 			HashMap<String, Object> b = argCombinations[ib];
 			boolean shouldEqual = ia == ib;
 
-			// There are 4 class checks
+			// The class changes so loop again
 			for (int t=0; t<2; t++) {
-				boolean actuallySameClass = t == 1;
+				boolean otherClass = t == 1;
 
 				checkHash("[" + n + "] " + formatBool(shouldEqual) + "(" +
-								formatBool(actuallySameClass) + "), " + ia + ", " + ib,
+								formatBool(otherClass) + "), " + ia + ", " + ib,
 						createInstance(true, a),
-						createInstance(actuallySameClass, b),
+						createInstance(otherClass, b),
 						shouldEqual);
 				n++;
 			}

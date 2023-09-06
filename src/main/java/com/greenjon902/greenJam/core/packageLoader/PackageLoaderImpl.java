@@ -7,6 +7,7 @@ import com.greenjon902.greenJam.api.core.PackageReference;
 import com.greenjon902.greenJam.api.core.packageLoader.PackageLoader;
 import com.greenjon902.greenJam.core.packageLoader.basedPackageHelpers.BasedPackage;
 import com.greenjon902.greenJam.core.packageLoader.rawConfig.*;
+import com.greenjon902.greenJam.utils.FileInputStream;
 import com.greenjon902.greenJam.utils.StackedClassBase;
 import com.moandjiezana.toml.Toml;
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +25,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static com.greenjon902.greenJam.utils.TomlUtils.loadIfExists;
-
-// TODO: load a reader for each file
 
 /**
  * See {@link #loadAndDependants()}
@@ -302,6 +301,7 @@ public class PackageLoaderImpl implements PackageLoader {
 	private LoadedFile loadFile(File file, String name) throws IOException {
 		LoadedFile.Builder fileBuilder = new LoadedFile.Builder();
 		fileBuilder.name(name);
+		fileBuilder.stream(new FileInputStream(file));
 
 		return fileBuilder.build();
 	}

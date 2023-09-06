@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+// TODO: Figure out what error is thrown and how end of stream is detected
+
 public interface InputStream extends InterfaceComparable, FieldStringWriter {
 	/**
 	 * Gets the name of this InputStream.
@@ -55,8 +57,10 @@ public interface InputStream extends InterfaceComparable, FieldStringWriter {
 	@NotNull String getAll();
 
 	@Override
-	default void writeFields(StringBuilder builder) {
-
+	default void writeFields(StringBuilder sb) {
+		sb.append("name=").append(name());
+		sb.append(", location=").append(location());
+		sb.append(", size=").append(size());
 	}
 
 	@Override

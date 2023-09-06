@@ -1,12 +1,12 @@
 package com.greenjon902.greenJam.core.packageLoader;
 
-import com.greenjon902.greenJam.api.core.File;
 import com.greenjon902.greenJam.api.core.Module;
 import com.greenjon902.greenJam.api.core.Package;
-import com.greenjon902.greenJam.api.core.PackageList;
+import com.greenjon902.greenJam.api.core.*;
 import com.greenjon902.greenJam.api.core.packageLoader.PackageLoader;
 import com.greenjon902.greenJam.core.PackageListImpl;
 import com.greenjon902.greenJam.core.packageLoader.rawConfig.ModuleRawConfig;
+import com.greenjon902.greenJam.utils.FileInputStream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,11 +45,19 @@ public class TestPackageLoaderImpl {
 		return new java.io.File(resource.getFile());
 	}
 
+	private static InputStream getJamFileStream(String path) throws IOException {
+		java.io.File file = getFile(path);
+		return new FileInputStream(file.getAbsoluteFile());
+	}
+
 	/**
 	 * Checks that the module version of the simple package was loaded correctly. You can also tell it to do
 	 * subfolder with files as that is based on it.
 	 */
-	public static void checkSimpleModuleContents(Module module, boolean withSubfolderFiles, String rootName) {
+	public static void checkSimpleModuleContents(Module module, boolean withSubfolderFiles, String rootName) throws IOException {
+		String path = withSubfolderFiles ? "com/greenjon902/greenJam/core/packageLoader/package_with_subfolder_files/" :
+				"com/greenjon902/greenJam/core/packageLoader/simple_package/";
+
 		Set<File> files1 = new HashSet<>();
 		Set<Module> modules = new HashSet<>();
 		Set<File> files2 = new HashSet<>();
@@ -57,28 +65,34 @@ public class TestPackageLoaderImpl {
 
 		files1.add(new LoadedFile.Builder() {{
 			name("main");
+			stream(getJamFileStream(path + "main.jam"));
 		}}.build());
 		files1.add(new LoadedFile.Builder() {{
 			name("test");
+			stream(getJamFileStream(path + "test.jam"));
 		}}.build());
 		if (withSubfolderFiles) {
 			files1.add(new LoadedFile.Builder() {{
 				name("x_actualSkills");
+				stream(getJamFileStream(path + "ext/x_actualSkills.jam"));
 			}}.build());
 		}
 
 		files2.add(new LoadedFile.Builder() {{
 			name("bar");
+			stream(getJamFileStream(path + "foo/bar.jam"));
 		}}.build());
 		if (withSubfolderFiles) {
 			files2.add(new LoadedFile.Builder() {{
 				name("lies");
+				stream(getJamFileStream(path + "foo/ext/lies.jam"));
 			}}.build());
 		}
 
 		if (withSubfolderFiles) {
 			files3.add(new LoadedFile.Builder() {{
 				name("baz");
+				stream(getJamFileStream(path + "xxx_module_xxx/baz.jam"));
 			}}.build());
 		}
 
@@ -172,9 +186,11 @@ public class TestPackageLoaderImpl {
 			files(Set.of(
 					new LoadedFile.Builder() {{
 						name("a.jam");
+						stream(getJamFileStream("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex/a.jam"));
 					}}.build(),
 					new LoadedFile.Builder() {{
 						name("b.jam");
+						stream(getJamFileStream("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex/b.jam"));
 					}}.build()
 			));
 			modules(Set.of(
@@ -183,9 +199,11 @@ public class TestPackageLoaderImpl {
 						files(Set.of(
 								new LoadedFile.Builder() {{
 									name("c.jam");
+									stream(getJamFileStream("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex/mod/c.jam"));
 								}}.build(),
 								new LoadedFile.Builder() {{
 									name("e");
+									stream(getJamFileStream("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex/mod/e.jam"));
 								}}.build()
 						));
 					}}.build(),
@@ -194,9 +212,11 @@ public class TestPackageLoaderImpl {
 						files(Set.of(
 								new LoadedFile.Builder() {{
 									name("f.jam");
+									stream(getJamFileStream("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex/mod2/f.jam"));
 								}}.build(),
 								new LoadedFile.Builder() {{
 									name("g");
+									stream(getJamFileStream("com/greenjon902/greenJam/core/packageLoader/package_with_changing_regex/mod2/g.jam"));
 								}}.build()
 						));
 					}}.build()
@@ -361,6 +381,7 @@ public class TestPackageLoaderImpl {
 		Set<File> expected = Set.of(
 				new LoadedFile.Builder() {{
 					name("a");
+					stream(getJamFileStream("com/greenjon902/greenJam/core/packageLoader/dependency_override_resources/main/a.jam"));
 				}}.build()
 		);
 
