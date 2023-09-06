@@ -54,7 +54,7 @@ public class StringInputStream extends FieldStringWriter.Abstract implements Inp
 	}
 
 	@Override
-	public String getAll() {
+	public @NotNull String getAll() {
 		return string;
 	}
 }

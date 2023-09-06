@@ -52,7 +52,7 @@ public interface InputStream extends InterfaceComparable, FieldStringWriter {
 	 * Gets the entire contents of this stream from start to finish.
 	 * @return The entire contents
 	 */
-	String getAll();
+	@NotNull String getAll();
 
 	@Override
 	default void writeFields(StringBuilder builder) {
