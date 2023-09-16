@@ -1,7 +1,7 @@
 package com.greenjon902.greenJam.testUtils;
 
-import com.greenjon902.greenJam.api.core.File;
-import com.greenjon902.greenJam.api.core.InputStream;
+import com.greenjon902.greenJam.api.File;
+import com.greenjon902.greenJam.api.InputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

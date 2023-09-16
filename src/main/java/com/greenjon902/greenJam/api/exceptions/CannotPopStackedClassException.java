@@ -1,4 +1,4 @@
-package com.greenjon902.greenJam.api.core.exceptions;
+package com.greenjon902.greenJam.api.exceptions;
 
 import com.greenjon902.greenJam.utils.StackedClassBase;
 

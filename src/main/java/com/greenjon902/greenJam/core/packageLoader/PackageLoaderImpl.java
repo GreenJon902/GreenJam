@@ -1,14 +1,14 @@
 package com.greenjon902.greenJam.core.packageLoader;
 
-import com.greenjon902.greenJam.api.core.Module;
-import com.greenjon902.greenJam.api.core.Package;
-import com.greenjon902.greenJam.api.core.PackageList;
-import com.greenjon902.greenJam.api.core.PackageReference;
-import com.greenjon902.greenJam.api.core.packageLoader.PackageLoader;
+import com.greenjon902.greenJam.api.Module;
+import com.greenjon902.greenJam.api.Package;
+import com.greenjon902.greenJam.api.PackageList;
+import com.greenjon902.greenJam.api.PackageReference;
+import com.greenjon902.greenJam.api.packageLoader.PackageLoader;
 import com.greenjon902.greenJam.core.packageLoader.basedPackageHelpers.BasedPackage;
 import com.greenjon902.greenJam.core.packageLoader.rawConfig.*;
-import com.greenjon902.greenJam.utils.FileInputStream;
 import com.greenjon902.greenJam.utils.StackedClassBase;
+import com.greenjon902.greenJam.utils.inputStream.FileInputStream;
 import com.moandjiezana.toml.Toml;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -283,7 +283,7 @@ public class PackageLoaderImpl implements PackageLoader {
 		}
 
 		// Put the found items in the builder and build it
-		moduleBuilder.files((Set<com.greenjon902.greenJam.api.core.File>) (Set<?>) newFiles);
+		moduleBuilder.files((Set<com.greenjon902.greenJam.api.File>) (Set<?>) newFiles);
 		moduleBuilder.modules((Set<Module>) (Set<?>) newModules);
 		LoadedModule module = moduleBuilder.build();
 

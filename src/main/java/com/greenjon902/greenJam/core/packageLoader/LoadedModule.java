@@ -1,7 +1,7 @@
 package com.greenjon902.greenJam.core.packageLoader;
 
-import com.greenjon902.greenJam.api.core.File;
-import com.greenjon902.greenJam.api.core.Module;
+import com.greenjon902.greenJam.api.File;
+import com.greenjon902.greenJam.api.Module;
 import com.greenjon902.greenJam.core.packageLoader.rawConfig.ModuleRawConfig;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,4 +1,4 @@
-package com.greenjon902.greenJam.utils;
+package com.greenjon902.greenJam.utils.inputStream;
 
 import java.io.File;
 import java.io.IOException;

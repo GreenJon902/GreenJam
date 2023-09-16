@@ -1,9 +1,9 @@
 package com.greenjon902.greenJam.core;
 
-import com.greenjon902.greenJam.api.core.Package;
-import com.greenjon902.greenJam.api.core.PackageList;
-import com.greenjon902.greenJam.api.core.exceptions.NoSuchPackageException;
-import com.greenjon902.greenJam.api.core.exceptions.PackageAlreadyAddedException;
+import com.greenjon902.greenJam.api.Package;
+import com.greenjon902.greenJam.api.PackageList;
+import com.greenjon902.greenJam.api.exceptions.NoSuchPackageException;
+import com.greenjon902.greenJam.api.exceptions.PackageAlreadyAddedException;
 
 import java.util.Collections;
 import java.util.Map;

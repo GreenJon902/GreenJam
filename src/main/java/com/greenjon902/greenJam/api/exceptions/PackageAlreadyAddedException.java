@@ -1,6 +1,6 @@
-package com.greenjon902.greenJam.api.core.exceptions;
+package com.greenjon902.greenJam.api.exceptions;
 
-import com.greenjon902.greenJam.api.core.PackageList;
+import com.greenjon902.greenJam.api.PackageList;
 
 public class PackageAlreadyAddedException extends NamedPackageListException {
 	public PackageAlreadyAddedException(PackageList packageList, String name, String version) {

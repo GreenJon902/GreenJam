@@ -1,4 +1,4 @@
-package com.greenjon902.greenJam.api.core;
+package com.greenjon902.greenJam.api;
 
 import com.greenjon902.greenJam.utils.FieldStringWriter;
 import org.jetbrains.annotations.NotNull;
@@ -76,5 +76,28 @@ public interface InputStream extends InterfaceComparable, FieldStringWriter {
 	@Override
 	default int hashCode_() {
 		return Objects.hash(name(), location(), getAll());
+	}
+
+	/**
+	 * Saves the location, so it can be reverted to later using a {@link #pop}.
+	 */
+	void push();
+
+	/**
+	 * Reverts the location to what it was when it was pushed.
+	 */
+	void pop();
+
+	/**
+	 * Consume if the next characters are equal to value, this will also fail if the end of file is reached.
+	 * @param value The value to check
+	 * @return Whether it was consumed
+	 */
+	default boolean consumeIf(String value) {
+		if (location() + value.length() <= size() && peek(value.length()).equals(value)) {
+			skip(value.length());  // Consume it
+			return true;
+		}
+		return false;
 	}
 }

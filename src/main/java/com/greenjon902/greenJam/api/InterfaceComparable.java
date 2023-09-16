@@ -1,4 +1,4 @@
-package com.greenjon902.greenJam.api.core;
+package com.greenjon902.greenJam.api;
 
 public interface InterfaceComparable {
 	/**

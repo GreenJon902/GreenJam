@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
+import com.greenjon902.greenJam.api.packageLoader.PackageLoader;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Information that is useful to the {@link com.greenjon902.greenJam.api.core.packageLoader.PackageLoader}.
+ * Information that is useful to the {@link PackageLoader}.
  */
 public class LoaderRawConfig {
 	@SerializedName("package-config-path")

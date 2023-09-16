@@ -1,9 +1,9 @@
 package com.greenjon902.greenJam.testUtils;
 
-import com.greenjon902.greenJam.api.core.File;
-import com.greenjon902.greenJam.api.core.Module;
-import com.greenjon902.greenJam.api.core.Package;
-import com.greenjon902.greenJam.api.core.PackageReference;
+import com.greenjon902.greenJam.api.File;
+import com.greenjon902.greenJam.api.Module;
+import com.greenjon902.greenJam.api.Package;
+import com.greenjon902.greenJam.api.PackageReference;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;

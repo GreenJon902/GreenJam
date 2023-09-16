@@ -1,7 +1,7 @@
 package com.greenjon902.greenJam.core.packageLoader.basedPackageHelpers;
 
-import com.greenjon902.greenJam.api.core.File;
-import com.greenjon902.greenJam.api.core.Package;
+import com.greenjon902.greenJam.api.File;
+import com.greenjon902.greenJam.api.Package;
 import com.greenjon902.greenJam.core.packageLoader.LoadedFile;
 import com.greenjon902.greenJam.core.packageLoader.LoadedModule;
 import com.greenjon902.greenJam.core.packageLoader.LoadedPackage;

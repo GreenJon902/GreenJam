@@ -1,6 +1,6 @@
-package com.greenjon902.greenJam.api.core.packageLoader;
+package com.greenjon902.greenJam.api.packageLoader;
 
-import com.greenjon902.greenJam.api.core.Package;
+import com.greenjon902.greenJam.api.Package;
 
 import java.io.IOException;
 

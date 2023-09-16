@@ -1,6 +1,6 @@
 package com.greenjon902.greenJam.utils;
 
-import com.greenjon902.greenJam.api.core.exceptions.CannotPopStackedClassException;
+import com.greenjon902.greenJam.api.exceptions.CannotPopStackedClassException;
 
 import java.util.Stack;
 // TODO: Generify this

@@ -1,7 +1,7 @@
-package com.greenjon902.greenJam.api.core;
+package com.greenjon902.greenJam.api;
 
-import com.greenjon902.greenJam.api.core.exceptions.NoSuchPackageException;
-import com.greenjon902.greenJam.api.core.exceptions.PackageAlreadyAddedException;
+import com.greenjon902.greenJam.api.exceptions.NoSuchPackageException;
+import com.greenjon902.greenJam.api.exceptions.PackageAlreadyAddedException;
 
 import java.util.Map;
 

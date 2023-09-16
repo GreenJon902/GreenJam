@@ -1,6 +1,6 @@
 package com.greenjon902.greenJam.core.packageLoader.basedPackageHelpers;
 
-import com.greenjon902.greenJam.api.core.PackageItem;
+import com.greenjon902.greenJam.api.PackageItem;
 import com.greenjon902.greenJam.utils.FieldStringWriter;
 
 public abstract class BasedPackageItem extends FieldStringWriter.Abstract  implements PackageItem {

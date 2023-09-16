@@ -1,6 +1,6 @@
 package com.greenjon902.greenJam.testUtils;
 
-import com.greenjon902.greenJam.api.core.PackageItem;
+import com.greenjon902.greenJam.api.PackageItem;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

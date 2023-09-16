@@ -1,4 +1,4 @@
-package com.greenjon902.greenJam.api.core;
+package com.greenjon902.greenJam.api;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

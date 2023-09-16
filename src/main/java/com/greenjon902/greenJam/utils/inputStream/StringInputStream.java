@@ -1,12 +1,16 @@
-package com.greenjon902.greenJam.utils;
+package com.greenjon902.greenJam.utils.inputStream;
 
-import com.greenjon902.greenJam.api.core.InputStream;
+import com.greenjon902.greenJam.api.InputStream;
+import com.greenjon902.greenJam.utils.FieldStringWriter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Stack;
 
 public class StringInputStream extends FieldStringWriter.Abstract implements InputStream  {
 	private final String string;
 	private int location = 0;
+	private Stack<Integer> locationStack = new Stack<>();
 	private @Nullable String name;
 
 	public StringInputStream(String string, String name) {
@@ -56,5 +60,15 @@ public class StringInputStream extends FieldStringWriter.Abstract implements Inp
 	@Override
 	public @NotNull String getAll() {
 		return string;
+	}
+
+	@Override
+	public void push() {
+		locationStack.push(location);
+	}
+
+	@Override
+	public void pop() {
+		location = locationStack.pop();
 	}
 }

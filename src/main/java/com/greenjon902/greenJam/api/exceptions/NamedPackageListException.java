@@ -1,7 +1,7 @@
-package com.greenjon902.greenJam.api.core.exceptions;
+package com.greenjon902.greenJam.api.exceptions;
 
-import com.greenjon902.greenJam.api.core.PackageList;
-import com.greenjon902.greenJam.api.core.PackageReference;
+import com.greenjon902.greenJam.api.PackageList;
+import com.greenjon902.greenJam.api.PackageReference;
 
 public abstract class NamedPackageListException extends PackageListException {
 	public final String name;

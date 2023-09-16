@@ -1,6 +1,6 @@
 package com.greenjon902.greenJam.testUtils;
 
-import com.greenjon902.greenJam.api.core.InterfaceComparable;
+import com.greenjon902.greenJam.api.InterfaceComparable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

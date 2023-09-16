@@ -1,8 +1,8 @@
-package com.greenjon902.greenJam.api.core;
+package com.greenjon902.greenJam.api;
 
 import com.greenjon902.greenJam.testUtils.MapValueFile;
-import com.greenjon902.greenJam.utils.NullInputStream;
-import com.greenjon902.greenJam.utils.StringInputStream;
+import com.greenjon902.greenJam.utils.inputStream.NullInputStream;
+import com.greenjon902.greenJam.utils.inputStream.StringInputStream;
 
 import java.util.Map;
 

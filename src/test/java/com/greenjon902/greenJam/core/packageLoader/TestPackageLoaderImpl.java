@@ -1,12 +1,12 @@
 package com.greenjon902.greenJam.core.packageLoader;
 
-import com.greenjon902.greenJam.api.core.Module;
-import com.greenjon902.greenJam.api.core.Package;
-import com.greenjon902.greenJam.api.core.*;
-import com.greenjon902.greenJam.api.core.packageLoader.PackageLoader;
+import com.greenjon902.greenJam.api.Module;
+import com.greenjon902.greenJam.api.Package;
+import com.greenjon902.greenJam.api.*;
+import com.greenjon902.greenJam.api.packageLoader.PackageLoader;
 import com.greenjon902.greenJam.core.PackageListImpl;
 import com.greenjon902.greenJam.core.packageLoader.rawConfig.ModuleRawConfig;
-import com.greenjon902.greenJam.utils.FileInputStream;
+import com.greenjon902.greenJam.utils.inputStream.FileInputStream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

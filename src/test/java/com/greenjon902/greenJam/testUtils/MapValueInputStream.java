@@ -1,7 +1,7 @@
 package com.greenjon902.greenJam.testUtils;
 
-import com.greenjon902.greenJam.api.core.InputStream;
-import com.greenjon902.greenJam.api.core.PackageItem;
+import com.greenjon902.greenJam.api.InputStream;
+import com.greenjon902.greenJam.api.PackageItem;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -52,6 +52,16 @@ public class MapValueInputStream extends MapValueBase implements InputStream {
 	@Override
 	public @NotNull String getAll() {
 		return (String) values.get("string");
+	}
+
+	@Override
+	public void push() {
+		throw new IllegalStateException();
+	}
+
+	@Override
+	public void pop() {
+		throw new IllegalStateException();
 	}
 
 	/**

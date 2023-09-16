@@ -1,6 +1,6 @@
 package com.greenjon902.greenJam.testUtils;
 
-import com.greenjon902.greenJam.api.core.PackageItem;
+import com.greenjon902.greenJam.api.PackageItem;
 import com.greenjon902.greenJam.testUtils.MapValuePackageItem.MapValuePackageItem2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
