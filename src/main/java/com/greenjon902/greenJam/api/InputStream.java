@@ -100,4 +100,13 @@ public interface InputStream extends InterfaceComparable, FieldStringWriter {
 		}
 		return false;
 	}
+
+	/**
+	 * Check if we can read the next n characters.
+	 * @param n The number of characters to check
+	 * @return The result of the check.
+	 */
+	default boolean hasNext(int n) {
+		return location() + n <= size();
+	}
 }

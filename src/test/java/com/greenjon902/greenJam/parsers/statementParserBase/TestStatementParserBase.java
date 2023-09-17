@@ -6,15 +6,17 @@ import com.greenjon902.greenJam.utils.inputStream.StringInputStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+// TODO: Fix these tests (or at least their names)
+
 public class TestStatementParserBase {
-	private Result<Object> funcOne(InputStream stream) { // Parse the keyword "TEST"
+	private Result<String> funcOne(InputStream stream) { // Parse the keyword "TEST"
 		if (stream.consumeIf("TEST")) {
 			return Result.ok("TEST");
 		}
 		return Result.fail();
 	}
 
-	private Result<Object> funcTwo(InputStream stream) { // Parse a 1-digit binary number
+	private Result<String> funcTwo(InputStream stream) { // Parse a 1-digit binary number
 		if (stream.consumeIf("0")) {
 			return Result.ok( "0");
 		} else if (stream.consumeIf("1")) {
@@ -28,16 +30,16 @@ public class TestStatementParserBase {
 		stream.consumeIf(" ");
 	}
 
-	private Object handlerOne(Object... objects) { // Returns parsed contents
+	private Object handlerOne(String... objects) { // Returns parsed contents
 		return objects;
-	}
+	}  // Much easier for checkWhileOk if this returns an object
 
 	/**
 	 * Test a single pathway with no ignores.
 	 */
 	@Test
 	public void testOnePath() {
-		StatementParserBase parser = new StatementParserBase();
+		StatementParserBase<String, Object> parser = new StatementParserBase<>(String[]::new);
 		parser.addPathway(this::handlerOne, this::funcOne, this::funcTwo);
 
 		checkWhileOk(new Object[] {"TEST", "0"}, parser.handle(new StringInputStream("TEST0")));
@@ -52,7 +54,7 @@ public class TestStatementParserBase {
 	 */
 	@Test
 	public void testOnePathWithIgnores() {
-		StatementParserBase parser = new StatementParserBase();
+		StatementParserBase<String, Object> parser = new StatementParserBase<>(String[]::new);
 		parser.addPathway(this::handlerOne, this::funcOne, this::funcTwo);
 
 		parser.addIgnoreFunction(this::ignoreOne);
@@ -75,7 +77,7 @@ public class TestStatementParserBase {
 	 */
 	@Test
 	public void testOrderedRoutes() {
-		StatementParserBase parser = new StatementParserBase();
+		StatementParserBase<String, Object> parser = new StatementParserBase<>(String[]::new);
 		parser.addPathway(this::handlerOne, this::funcOne, this::funcTwo, this::funcTwo);
 		parser.addPathway(this::handlerOne, this::funcOne, this::funcTwo);
 

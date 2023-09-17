@@ -11,22 +11,24 @@ package-name/main.jam:
 	;; PRINT {foo}
 	;; PRINT {foo * 2}
 package-name/file2.jam:
-	;; REQUIRE package-name/main.jam
+	;; REQUIRE `package-name/main.jam`
 	;; PRINT {package-name.main.foo}
 package-name/file3.jam:
-	;; REQUIRE package-name/main.jam AS main
+	;; REQUIRE `package-name/main.jam` AS main
 	;; PRINT {main.foo}
 package-name/file4.jam:
-	;; REQUIRE COPY package-name/main.jam
+	;; REQUIRE COPY `package-name/main.jam`
 	;; PRINT {foo}
 package-name/file5.jam:
-	;; REQUIRE COPY OVERWRITE package-name/main.jam
+	;; REQUIRE COPY OVERWRITE `package-name/main.jam`
 	;; PRINT {foo}
 	
 	
 
-CODE BLOCKS ------------------------------------
-code blocks are special language for more complex things during compilation.
+INSTRUCTIONS ------------------------------------
+Instruction lines start with ;; and do preprocessing stuff (like set up language rules or import other files)
+
+InsutrctionLanguage is in code blocks and is a special language for more complex things during compilation.
 just sped up version of insturctions with extra features like ifs and loops.
 This means variables dont have to go in {} while inside a code block.
 

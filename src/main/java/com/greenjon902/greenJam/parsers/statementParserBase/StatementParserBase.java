@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 
 /**
  * Subclasses of this can be used for easy statement parsing, you can add the formats of your statements, and it will
@@ -14,12 +15,18 @@ import java.util.function.Function;
  *
  * @implNote Order of operations may matter, so ensure you add longer items before shorter ones.
  */
-public class StatementParserBase {
+public class StatementParserBase<T, R> {
+	private final IntFunction<T[]> tGenerator;
+
+	public StatementParserBase(IntFunction<T[]> tGenerator) {
+		this.tGenerator = tGenerator;
+	}
+
 	protected boolean requireIgnored = false;
 
 	// Indexes for pathways are same as handler, e.g. pathways[0] means handler[0]
-	private final ArrayList<Function<InputStream, Result<Object>>[]> pathways = new ArrayList<>();
-	private final ArrayList<Function<Object[], Object>> handlers = new ArrayList<>();
+	private final ArrayList<StatementTokenizerHelper<T>[]> pathways = new ArrayList<>();
+	private final ArrayList<Function<T[], R>> handlers = new ArrayList<>();
 
 	private final List<Consumer<InputStream>> ignoreFunctions = new ArrayList<>();
 
@@ -31,7 +38,7 @@ public class StatementParserBase {
 	 * @param route The format of the statement
 	 * @param handler The consumer to run if it was matched successfully
 	 */
-	protected void addPathway(Function<Object[], Object> handler, Function<InputStream, Result<Object>>... route) {
+	protected void addPathway(Function<T[], R> handler, StatementTokenizerHelper<T>... route) {
 		pathways.add(route);
 		handlers.add(handler);
 	}
@@ -47,13 +54,13 @@ public class StatementParserBase {
 	/**
 	 * Handles an instruction with one of the predefined pathways.
 	 */
-	public Result<Object> handle(InputStream inputStream) {
+	public Result<R> handle(InputStream inputStream) {
 		for (int pi=0; (pi<pathways.size()); pi++) {
 			inputStream.push();
 
-			Function<InputStream, Result<Object>>[] route = pathways.get(pi);
+			Function<InputStream, Result<T>>[] route = pathways.get(pi);
 
-			Object[] results = new Object[route.length];
+			T[] results = tGenerator.apply(route.length);
 			boolean failed = false;
 
 			for (int i=0; (i<route.length) && !failed; i++) {
@@ -69,7 +76,7 @@ public class StatementParserBase {
 
 				} else {
 					// Now try and parse a result
-					Result<Object> result = route[i].apply(inputStream);
+					Result<T> result = route[i].apply(inputStream);
 					if (result.isOk) {
 						results[i] = result.unwrap();
 					} else {
