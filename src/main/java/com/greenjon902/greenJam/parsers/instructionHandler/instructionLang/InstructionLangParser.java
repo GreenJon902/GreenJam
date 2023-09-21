@@ -2,6 +2,8 @@ package com.greenjon902.greenJam.parsers.instructionHandler.instructionLang;
 
 import com.greenjon902.greenJam.api.exceptions.InstructionLangParserSyntaxError;
 import com.greenjon902.greenJam.parsers.instructionHandler.InstructionIdentifier;
+import com.greenjon902.greenJam.parsers.instructionHandler.InstructionLiteral;
+import com.greenjon902.greenJam.parsers.instructionHandler.InstructionOperator;
 import com.greenjon902.greenJam.utils.Result;
 
 import java.util.ArrayList;
@@ -9,6 +11,8 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 import static com.greenjon902.greenJam.parsers.instructionHandler.InstructionOperator.*;
+
+// TODO: Method Doc
 
 /**
  * The main parser class for InstructionLang.
@@ -51,7 +55,7 @@ public class InstructionLangParser {
 				}
 
 			} else {
-				throw new InstructionLangParserSyntaxError("Expected line end character(s)");
+				throw new InstructionLangParserSyntaxError("Expected " + END_LINE);
 			}
 		}
 		// Don't add one to I, as END_CODE_BLOCK is processes elsewhere!
@@ -69,27 +73,89 @@ public class InstructionLangParser {
 	}
 
 	private static Result<Ret> tryParseStatement(List<InstructionLangTreeLeaf> tokens, int i) {
-		Result<Ret2> result;
-		if ((result = tryMatch(tokens, i,
-				InstructionIdentifier.class,
-				ASSIGNMENT,
-				(BiFunction<List<InstructionLangTreeLeaf>, Integer, Result<Ret>>) (instructionLangTreeLeaves, integer) ->
-						tryParseStatement(instructionLangTreeLeaves, integer))).isOk) {
-			Ret2 ret2 = result.unwrap();
-			i = ret2.i();
-			InstructionLangTreeLeaf[] trees = ret2.trees();
-			Assignment assignment = new Assignment((InstructionIdentifier) trees[0], trees[2]);
-			return Result.ok(new Ret(assignment, i));
 
-		} else if ((result = tryMatch(tokens, i,
-				InstructionIdentifier.class)).isOk) {
-			Ret2 ret2 = result.unwrap();
-			i = ret2.i();
-			InstructionLangTreeLeaf[] trees = ret2.trees();
-			return Result.ok(new Ret(trees[0], i));
-		}else {
-				return Result.fail();
+		// Cast now so easier to read
+		BiFunction<List<InstructionLangTreeLeaf>, Integer, Result<Ret>> tryParseStatement = InstructionLangParser::tryParseStatement;
+
+		// Stuff that is declared during the if expression
+		Result<Ret2> result;
+		Result<Ret> result2;
+		Ret2 ret2;
+		InstructionOperator instructionOperator;
+
+
+		if (tryMatch(tokens, i, END_LINE).isOk) {  // Check for empty line -------------------------------
+			i += 1;
+			return Result.ok(new Ret(new NullLine(), i));
+
+		} else if ((result2 = tryParseExpression(tokens, i)).isOk) {  // Check for expression ------------------------
+
+			Ret ret = result2.unwrap();
+			i = ret.i();
+			InstructionLangTreeLeaf tree = ret.tree();
+			return Result.ok(new Ret(tree, i));
+
+		} else {  // Fail ------------------------
+			return Result.fail();
 		}
+	}
+
+	/**
+	 * Attempts to parse a {@link InstructionIdentifier},
+	 * {@link com.greenjon902.greenJam.parsers.instructionHandler.InstructionLiteral}, bracketed expression or a
+	 * "-" literal.
+	 */
+	private static Result<Ret> tryParsePrimary(List<InstructionLangTreeLeaf> tokens, int i) {
+		InstructionLangTreeLeaf next = tokens.get(i);
+		i += 1;
+
+		if (next instanceof InstructionLiteral) {
+			return Result.ok(new Ret(next, i));
+		} else if (next instanceof InstructionIdentifier) {
+			return Result.ok(new Ret(next, i));
+		} else {  // TODO: Parse bracket contents
+			return Result.fail();
+		}
+	}
+
+	/**
+	 * Attempts to parse an expression, or a singular primary.
+	 */
+	private static Result<Ret> tryParseExpression(List<InstructionLangTreeLeaf> tokens, int i) {
+		Result<Ret> res = tryParsePrimary(tokens, i);
+		Ret ret = res.unwrap();
+		return tryParseExpressionSecondHalf(tokens, ret.i(), ret.tree(), 0);
+	}
+
+	/**
+	 * Attempts to parse the second half of an expression. See {@link #tryParseExpression(List, int)}.
+	 */
+	private static Result<Ret> tryParseExpressionSecondHalf(List<InstructionLangTreeLeaf> tokens, int i, InstructionLangTreeLeaf a, int minPrecedence) {
+		InstructionLangTreeLeaf lookahead = tokens.get(i);
+
+		while (lookahead instanceof InstructionOperator op && op.precedence >= minPrecedence) {
+			i += 1;
+			Result<Ret> resB = tryParsePrimary(tokens, i);
+			Ret retB = resB.unwrap();
+			i = retB.i();
+			InstructionLangTreeLeaf b = retB.tree();
+
+			lookahead = tokens.get(i);
+			while (lookahead instanceof InstructionOperator nextOp &&
+					(nextOp.precedence > op.precedence)) {  // TODO: Right Associative operators
+
+				Result<Ret> resB2 = tryParseExpressionSecondHalf(tokens, i, b, op.precedence + (nextOp.precedence > op.precedence ? 1 : 0)); // This expression is for the above todo
+				Ret retB2 = resB2.unwrap();
+				i = retB2.i();
+				b = retB2.tree();
+
+				lookahead = tokens.get(i);
+			}
+
+			a = op.treeValueGenerator.apply(a, b);
+		}
+
+		return Result.ok(new Ret(a, i));
 	}
 
 	/**
