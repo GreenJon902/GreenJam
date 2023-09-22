@@ -10,20 +10,19 @@ import com.greenjon902.greenJam.parsers.statementParserBase.StatementTokenizerHe
 import com.greenjon902.greenJam.utils.Result;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * The tokenizer for the instructionLang, this works by checking all the token types and attempts to match one of them.
  */
 public class InstructionLangTokenizer {
-	protected static final Set<StatementTokenizerHelper<? extends InstructionLangTreeLeaf>> tokenizers = new HashSet<>() {{
-		addAll(List.of(InstructionLangKeyword.values()));  // Do this before literals
-		addAll(List.of(InstructionLiteral.values()));
-		addAll(List.of(InstructionOperator.values()));
-		add(InstructionIdentifier.IDENTIFIER);
-	}};
+	protected static final List<StatementTokenizerHelper<? extends InstructionLangTreeLeaf>> tokenizers = new ArrayList<>();  // List as needs to be ordered
+	static {
+		tokenizers.addAll(List.of(InstructionLangKeyword.values()));  // Do this before literals as look the same
+		tokenizers.addAll(List.of(InstructionLiteral.values()));
+		tokenizers.addAll(List.of(InstructionOperator.values()));
+		tokenizers.add(InstructionIdentifier.IDENTIFIER);
+	}
 
 	/**
 	 * Tokenize a block of InstructionLang from the given input stream, it will tokenize until it exits the outer
@@ -34,6 +33,7 @@ public class InstructionLangTokenizer {
 	public static Result<List<InstructionLangTreeLeaf>> tokenize(InputStream inputStream) {
 		int codeBlockDepth = 0; // When this reaches zero, it means we've exited out the last code block (and therefor the InstructionLang)
 		List<InstructionLangTreeLeaf> tokens = new ArrayList<>();
+		System.out.println(tokenizers);
 
 		outer:
 		do {
