@@ -33,7 +33,6 @@ public class InstructionLangTokenizer {
 	public static Result<List<InstructionLangTreeLeaf>> tokenize(InputStream inputStream) {
 		int codeBlockDepth = 0; // When this reaches zero, it means we've exited out the last code block (and therefor the InstructionLang)
 		List<InstructionLangTreeLeaf> tokens = new ArrayList<>();
-		System.out.println(tokenizers);
 
 		outer:
 		do {
