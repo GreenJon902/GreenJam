@@ -1,6 +1,7 @@
 package com.greenjon902.greenJam.parsers.instructionHandler;
 
 import com.greenjon902.greenJam.api.InputStream;
+import com.greenjon902.greenJam.parsers.instructionHandler.instructionLang.InstructionLangKeyword;
 import com.greenjon902.greenJam.parsers.instructionHandler.instructionLang.InstructionLangTreeLeaf;
 import com.greenjon902.greenJam.parsers.statementParserBase.StatementTokenizerHelper;
 import com.greenjon902.greenJam.utils.Result;
@@ -9,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A keyword that can be used in an instruction. We extend function so this can be used by the
  * {@link com.greenjon902.greenJam.parsers.statementParserBase.StatementParserBase}.
+ * Note, this is not the same as an {@link InstructionLangKeyword}.
  */
 public enum InstructionKeyword implements StatementTokenizerHelper<InstructionKeyword>, InstructionLangTreeLeaf {
 	STORE, PRINT;

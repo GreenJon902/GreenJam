@@ -14,6 +14,7 @@ import java.util.function.BiFunction;
  */
 public enum InstructionOperator implements StatementTokenizerHelper<InstructionOperator>, InstructionLangTreeLeaf {
 	START_CODE_BLOCK("{"), END_CODE_BLOCK("}"), END_LINE(";"), OPEN_BRACKET("("), CLOSE_BRACKET(")"),
+	COMMA(","),
 	ASSIGNMENT("=", (InstructionLangTreeLeaf a, InstructionLangTreeLeaf b) -> new Assignment((InstructionIdentifier) a, b), 0, true),
 	ADD("+", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.ADD), 2),
 	SUBTRACT("-", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.SUBTRACT), 1),

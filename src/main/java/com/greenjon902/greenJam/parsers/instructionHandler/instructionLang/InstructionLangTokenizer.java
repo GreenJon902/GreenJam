@@ -19,9 +19,10 @@ import java.util.Set;
  */
 public class InstructionLangTokenizer {
 	protected static final Set<StatementTokenizerHelper<? extends InstructionLangTreeLeaf>> tokenizers = new HashSet<>() {{
+		addAll(List.of(InstructionLangKeyword.values()));  // Do this before literals
 		addAll(List.of(InstructionLiteral.values()));
-		add(InstructionIdentifier.IDENTIFIER);
 		addAll(List.of(InstructionOperator.values()));
+		add(InstructionIdentifier.IDENTIFIER);
 	}};
 
 	/**

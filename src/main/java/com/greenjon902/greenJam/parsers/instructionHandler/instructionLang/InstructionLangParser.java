@@ -104,29 +104,51 @@ public class InstructionLangParser {
 	 * Attempts to parse a {@link InstructionIdentifier},
 	 * {@link com.greenjon902.greenJam.parsers.instructionHandler.InstructionLiteral}, bracketed expression or a
 	 * "-" literal.
-	 */
+	 * Then attempt to parse it as a function.
+	 */ // TODO: parse "-" literal
 	private static Result<Ret> tryParsePrimary(List<InstructionLangTreeLeaf> tokens, int i) {
 		InstructionLangTreeLeaf next = tokens.get(i);
 		i += 1;
 
-		if (next instanceof InstructionLiteral) {
-			return Result.ok(new Ret(next, i));
-
-		} else if (next instanceof InstructionIdentifier) {
-			return Result.ok(new Ret(next, i));
-
-		} else if (next == OPEN_BRACKET) {
-			Result<Ret> res = tryParseStatement(tokens, i);
+		// Do any extra logic, or exit if not a primary.
+		if (next == OPEN_BRACKET) {
+			Result<Ret> res = tryParseExpression(tokens, i);
 			if (!res.isOk) return Result.fail();
 			Ret ret = res.unwrap();
 			i = ret.i();
 			if (tokens.get(i) != CLOSE_BRACKET) return Result.fail();
 			i += 1;
-			return Result.ok(new Ret(ret.tree(), i));
+			next = ret.tree();
 
-		} else {
+		} else if (!(next instanceof InstructionLiteral || next instanceof InstructionIdentifier)) {  // These assume next to be the primary
 			return Result.fail();
 		}
+
+		if (tokens.get(i) == OPEN_BRACKET) {  // Now try and check for a function call
+			i += 1;  // Consume bracket
+			List<InstructionLangTreeLeaf> args = new ArrayList<>();
+
+			if (tokens.get(i) != CLOSE_BRACKET) {
+				while (true) { // Parse args
+					Result<Ret> res = tryParseExpression(tokens, i);
+					if (!res.isOk) return Result.fail();
+					Ret ret = res.unwrap();
+					i = ret.i();
+					args.add(ret.tree());
+
+					if (tokens.get(i) == CLOSE_BRACKET) break;
+					if (tokens.get(i) != COMMA) return Result.fail();  // Tf is this
+					i += 1;  // Consume comma
+				}
+			}
+
+			if (tokens.get(i) != CLOSE_BRACKET) return Result.fail();
+			i += 1;  // Consume bracket
+
+			next = new InstructionLangFunctionCall(next, args.toArray(InstructionLangTreeLeaf[]::new));
+		}
+
+		return Result.ok(new Ret(next, i));
 	}
 
 	/**
