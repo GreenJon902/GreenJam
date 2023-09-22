@@ -12,13 +12,16 @@ import java.util.function.BiFunction;
 
 import static com.greenjon902.greenJam.parsers.instructionHandler.InstructionOperator.*;
 
-// TODO: Method Doc
-
 /**
  * The main parser class for InstructionLang.
  * // TODO: More doc on the internals of this
  */
 public class InstructionLangParser {
+	/**
+	 * Parses a list of tokens into an AST for the instruction lang.
+	 * @param tokens The token list
+	 * @return The root code block.
+	 */
 	public static CodeBlock parse(List<InstructionLangTreeLeaf> tokens) {
 		if (tokens.get(0) != START_CODE_BLOCK) {
 			throw new InstructionLangParserSyntaxError("InstructionLang must start with a code block");
@@ -33,8 +36,12 @@ public class InstructionLangParser {
 		return (CodeBlock) ret.tree();
 	}
 
-	// TOOD: Code block normal (checks for curly brackets)
-	public static Ret parseCodeBlockInner(List<InstructionLangTreeLeaf> tokens, int i) {
+	// TODO: Make parse code block normal (checks for curly brackets)
+
+	/**
+	 * Parses the inside of a code block, this consists of a group of lines.
+	 */
+	private static Ret parseCodeBlockInner(List<InstructionLangTreeLeaf> tokens, int i) {
 		List<InstructionLangTreeLeaf> lines = new ArrayList<>();
 		InstructionLangTreeLeaf return_value;
 
@@ -63,6 +70,9 @@ public class InstructionLangParser {
 		return new Ret(new CodeBlock(lines, return_value), i);
 	}
 
+	/**
+	 * Parses a statement, see {@link #tryParseStatement(List, int)}.
+	 */
 	private static Ret parseStatement(List<InstructionLangTreeLeaf> tokens, int i) {
 		Result<Ret> res = tryParseStatement(tokens, i);
 		if (!res.isOk) {
@@ -72,6 +82,9 @@ public class InstructionLangParser {
 		return res.unwrap();
 	}
 
+	/**
+	 * Tries to parse a statement, this could be an empty line, expression, or a function declaration, etc.
+	 */
 	private static Result<Ret> tryParseStatement(List<InstructionLangTreeLeaf> tokens, int i) {
 
 		// Cast now so easier to read
@@ -250,5 +263,16 @@ public class InstructionLangParser {
 	}
 }
 
+/**
+ * A record to help return multiple values.
+ * @param tree The tree that was got
+ * @param i The new index
+ */
 record Ret(InstructionLangTreeLeaf tree, int i) {}
+
+/**
+ * A record to help return multiple values.
+ * @param trees The trees that were got
+ * @param i The new index
+ */
 record Ret2(InstructionLangTreeLeaf[] trees, int i) {}
