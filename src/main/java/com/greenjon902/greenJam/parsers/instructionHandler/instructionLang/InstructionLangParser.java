@@ -111,9 +111,20 @@ public class InstructionLangParser {
 
 		if (next instanceof InstructionLiteral) {
 			return Result.ok(new Ret(next, i));
+
 		} else if (next instanceof InstructionIdentifier) {
 			return Result.ok(new Ret(next, i));
-		} else {  // TODO: Parse bracket contents
+
+		} else if (next == OPEN_BRACKET) {
+			Result<Ret> res = tryParseStatement(tokens, i);
+			if (!res.isOk) return Result.fail();
+			Ret ret = res.unwrap();
+			i = ret.i();
+			if (tokens.get(i) != CLOSE_BRACKET) return Result.fail();
+			i += 1;
+			return Result.ok(new Ret(ret.tree(), i));
+
+		} else {
 			return Result.fail();
 		}
 	}
@@ -133,7 +144,8 @@ public class InstructionLangParser {
 	private static Result<Ret> tryParseExpressionSecondHalf(List<InstructionLangTreeLeaf> tokens, int i, InstructionLangTreeLeaf a, int minPrecedence) {
 		InstructionLangTreeLeaf lookahead = tokens.get(i);
 
-		while (lookahead instanceof InstructionOperator op && op.precedence >= minPrecedence) {
+
+		while (lookahead instanceof InstructionOperator op && (op.precedence >= minPrecedence || op.rightAssociative)) {
 			i += 1;
 			Result<Ret> resB = tryParsePrimary(tokens, i);
 			Ret retB = resB.unwrap();
@@ -142,7 +154,7 @@ public class InstructionLangParser {
 
 			lookahead = tokens.get(i);
 			while (lookahead instanceof InstructionOperator nextOp &&
-					(nextOp.precedence > op.precedence)) {  // TODO: Right Associative operators
+					(nextOp.precedence > op.precedence || nextOp.rightAssociative)) {
 
 				Result<Ret> resB2 = tryParseExpressionSecondHalf(tokens, i, b, op.precedence + (nextOp.precedence > op.precedence ? 1 : 0)); // This expression is for the above todo
 				Ret retB2 = resB2.unwrap();

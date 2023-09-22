@@ -13,8 +13,8 @@ import java.util.function.BiFunction;
  * Parser information for any operators in Instructions or InstructionLang.
  */
 public enum InstructionOperator implements StatementTokenizerHelper<InstructionOperator>, InstructionLangTreeLeaf {
-	START_CODE_BLOCK("{"), END_CODE_BLOCK("}"), END_LINE(";"),
-	ASSIGNMENT("=", (InstructionLangTreeLeaf a, InstructionLangTreeLeaf b) -> new Assignment((InstructionIdentifier) a, b), 0),
+	START_CODE_BLOCK("{"), END_CODE_BLOCK("}"), END_LINE(";"), OPEN_BRACKET("("), CLOSE_BRACKET(")"),
+	ASSIGNMENT("=", (InstructionLangTreeLeaf a, InstructionLangTreeLeaf b) -> new Assignment((InstructionIdentifier) a, b), 0, true),
 	ADD("+", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.ADD), 2),
 	SUBTRACT("-", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.SUBTRACT), 1),
 	MULTIPLY("*", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.MULTIPLY), 3),
@@ -29,15 +29,22 @@ public enum InstructionOperator implements StatementTokenizerHelper<InstructionO
 	 */
 	public final @Nullable BiFunction<InstructionLangTreeLeaf, InstructionLangTreeLeaf, ? extends Operator> treeValueGenerator;
 	public final int precedence;  // -1 is N/A
+	public boolean rightAssociative;
 
-	InstructionOperator(@NotNull String chars, @Nullable BiFunction<InstructionLangTreeLeaf, InstructionLangTreeLeaf, ? extends Operator> treeValueGenerator, int precedence) {
+	InstructionOperator(@NotNull String chars, @Nullable BiFunction<InstructionLangTreeLeaf, InstructionLangTreeLeaf, ? extends Operator> treeValueGenerator, int precedence, boolean rightAssociative) {
 		this.chars = chars;
 		this.treeValueGenerator = treeValueGenerator;
 		this.precedence = precedence;
+		this.rightAssociative = rightAssociative;
 	}
 
-	InstructionOperator(@NotNull String chars) {
-		this(chars, null, -1);
+	InstructionOperator(@NotNull String chars, @Nullable BiFunction<InstructionLangTreeLeaf, InstructionLangTreeLeaf, ? extends Operator> treeValueGenerator, int precedence) {
+		this(chars, treeValueGenerator, precedence, false);
+	}
+
+
+		InstructionOperator(@NotNull String chars) {
+		this(chars, null, -1, false);
 	}
 
 	@Override

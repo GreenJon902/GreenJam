@@ -49,4 +49,25 @@ class InstructionLangParserTest_assignment {
 				)
 		);
 	}
+
+	@Test
+	public void stackedAssignment() {
+		Assertions.assertEquals(
+				CodeBlock.of(
+						new InstructionOperator.Assignment(
+								new InstructionIdentifier("foo"),
+								new InstructionOperator.Assignment(
+										new InstructionIdentifier("bar"),
+										new InstructionIdentifier("baz")
+								))),
+				InstructionLangParser.parse(List.of(
+								START_CODE_BLOCK,
+								new InstructionIdentifier("foo"), ASSIGNMENT,
+								new InstructionIdentifier("bar"), ASSIGNMENT,
+								new InstructionIdentifier("baz"), END_LINE,
+								END_CODE_BLOCK
+						)
+				)
+		);
+	}
 }
