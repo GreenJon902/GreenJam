@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 import static com.greenjon902.greenJam.parsers.instructionHandler.InstructionOperator.*;
+import static com.greenjon902.greenJam.parsers.instructionHandler.instructionLang.InstructionLangKeyword.FUNCTION;
 
 /**
  * The main parser class for InstructionLang.
@@ -36,7 +37,25 @@ public class InstructionLangParser {
 		return (CodeBlock) ret.tree();
 	}
 
-	// TODO: Make parse code block normal (checks for curly brackets)
+	/**
+	 * Parses a list of tokens into a code block, this checks for curly braces then runs {@link #parseCodeBlockInner(List, int)}.
+	 * */
+	private static Ret parseCodeBlock(List<InstructionLangTreeLeaf> tokens, int i) {
+		if (tokens.get(0) != START_CODE_BLOCK) {
+			throw new InstructionLangParserSyntaxError("Code block must start with with a \"" + START_CODE_BLOCK.chars + "\"");
+		}
+
+		Ret ret = parseCodeBlockInner(tokens, i + 1);  // 1 as we skipped the START_CODE_BLOCK
+		i = ret.i();
+
+		if (tokens.get(i) != END_CODE_BLOCK) {
+			throw new InstructionLangParserSyntaxError("Code block must end with with a \"" + END_CODE_BLOCK.chars + "\"");
+		}
+
+		return new Ret(ret.tree(), i + 1);
+	}
+
+
 
 	/**
 	 * Parses the inside of a code block, this consists of a group of lines.
@@ -45,27 +64,32 @@ public class InstructionLangParser {
 		List<InstructionLangTreeLeaf> lines = new ArrayList<>();
 		InstructionLangTreeLeaf return_value;
 
-		while (true) {
-			Ret ret = parseStatement(tokens, i);
-			i = ret.i();
+		if (tokens.get(i) == END_CODE_BLOCK) {  // empty so just set the return to null line
+			return_value = new NullLine();
 
-			if (tokens.get(i) == END_CODE_BLOCK) {  // No semi-colon, so return value
-				return_value = ret.tree();
-				break;
+		} else {
+			while (true) {
+				Ret ret = parseStatement(tokens, i);
+				i = ret.i();
 
-			} else if (tokens.get(i) == END_LINE) {
-				lines.add(ret.tree());
-				i += 1;
-				if (tokens.get(i) == END_CODE_BLOCK) { // No return value of code block
-					return_value = new NullLine();
+				if (tokens.get(i) == END_CODE_BLOCK) {  // No semi-colon, so return value
+					return_value = ret.tree();
 					break;
-				}
 
-			} else {
-				throw new InstructionLangParserSyntaxError("Expected " + END_LINE);
+				} else if (tokens.get(i) == END_LINE || tokens.get(i - 1) == END_CODE_BLOCK) {  // We don't need a END_LINE after an e.g. function declaration
+					lines.add(ret.tree());
+					i += 1;
+					if (tokens.get(i) == END_CODE_BLOCK) { // No return value of code block
+						return_value = new NullLine();
+						break;
+					}
+
+				} else {
+					throw new InstructionLangParserSyntaxError("Expected " + END_LINE);
+				}
 			}
+			// Don't add one to I, as END_CODE_BLOCK is processes elsewhere!
 		}
-		// Don't add one to I, as END_CODE_BLOCK is processes elsewhere!
 
 		return new Ret(new CodeBlock(lines, return_value), i);
 	}
@@ -101,8 +125,13 @@ public class InstructionLangParser {
 			i += 1;
 			return Result.ok(new Ret(new NullLine(), i));
 
-		} else if ((result2 = tryParseExpression(tokens, i)).isOk) {  // Check for expression ------------------------
+		} else if ((result2 = tryParseFunctionDeclaration(tokens, i)).isOk) {  // Check for function declaration -------
+			Ret ret = result2.unwrap();
+			i = ret.i();
+			InstructionLangTreeLeaf tree = ret.tree();
+			return Result.ok(new Ret(tree, i));
 
+		} else if ((result2 = tryParseExpression(tokens, i)).isOk) {  // Check for expression ------------------------
 			Ret ret = result2.unwrap();
 			i = ret.i();
 			InstructionLangTreeLeaf tree = ret.tree();
@@ -111,6 +140,36 @@ public class InstructionLangParser {
 		} else {  // Fail ------------------------
 			return Result.fail();
 		}
+	}
+
+	/**
+	 * Attempts to parse a function declaration.
+	 */
+	private static Result<Ret> tryParseFunctionDeclaration(List<InstructionLangTreeLeaf> tokens, int i) {
+		// Parse keyword and name
+		Result<Ret2> result;
+		if (!(result = tryMatch(tokens, i, FUNCTION, InstructionIdentifier.class, OPEN_BRACKET)).isOk) return Result.fail();
+		Ret2 ret = result.unwrap();
+		InstructionIdentifier name = (InstructionIdentifier) ret.trees()[1];
+		i = ret.i();
+
+		// Parse args
+		List<InstructionIdentifier> args = new ArrayList<>();
+		while (tokens.get(i) instanceof InstructionIdentifier identifier) {  // Might be no args, or last op may be COMMA
+			args.add(identifier);
+			i += 1;
+			if (tokens.get(i) != COMMA) break;  // We need a comma between args
+			i += 1;
+		}
+		if (tokens.get(i) != CLOSE_BRACKET) return Result.fail();
+		i += 1;
+
+		// Parse actual code
+		Ret ret2 = parseCodeBlock(tokens, i);
+		i = ret2.i();
+		CodeBlock codeBlock = (CodeBlock) ret2.tree();
+
+		return Result.ok(new Ret(new FunctionDeclaration(name, args, codeBlock), i));
 	}
 
 	/**

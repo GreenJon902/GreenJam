@@ -32,7 +32,10 @@ InsutrctionLanguage is in code blocks and is a special language for more complex
 just sped up version of insturctions with extra features like ifs and loops.
 This means variables dont have to go in {} while inside a code block.
 
-The last expression in the code block is the return value of it.
+The last expression in a code block does not require a semi-colon, if none is given then it will be used as the return
+value.
+
+Instruction lang doesnt need types, though if they are given, they must be checked to ensure they are correct.
 
 
 
