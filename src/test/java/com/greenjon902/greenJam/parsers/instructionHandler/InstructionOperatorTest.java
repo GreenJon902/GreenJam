@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 class InstructionOperatorTest {
-	@ParameterizedTest
+	@ParameterizedTest(name="[{index}] {0}")
 	@MethodSource
 	public void operators(String name, boolean isOk, InstructionOperator parser, String data) {
 		Assertions.assertEquals(isOk, parser.apply(new StringInputStream(data)).isOk);
