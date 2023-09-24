@@ -14,6 +14,7 @@ import java.util.Set;
 
 /**
  * Parser information for any identifiers in Instructions or InstructionLang.
+ * Note: These may mistake keywords for identifiers.
  */
 public record InstructionIdentifier(@NotNull String name) implements StatementTokenizerHelper<InstructionIdentifier>, InstructionLangTreeLeaf {
 	public static final InstructionIdentifier IDENTIFIER = new InstructionIdentifier("There has been an error");

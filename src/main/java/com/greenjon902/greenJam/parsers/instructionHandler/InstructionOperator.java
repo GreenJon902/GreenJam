@@ -12,6 +12,7 @@ import java.util.function.BiFunction;
 
 /**
  * Parser information for any operators in Instructions or InstructionLang.
+ * Note: these should be safe against being mistaken for other operators (e.g. > and >>).
  */
 public enum InstructionOperator implements StatementTokenizerHelper<InstructionOperator>, InstructionLangTreeLeaf {
 	START_CODE_BLOCK("{"), END_CODE_BLOCK("}"), END_LINE(";"), OPEN_BRACKET("("), CLOSE_BRACKET(")"),
