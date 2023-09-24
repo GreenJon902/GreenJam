@@ -25,10 +25,36 @@ public enum InstructionOperator implements StatementTokenizerHelper<InstructionO
 	DIVIDE("/", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.DIVIDE), 400),
 	BIT_SHIFT_LEFT("<<", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.BIT_SHIFT_LEFT), 500),
 	BIT_SHIFT_RIGHT(">>", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.BIT_SHIFT_RIGHT), 600),
-	GREATER_THAN(">", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.GREATER_THAN), 600),
-	LESS_THAN("<", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.LESS_THAN), 620),
+	GREATER_THAN(">", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.GREATER_THAN), 600) {
+		@Override
+		public Result<InstructionOperator> apply(InputStream inputStream) {  // Protect against being mistaken
+			inputStream.push();
+			Result<InstructionOperator> res = super.apply(inputStream);
+			if (inputStream.consumeIf(">") || inputStream.consumeIf("=")) {
+				inputStream.pop();
+				return Result.fail();
+			} else {
+				inputStream.popKeep();
+				return res;
+			}
+		}
+	},
+	LESS_THAN("<", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.LESS_THAN), 620) {
+		@Override
+		public Result<InstructionOperator> apply(InputStream inputStream) {  // Protect against being mistaken
+			inputStream.push();
+			Result<InstructionOperator> res = super.apply(inputStream);
+			if (inputStream.consumeIf("<") || inputStream.consumeIf("=")) {
+				inputStream.pop();
+				return Result.fail();
+			} else {
+				inputStream.popKeep();
+				return res;
+			}
+		}
+	},
 	GREATER_EQUALS_THAN(">=", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.GREATER_EQUALS_THAN), 640),
-	LESS_EQUALS_THAN(">=", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.LESS_EQUALS_THAN), 660);
+	LESS_EQUALS_THAN("<=", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.LESS_EQUALS_THAN), 660);
 
 	public final @NotNull String chars;
 

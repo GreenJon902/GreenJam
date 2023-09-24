@@ -59,7 +59,7 @@ public enum InstructionLiteral implements StatementTokenizerHelper<InstructionLa
 			int base = 10;
 
 			java.lang.Integer digit;
-			while ((digit = numbers.get(inputStream.peek(1).charAt(0))) != null) {
+			while (inputStream.hasNext(1) && (digit = numbers.get(inputStream.peek(1).charAt(0))) != null) {
 				inputStream.skip(1);
 				number *= base;
 				number += digit;
