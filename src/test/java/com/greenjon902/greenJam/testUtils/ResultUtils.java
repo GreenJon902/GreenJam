@@ -3,6 +3,7 @@ package com.greenjon902.greenJam.testUtils;
 import com.greenjon902.greenJam.utils.Result;
 import org.junit.jupiter.api.Assertions;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ResultUtils {
@@ -13,6 +14,7 @@ public class ResultUtils {
 
 	public static <T> void checkOkAndListCorrect(List<T> expected, Result<List<T>> result) {
 		Assertions.assertTrue(result.isOk);
-		Assertions.assertArrayEquals(expected.toArray(), result.unwrap().toArray());
+		Assertions.assertArrayEquals(expected.toArray(), result.unwrap().toArray(),
+				() -> "\nE: " + Arrays.toString(expected.toArray()) + "\nA: " + Arrays.toString(result.unwrap().toArray()) + "\n\n");
 	}
 }

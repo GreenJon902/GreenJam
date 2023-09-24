@@ -71,4 +71,9 @@ public class StringInputStream extends FieldStringWriter.Abstract implements Inp
 	public void pop() {
 		location = locationStack.pop();
 	}
+
+	@Override
+	public void seek(int i) {
+		this.location = i;
+	}
 }

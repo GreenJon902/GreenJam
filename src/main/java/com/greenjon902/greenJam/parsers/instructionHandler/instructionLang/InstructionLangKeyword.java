@@ -1,6 +1,7 @@
 package com.greenjon902.greenJam.parsers.instructionHandler.instructionLang;
 
 import com.greenjon902.greenJam.api.InputStream;
+import com.greenjon902.greenJam.parsers.instructionHandler.InstructionIdentifier;
 import com.greenjon902.greenJam.parsers.statementParserBase.StatementTokenizerHelper;
 import com.greenjon902.greenJam.utils.Result;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
  * Note, this is not the same as an {@link com.greenjon902.greenJam.parsers.instructionHandler.InstructionKeyword}.
  */
 public enum InstructionLangKeyword implements StatementTokenizerHelper<InstructionLangKeyword>, InstructionLangTreeLeaf {
-	FUNCTION("def");
+	FUNCTION("def"), DO("do"), WHILE("while"), VARIABLE("let"), FOR("for"),
+	IF("if"), IN("in");
 
 	public final String stringRepr;
 
@@ -35,4 +37,6 @@ public enum InstructionLangKeyword implements StatementTokenizerHelper<Instructi
 		}
 		return Result.fail();
 	}
+
+	public record Declaration(InstructionIdentifier name) implements InstructionLangTreeLeaf {}
 }

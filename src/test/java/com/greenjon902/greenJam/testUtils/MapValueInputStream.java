@@ -64,6 +64,11 @@ public class MapValueInputStream extends MapValueBase implements InputStream {
 		throw new IllegalStateException();
 	}
 
+	@Override
+	public void seek(int i) {
+		throw new IllegalStateException();
+	}
+
 	/**
 	 * A subclass that is technically a different class, but apart from that is identical.
 	 */

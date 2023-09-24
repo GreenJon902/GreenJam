@@ -109,4 +109,19 @@ public interface InputStream extends InterfaceComparable, FieldStringWriter {
 	default boolean hasNext(int n) {
 		return location() + n <= size();
 	}
+
+	/**
+	 * Set the location to the value at "i".
+	 * @param i The value to go to
+	 */
+	void seek(int i);
+
+	/**
+	 * Does the same as {@link #pop()} but without changing any values.
+	 */
+	default void popKeep() {
+		int location = location();
+		pop();
+		seek(location);
+	}
 }

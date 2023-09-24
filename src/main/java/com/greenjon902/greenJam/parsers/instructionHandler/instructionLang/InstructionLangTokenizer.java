@@ -38,6 +38,7 @@ public class InstructionLangTokenizer {
 		do {
 			for (StatementTokenizerHelper<? extends InstructionLangTreeLeaf> tokenizer : tokenizers) {
 				InstructionHandlerIgnoredHelper.whitespaceSkipper(inputStream); // TODO: Some sort of checking for this maybe? ( somin like string with int with no space)
+				InstructionHandlerIgnoredHelper.commentSkipper(inputStream);
 
 				Result<? extends InstructionLangTreeLeaf> result = tokenizer.apply(inputStream);
 				if (result.isOk) {

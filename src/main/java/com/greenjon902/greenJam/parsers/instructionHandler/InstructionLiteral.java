@@ -8,6 +8,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 // TODO: Other literals
 
@@ -35,7 +36,58 @@ public enum InstructionLiteral implements StatementTokenizerHelper<InstructionLa
 
 			return Result.ok(new InstructionLiteral.String(new java.lang.String(ArrayUtils.toPrimitive(stringLiteral.toArray(Character[]::new)))));
 		}
+	},
+	INTEGER {
+		public final static Map<Character, java.lang.Integer> numbers = Map.of(
+				'0', 0,
+				'1', 1,
+				'2', 2,
+				'3', 3,
+				'4', 4,
+				'5', 5,
+				'6', 6,
+				'7', 7,
+				'8', 8,
+				'9', 9
+		);
+
+		@Override
+		public Result<InstructionLangTreeLeaf> apply(InputStream inputStream) {  // TODO: other bases (e.g. 16)
+			int startLocation = inputStream.location();
+
+			int number = 0;
+			int base = 10;
+
+			java.lang.Integer digit;
+			while ((digit = numbers.get(inputStream.peek(1).charAt(0))) != null) {
+				inputStream.skip(1);
+				number *= base;
+				number += digit;
+			}
+
+			if (inputStream.location() == startLocation) {
+				return Result.fail();
+			}
+
+			return Result.ok(new Integer(number));
+		}
+	},
+	BOOLEAN {
+		@Override
+		public Result<InstructionLangTreeLeaf> apply(InputStream inputStream) {  // TODO: other bases (e.g. 16)
+			if (inputStream.consumeIf("True")) {
+				return Result.ok(new Boolean(true));
+			} else if (inputStream.consumeIf("False")) {
+				return Result.ok(new Boolean(false));
+			} else {
+				return Result.fail();
+			}
+		}
 	};
 
-	public record String(java.lang.String value) implements InstructionLangTreeLeaf {};
+	public interface Literal extends InstructionLangTreeLeaf {};
+
+	public record String(java.lang.String value) implements Literal {}
+	public record Integer(int value) implements Literal {}
+	public record Boolean(boolean value) implements Literal {}
 }

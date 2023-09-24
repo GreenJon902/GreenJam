@@ -17,6 +17,10 @@ public record CodeBlock(@NotNull List<? extends InstructionLangTreeLeaf> lines, 
 		this.returnExpression = returnExpression;
 	}
 
+	public CodeBlock(InstructionLangTreeLeaf line, InstructionLangTreeLeaf returnExpression) {
+		this(List.of(line), returnExpression);
+	}
+
 	/**
 	 * Creates a code-block from lines, {@link #returnExpression)} is set to {@link NullLine}
 	 * @param lines

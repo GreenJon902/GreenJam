@@ -42,9 +42,9 @@ class InstructionLangParserTest_functions {
 				funcCallArgs[i] = new InstructionIdentifier(argNames[i]);
 
 				tokens.add(new InstructionIdentifier(argNames[i]));
-				tokens.add(COMMA);
+				tokens.add(LIST_DELIMITER);
 			}
-			if (tokens.get(tokens.size() - 1) == COMMA) tokens.remove(tokens.size() - 1);  // Remove last COMMA
+			if (tokens.get(tokens.size() - 1) == LIST_DELIMITER) tokens.remove(tokens.size() - 1);  // Remove last COMMA
 
 			tokens.add(CLOSE_BRACKET);
 			tokens.add(END_LINE);
@@ -112,9 +112,9 @@ class InstructionLangParserTest_functions {
 					funcParameters.add(new InstructionIdentifier(paramNames[i]));
 
 					tokens.add(new InstructionIdentifier(paramNames[i]));
-					tokens.add(COMMA);
+					tokens.add(LIST_DELIMITER);
 				}
-				if (tokens.get(tokens.size() - 1) == COMMA) tokens.remove(tokens.size() - 1);  // Remove last COMMA
+				if (tokens.get(tokens.size() - 1) == LIST_DELIMITER) tokens.remove(tokens.size() - 1);  // Remove last COMMA
 				tokens.add(CLOSE_BRACKET);
 
 				// Contents -------------------

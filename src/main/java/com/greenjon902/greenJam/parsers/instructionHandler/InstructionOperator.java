@@ -2,6 +2,7 @@ package com.greenjon902.greenJam.parsers.instructionHandler;
 
 import com.greenjon902.greenJam.api.InputStream;
 import com.greenjon902.greenJam.parsers.instructionHandler.instructionLang.InstructionLangTreeLeaf;
+import com.greenjon902.greenJam.parsers.instructionHandler.instructionLang.Item;
 import com.greenjon902.greenJam.parsers.statementParserBase.StatementTokenizerHelper;
 import com.greenjon902.greenJam.utils.Result;
 import org.jetbrains.annotations.NotNull;
@@ -14,14 +15,20 @@ import java.util.function.BiFunction;
  */
 public enum InstructionOperator implements StatementTokenizerHelper<InstructionOperator>, InstructionLangTreeLeaf {
 	START_CODE_BLOCK("{"), END_CODE_BLOCK("}"), END_LINE(";"), OPEN_BRACKET("("), CLOSE_BRACKET(")"),
-	COMMA(","),
-	ASSIGNMENT("=", (InstructionLangTreeLeaf a, InstructionLangTreeLeaf b) -> new Assignment((InstructionIdentifier) a, b), 0, true),
-	ADD("+", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.ADD), 2),
-	SUBTRACT("-", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.SUBTRACT), 1),
-	MULTIPLY("*", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.MULTIPLY), 3),
-	DIVIDE("/", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.DIVIDE), 4),
-	BIT_SHIFT_LEFT("<<", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.BIT_SHIFT_LEFT), 5),
-	BIT_SHIFT_RIGHT(">>", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.BIT_SHIFT_RIGHT), 6);
+	LIST_DELIMITER(","), START_GET_ITEM("["), END_GET_ITEM("]"),
+
+	ATTRIBUTE(".", (InstructionLangTreeLeaf a, InstructionLangTreeLeaf b) -> new Attribute(a, (InstructionIdentifier) b), -1),  // This is handled elsewhere
+	ASSIGNMENT("=", (InstructionLangTreeLeaf a, InstructionLangTreeLeaf b) -> new Assignment(a, b), 0, true),
+	ADD("+", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.ADD), 200),
+	SUBTRACT("-", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.SUBTRACT), 100),
+	MULTIPLY("*", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.MULTIPLY), 300),
+	DIVIDE("/", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.DIVIDE), 400),
+	BIT_SHIFT_LEFT("<<", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.BIT_SHIFT_LEFT), 500),
+	BIT_SHIFT_RIGHT(">>", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.BIT_SHIFT_RIGHT), 600),
+	GREATER_THAN(">", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.GREATER_THAN), 600),
+	LESS_THAN("<", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.LESS_THAN), 620),
+	GREATER_EQUALS_THAN(">=", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.GREATER_EQUALS_THAN), 640),
+	LESS_EQUALS_THAN(">=", (a, b) -> new ExpressionOperator(a, b, ExpressionOperation.LESS_EQUALS_THAN), 660);
 
 	public final @NotNull String chars;
 
@@ -63,11 +70,24 @@ public enum InstructionOperator implements StatementTokenizerHelper<InstructionO
 
 
 	/**
-	 * An assignment operation, this stores the result from B, into the identifier A.
+	 * An assignment operation, this stores the result from B, into the value A.
+	 * @param a The identifier, {@link Item}, {@link Attribute}
+	 * @param b The expression
+	 */
+	public record Assignment(InstructionLangTreeLeaf a, InstructionLangTreeLeaf b) implements Operator {
+		public Assignment {
+			if (!(a instanceof InstructionIdentifier || a instanceof Item || a instanceof Attribute)) {
+				throw new IllegalArgumentException("A must be of type identifier, item or attribute");
+			}
+		}
+	}
+
+	/**
+	 * An attribute operation, this gets the attribute B from the result of A.
 	 * @param a The identifier
 	 * @param b The expression
 	 */
-	public record Assignment(InstructionIdentifier a, InstructionLangTreeLeaf b) implements Operator {
+	public record Attribute(InstructionLangTreeLeaf a, InstructionIdentifier b) implements Operator {
 	}
 
 	/**
@@ -82,6 +102,6 @@ public enum InstructionOperator implements StatementTokenizerHelper<InstructionO
 	 * See {@link ExpressionOperator}.
 	 */
 	public enum ExpressionOperation {
-		ADD, SUBTRACT, MULTIPLY, DIVIDE, BIT_SHIFT_LEFT, BIT_SHIFT_RIGHT;
+		ADD, SUBTRACT, MULTIPLY, DIVIDE, BIT_SHIFT_LEFT, BIT_SHIFT_RIGHT, GREATER_THAN, LESS_THAN, GREATER_EQUALS_THAN, LESS_EQUALS_THAN;
 	}
 }

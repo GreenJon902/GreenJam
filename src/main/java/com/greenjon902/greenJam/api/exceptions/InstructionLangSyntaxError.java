@@ -11,6 +11,24 @@ public class InstructionLangSyntaxError extends RuntimeException {
 
 	@Override
 	public String getMessage() {
-		return "Could not recognize syntax at location " + inputStream.location() + " in file " + inputStream.name();
+		int location = inputStream.location();
+
+		int line = 0;
+		int linePos = 0;  // The index on this line
+		inputStream.push();
+		inputStream.seek(0);
+		while (inputStream.hasNext(1)) {
+			if (inputStream.next(1).equals("\n")) {
+				line += 1;
+				linePos = 0;
+			}
+			linePos += 1;
+			if (inputStream.location() == location) {
+				break;
+			}
+		}
+		inputStream.pop();
+
+		return "Could not recognize syntax at location " + inputStream.location() + " (" + line + "," + linePos + ") in file " + inputStream.name();
 	}
 }

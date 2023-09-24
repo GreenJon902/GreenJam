@@ -21,4 +21,14 @@ class InstructionLiteralTest {
 	}
 
 	// TODO: String escape codes
+
+	@Test
+	public void integers() {
+		checkOkAndCorrect(new InstructionLiteral.Integer(0), STRING.apply(new StringInputStream("0")));
+		checkOkAndCorrect(new InstructionLiteral.Integer(245),
+				STRING.apply(new StringInputStream("245")));
+		Assertions.assertFalse(STRING.apply(new StringInputStream("test")).isOk, "Detected identifier");
+		Assertions.assertFalse(STRING.apply(new StringInputStream("`test`")).isOk, "Detected path");
+		Assertions.assertFalse(STRING.apply(new StringInputStream("\"1\"")).isOk, "Detected string");
+	}
 }
