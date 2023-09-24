@@ -6,6 +6,11 @@ altogether different like yml to json conversion)
 [![CodeFactor](https://www.codefactor.io/repository/github/greenjon902/greenjam/badge)](https://www.codefactor.io/repository/github/greenjon902/greenjam)
 [![Java CI with Maven](https://github.com/GreenJon902/GreenJam/actions/workflows/maven.yml/badge.svg)](https://github.com/GreenJon902/GreenJam/actions/workflows/maven.yml)
 
+# This branch exists as a proof of concept more than anything
+I might look into doing something like this in future, or not, idk. Maybe if someone more intelligent appears to set it up properly.
+
+TODO: move tests in this branch too
+
 # TODO (& other related tools)
 
 

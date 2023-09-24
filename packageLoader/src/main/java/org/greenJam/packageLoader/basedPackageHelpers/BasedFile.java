@@ -1,0 +1,35 @@
+package org.greenJam.packageLoader.basedPackageHelpers;
+
+import org.greenJam.api.File;
+import org.greenJam.api.InputStream;
+import org.greenJam.api.FieldStringWriter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+/**
+ * See {@link BasedPackage}.
+ */
+public class BasedFile extends BasedPackageItem implements File, FieldStringWriter {
+	private final File file;
+	private final File superFile;
+
+	public BasedFile(File file, File superFile) {
+		this.file = file;
+		this.superFile = superFile;
+	}
+
+	@Override
+	public @Nullable File super_() {
+		return superFile;
+	}
+
+	@Override
+	public @NotNull InputStream stream() {
+		return file.stream();
+	}
+
+	@Override
+	public @NotNull String name() {
+		return file.name();
+	}
+}

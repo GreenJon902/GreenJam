@@ -4,9 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.greenjon902</groupId>
+    <groupId>org.greenJam</groupId>
     <artifactId>GreenJam</artifactId>
     <version>Alpha-V4</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>API</module>
+        <module>packageLoader</module>
+        <module>utils</module>
+        <module>core</module>
+        <module>parsers</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
